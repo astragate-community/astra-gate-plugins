@@ -5,9 +5,40 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "commandcode"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "commandcode"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-commandcode-auth", "version": "0.1.12" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-commandcode-auth",
+    "version": "0.1.12"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "Command Code",
+    "icon": "commandcode",
+    "providers": [
+      "commandcode-plan"
+    ],
+    "replaces": "commandcode-plan",
+    "summary": {
+      "en": "Command Code plans — Pro, GOAT, Max, Ultra, Go and Teams.",
+      "zh": "Command Code 各档套餐：Pro、GOAT、Max、Ultra、Go 和 Teams。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/commandcode"
+  }
 }

@@ -5,9 +5,44 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "workbuddy", "codebuddy"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "workbuddy",
+    "codebuddy"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-workbuddy-auth", "version": "0.1.19" },
-  "upstreamDiff": [".WorkBuddyAIAuthPlugin.auth.checkin", ".WorkBuddyAuthPlugin.auth.checkin", "._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-workbuddy-auth",
+    "version": "0.1.19"
+  },
+  "upstreamDiff": [
+    ".WorkBuddyAIAuthPlugin.auth.checkin",
+    ".WorkBuddyAuthPlugin.auth.checkin",
+    "._internal"
+  ],
+  "astra": {
+    "name": "WorkBuddy",
+    "icon": "workbuddy-color",
+    "providers": [
+      "workbuddy",
+      "workbuddy-ai"
+    ],
+    "replaces": "workbuddy",
+    "summary": {
+      "en": "WorkBuddy's China build (CodeBuddy plan) and its international build, with the daily check-in.",
+      "zh": "WorkBuddy 国内版（CodeBuddy 套餐）与国际版，支持每日签到。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/workbuddy"
+  }
 }

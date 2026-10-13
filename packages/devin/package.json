@@ -5,9 +5,41 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "devin", "windsurf"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "devin",
+    "windsurf"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-devin-auth", "version": "0.1.14" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-devin-auth",
+    "version": "0.1.14"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "Devin",
+    "icon": "devin",
+    "providers": [
+      "devin"
+    ],
+    "replaces": "devin",
+    "summary": {
+      "en": "Devin's models with your Devin account — a browser sign-in or the devin CLI's.",
+      "zh": "用 Devin 账号使用 Devin 的模型：浏览器登录，或沿用 devin CLI 的登录。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/devin"
+  }
 }

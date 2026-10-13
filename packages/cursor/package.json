@@ -5,9 +5,40 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "cursor"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "cursor"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-cursor-auth", "version": "0.2.11" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-cursor-auth",
+    "version": "0.2.11"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "Cursor",
+    "icon": "cursor",
+    "providers": [
+      "cursor"
+    ],
+    "replaces": "cursor",
+    "summary": {
+      "en": "Cursor Pro, Pro+, Ultra and Teams — every model your plan has, with tool calls.",
+      "zh": "Cursor Pro、Pro+、Ultra 与 Teams：套餐里的所有模型，支持工具调用。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/cursor"
+  }
 }

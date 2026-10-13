@@ -5,9 +5,40 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "zed"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "zed"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-zed-auth", "version": "0.1.6" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-zed-auth",
+    "version": "0.1.6"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "Zed",
+    "icon": "zed",
+    "providers": [
+      "zed"
+    ],
+    "replaces": "zed",
+    "summary": {
+      "en": "Claude, GPT, Gemini and Grok hosted by Zed, on your Zed plan.",
+      "zh": "用 Zed 订阅使用 Zed 托管的 Claude、GPT、Gemini 和 Grok。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/zed"
+  }
 }

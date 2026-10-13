@@ -50,5 +50,18 @@
     "package": "@magpie-community/middleware-param-override",
     "version": "0.1.0"
   },
-  "upstreamDiff": []
+  "upstreamDiff": [],
+  "astra": {
+    "name": "Param Override",
+    "kind": "middleware",
+    "summary": {
+      "en": "New API's parameter override: set, delete, move or rewrite fields of every request, by model or by condition.",
+      "zh": "New API 的参数覆盖：按模型或条件设置、删除、移动或改写每个请求的字段。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/middleware-param-override"
+  }
 }

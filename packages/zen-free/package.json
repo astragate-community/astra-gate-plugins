@@ -5,10 +5,42 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "zen", "free", "magpie", "astra"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "zen",
+    "free",
+    "magpie",
+    "astra"
+  ],
   "license": "MIT",
-  "magpie": { "icon": "https://opencode.ai/favicon-v3.ico", "maxConcurrency": 2 },
-  "upstream": { "package": "@magpie-community/opencode-zen-free-auth", "version": "0.1.1" },
-  "upstreamDiff": []
+  "magpie": {
+    "icon": "https://opencode.ai/favicon-v3.ico",
+    "maxConcurrency": 2
+  },
+  "upstream": {
+    "package": "@magpie-community/opencode-zen-free-auth",
+    "version": "0.1.1"
+  },
+  "upstreamDiff": [],
+  "astra": {
+    "name": "OpenCode Zen Free",
+    "icon": "opencode",
+    "providers": [
+      "opencode-zen-free"
+    ],
+    "summary": {
+      "en": "OpenCode Zen's free models with the public credential, automatic discovery and native streaming protocols.",
+      "zh": "使用 public 凭证接入 OpenCode Zen 免费模型，自动发现模型并支持原生流式协议。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/zen-free"
+  }
 }

@@ -5,9 +5,41 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "factory", "droid"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "factory",
+    "droid"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-factory-auth", "version": "0.1.25" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-factory-auth",
+    "version": "0.1.25"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "Factory",
+    "icon": "factory",
+    "providers": [
+      "factory"
+    ],
+    "replaces": "factory",
+    "summary": {
+      "en": "Factory's Droid subscription: 30 models from Anthropic, OpenAI, xAI and open labs.",
+      "zh": "Factory Droid 订阅：Anthropic、OpenAI、xAI 及开源模型共 30 个。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/factory"
+  }
 }

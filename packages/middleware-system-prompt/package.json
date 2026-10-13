@@ -28,5 +28,18 @@
     "package": "@magpie-community/middleware-system-prompt",
     "version": "0.1.0"
   },
-  "upstreamDiff": []
+  "upstreamDiff": [],
+  "astra": {
+    "name": "System Prompt",
+    "kind": "middleware",
+    "summary": {
+      "en": "Add your own system prompt to every request, or only some agents' or models', in each API's own place.",
+      "zh": "给每个请求（或指定 agent、模型）加上自己的系统提示词，放在各 API 自己的位置。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/middleware-system-prompt"
+  }
 }

@@ -32,5 +32,18 @@
     "package": "@magpie-community/middleware-word-guard",
     "version": "0.1.1"
   },
-  "upstreamDiff": []
+  "upstreamDiff": [],
+  "astra": {
+    "name": "Word Guard",
+    "kind": "middleware",
+    "summary": {
+      "en": "New API's sensitive-word filter: turn away or mask words and patterns in what you send, and in replies.",
+      "zh": "New API 的敏感词过滤：拒绝或替换你发出的内容和回复里的词与正则。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/middleware-word-guard"
+  }
 }

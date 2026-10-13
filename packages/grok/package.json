@@ -5,9 +5,42 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "grok", "xai", "supergrok"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "grok",
+    "xai",
+    "supergrok"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-grok-auth", "version": "0.1.14" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-grok-auth",
+    "version": "0.1.14"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "Grok",
+    "icon": "xai",
+    "providers": [
+      "grok"
+    ],
+    "replaces": "grok",
+    "summary": {
+      "en": "SuperGrok and X Premium+, through the Grok Build CLI's sign-in.",
+      "zh": "通过 Grok Build CLI 的登录使用 SuperGrok 和 X Premium+。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/grok"
+  }
 }

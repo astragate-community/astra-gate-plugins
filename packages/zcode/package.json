@@ -5,9 +5,44 @@
   "type": "module",
   "main": "./index.mjs",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "zcode", "z.ai", "bigmodel", "glm", "coding-plan"],
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "zcode",
+    "z.ai",
+    "bigmodel",
+    "glm",
+    "coding-plan"
+  ],
   "license": "MIT",
-  "upstream": { "package": "@magpie-community/opencode-zcode-auth", "version": "0.1.17" },
-  "upstreamDiff": ["._internal"]
+  "upstream": {
+    "package": "@magpie-community/opencode-zcode-auth",
+    "version": "0.1.17"
+  },
+  "upstreamDiff": [
+    "._internal"
+  ],
+  "astra": {
+    "name": "ZCode",
+    "icon": "zcode",
+    "providers": [
+      "zcode"
+    ],
+    "replaces": "zcode",
+    "summary": {
+      "en": "Z.ai and BigModel GLM Coding Plan, with team seats.",
+      "zh": "Z.ai 与智谱 GLM Coding Plan，支持团队席位。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/zcode"
+  }
 }

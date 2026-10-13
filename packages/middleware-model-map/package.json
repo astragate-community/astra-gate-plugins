@@ -29,5 +29,18 @@
     "package": "@magpie-community/middleware-model-map",
     "version": "0.1.1"
   },
-  "upstreamDiff": []
+  "upstreamDiff": [],
+  "astra": {
+    "name": "Model Map",
+    "kind": "middleware",
+    "summary": {
+      "en": "New API's model redirection: send a model under another name, by name or pattern; replies keep the name asked for.",
+      "zh": "New API 的模型重定向：按名称或正则把模型换成另一个发出，回复里仍是原来的名字。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/middleware-model-map"
+  }
 }

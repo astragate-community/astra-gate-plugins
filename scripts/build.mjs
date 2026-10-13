@@ -25,5 +25,9 @@ for (const name of names) {
     logLevel: "warning",
   })
   for (const f of ["package.json", "README.md"]) if (existsSync(join(dir, f))) await cp(join(dir, f), join(dist, f))
+  // the MIT licence ships with every package, with any licence text a plugin carries of its own
+  const own = (await readdir(dir)).filter((f) => /^LICENSE/.test(f))
+  for (const f of own) await cp(join(dir, f), join(dist, f))
+  if (!own.includes("LICENSE")) await cp(join(root, "LICENSE"), join(dist, "LICENSE"))
   console.log("built", name)
 }
