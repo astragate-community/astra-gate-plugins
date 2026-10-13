@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/grok-auth",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "OpenCode provider plugin: Grok (SuperGrok / X Premium+) through the Grok Build CLI's sign-in",
   "type": "module",
   "main": "./index.mjs",

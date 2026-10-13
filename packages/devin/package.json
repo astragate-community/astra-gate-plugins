@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/devin-auth",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Devin subscriptions (the devin CLI's account) provider plugin for Astra and magpie",
   "type": "module",
   "main": "./index.mjs",

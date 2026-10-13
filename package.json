@@ -11,8 +11,8 @@
     "build": "node scripts/build.mjs",
     "test": "node --test \"kit/test/*.test.mjs\" \"packages/*/test/*.test.mjs\"",
     "check": "node scripts/check.mjs",
-    "pack": "node scripts/release.mjs pack",
-    "publish": "node scripts/release.mjs publish"
+    "registry": "node scripts/release.mjs pack",
+    "release": "node scripts/release.mjs publish"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -18,7 +18,28 @@ npx eslint packages kit scripts
 npm run check        # each plugin's exported shape against its upstream npm package
 ```
 
-Install a built plugin in Astra by adding the path of its `dist/` directory in the console's Plugins page.
+Install from Astra's plugin market (`astra plugin add @astragate-community/<name>`, or the console's Plugins page), or
+add the path of a built `dist/` directory to try a change locally.
+
+## Releasing
+
+Astra's market reads `registry.json` from this repository's `main` branch and downloads each plugin's tarball from the
+GitHub Release it lists, checking the sha256 — no npm account is involved.
+
+1. Bump `version` in the package's `package.json` (a released tarball is never replaced: a changed tarball is a new version).
+2. `npm run registry` — builds, packs every package (deterministic, so an unchanged package keeps its hash) and rewrites
+   `registry.json` with the Release URLs and hashes. Commit it and push.
+3. `GH_TOKEN=… npm run release` — creates the `<dir>-v<version>` Release, with the tarball, for each version that has none.
+4. Copy `registry.json` over Astra's two built-in copies (`src/Astra.Plugins/Market/market.json` and
+   `docs/lib/plugin-market/upstream-fallback.json` in the Astra repository).
+
+The `astra` block of a package's `package.json` (name, icon, summary, `replaces`) is registry metadata and is left out of
+the published tarball; `magpie.icon` is what an installed plugin shows for its providers.
+
+## License
+
+See `THIRD_PARTY_NOTICES.md`: the published plugins are MIT (upstream's code, upstream's copyright line kept); `kit/` and
+`scripts/` are Apache-2.0 like the repository.
 
 ## Plugins
 

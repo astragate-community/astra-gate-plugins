@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/qoder-auth",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "Qoder subscriptions in Astra, OpenCode and magpie: Qoder (qoder.com) and Qoder CN (qoder.cn)",
   "type": "module",
   "main": "./index.mjs",

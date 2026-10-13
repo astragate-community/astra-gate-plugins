@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/mimo-auth",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "OpenCode provider plugin for Xiaomi MiMo: the MiMo app's Xiaomi-account sign-in, MiMo Pro and MiMo Flash",
   "type": "module",
   "main": "./index.mjs",

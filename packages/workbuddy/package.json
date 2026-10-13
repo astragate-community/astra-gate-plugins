@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/workbuddy-auth",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "WorkBuddy (China, copilot.tencent.com) and WorkBuddy AI (international, www.workbuddy.ai) provider plugins for Astra and magpie, with the daily check-in (签到)",
   "type": "module",
   "main": "./index.mjs",

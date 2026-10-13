@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/commandcode-auth",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Command Code plans (Pro, GOAT, Max, Ultra, Go, Teams) in Astra, OpenCode and magpie",
   "type": "module",
   "main": "./index.mjs",

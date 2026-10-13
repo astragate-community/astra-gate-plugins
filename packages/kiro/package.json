@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/kiro-auth",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Kiro subscriptions (Free, Pro, Pro+, Power) in OpenCode, magpie and Astra",
   "type": "module",
   "main": "./index.mjs",
