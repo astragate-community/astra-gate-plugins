@@ -1,0 +1,13 @@
+{
+  "name": "@astragate-community/devin-auth",
+  "version": "0.1.14",
+  "description": "Devin subscriptions (the devin CLI's account) provider plugin for Astra and magpie",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md"],
+  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "devin", "windsurf"],
+  "license": "MIT",
+  "upstream": { "package": "@magpie-community/opencode-devin-auth", "version": "0.1.14" },
+  "upstreamDiff": ["._internal"]
+}

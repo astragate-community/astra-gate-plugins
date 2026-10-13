@@ -1,0 +1,54 @@
+{
+  "name": "@astragate-community/middleware-param-override",
+  "version": "0.1.0",
+  "description": "New API's param_override (参数覆盖) as magpie gateway middleware: set, delete, move and rewrite any field of what agents send, with conditions",
+  "type": "module",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-middleware",
+    "new-api",
+    "param-override",
+    "llm-gateway",
+    "astra"
+  ],
+  "license": "MIT",
+  "magpie": {
+    "middleware": "./index.mjs",
+    "options": {
+      "operations": [
+        {
+          "path": "max_tokens",
+          "mode": "set",
+          "value": 32000,
+          "conditions": [
+            {
+              "path": "max_tokens",
+              "mode": "gt",
+              "value": 32000
+            }
+          ]
+        },
+        {
+          "path": "temperature",
+          "mode": "delete",
+          "conditions": [
+            {
+              "path": "model",
+              "mode": "contains",
+              "value": "reasoner"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "upstream": {
+    "package": "@magpie-community/middleware-param-override",
+    "version": "0.1.0"
+  },
+  "upstreamDiff": []
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@astragate-community/middleware-system-prompt",
+  "version": "0.1.0",
+  "description": "New API's system_prompt (系统提示词) as magpie gateway middleware: give agents' requests a system prompt of yours, in each API's own place for it",
+  "type": "module",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-middleware",
+    "new-api",
+    "system-prompt",
+    "llm-gateway",
+    "astra"
+  ],
+  "license": "MIT",
+  "magpie": {
+    "middleware": "./index.mjs",
+    "options": {
+      "system_prompt": "Reply in the language the user writes in.",
+      "override": true,
+      "position": "append"
+    }
+  },
+  "upstream": {
+    "package": "@magpie-community/middleware-system-prompt",
+    "version": "0.1.0"
+  },
+  "upstreamDiff": []
+}

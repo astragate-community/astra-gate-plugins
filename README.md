@@ -20,6 +20,30 @@ npm run check        # each plugin's exported shape against its upstream npm pac
 
 Install a built plugin in Astra by adding the path of its `dist/` directory in the console's Plugins page.
 
+## Plugins
+
+| package dir | kind | version | upstream (`@magpie-community/…`) |
+| --- | --- | --- | --- |
+| `commandcode` | provider | 0.1.12 | `opencode-commandcode-auth` |
+| `cursor` | provider | 0.2.11 | `opencode-cursor-auth` |
+| `devin` | provider | 0.1.14 | `opencode-devin-auth` |
+| `factory` | provider | 0.1.25 | `opencode-factory-auth` |
+| `grok` | provider | 0.1.14 | `opencode-grok-auth` |
+| `kiro` | provider | 0.1.9 | `opencode-kiro-auth` |
+| `middleware-model-map` | middleware | 0.1.1 | `middleware-model-map` |
+| `middleware-param-override` | middleware | 0.1.0 | `middleware-param-override` |
+| `middleware-system-prompt` | middleware | 0.1.0 | `middleware-system-prompt` |
+| `middleware-think-tags` | middleware | 0.1.0 | `middleware-think-tags` |
+| `middleware-word-guard` | middleware | 0.1.1 | `middleware-word-guard` |
+| `mimo` | provider | 0.1.9 | `opencode-mimo-auth` |
+| `qoder` | provider | 0.2.14 | `opencode-qoder-auth` |
+| `workbuddy` | provider | 0.2.0 | `opencode-workbuddy-auth` |
+| `zcode` | provider | 0.1.17 | `opencode-zcode-auth` |
+| `zed` | provider | 0.1.6 | `opencode-zed-auth` |
+| `zen-free` | provider | 0.1.1 | `opencode-zen-free-auth` |
+
+WorkBuddy covers both builds (China and international) and adds the daily check-in the upstream package lacks.
+
 ## Plugin layout
 
 A provider plugin is split by what changes together, not by size. `index.mjs` only exports the plugins; the rest

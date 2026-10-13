@@ -1,0 +1,13 @@
+{
+  "name": "@astragate-community/grok-auth",
+  "version": "0.1.14",
+  "description": "OpenCode provider plugin: Grok (SuperGrok / X Premium+) through the Grok Build CLI's sign-in",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md"],
+  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "grok", "xai", "supergrok"],
+  "license": "MIT",
+  "upstream": { "package": "@magpie-community/opencode-grok-auth", "version": "0.1.14" },
+  "upstreamDiff": ["._internal"]
+}

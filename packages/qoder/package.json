@@ -1,0 +1,13 @@
+{
+  "name": "@astragate-community/qoder-auth",
+  "version": "0.2.14",
+  "description": "Qoder subscriptions in Astra, OpenCode and magpie: Qoder (qoder.com) and Qoder CN (qoder.cn)",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md", "LICENSE-CLIProxyAPI"],
+  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "qoder", "qoder-cn"],
+  "license": "MIT",
+  "upstream": { "package": "@magpie-community/opencode-qoder-auth", "version": "0.2.14" },
+  "upstreamDiff": ["._internal"]
+}

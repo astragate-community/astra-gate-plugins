@@ -17,7 +17,9 @@ for (const name of names) {
   const dir = mkdtempSync(join(tmpdir(), "upstream-"))
   execFileSync("npm", ["pack", `${pkg.upstream.package}@${pkg.upstream.version}`, "--silent"], { cwd: dir })
   execFileSync("sh", ["-c", "tar xzf *.tgz"], { cwd: dir })
-  const before = await shapeOf(join(dir, "package", "index.mjs"))
+  const up = JSON.parse(readFileSync(join(dir, "package", "package.json"), "utf8"))
+  const entry = up.magpie?.middleware ?? up.main ?? "index.mjs"
+  const before = await shapeOf(join(dir, "package", entry))
   const after = await shapeOf(join(root, "packages", name, "dist", "index.mjs"))
   const diff = []
   const walk = (a, b, path) => {

@@ -1,0 +1,13 @@
+{
+  "name": "@astragate-community/kiro-auth",
+  "version": "0.1.9",
+  "description": "Kiro subscriptions (Free, Pro, Pro+, Power) in OpenCode, magpie and Astra",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md"],
+  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "kiro"],
+  "license": "MIT",
+  "upstream": { "package": "@magpie-community/opencode-kiro-auth", "version": "0.1.9" },
+  "upstreamDiff": ["._internal"]
+}

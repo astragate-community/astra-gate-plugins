@@ -1,0 +1,13 @@
+{
+  "name": "@astragate-community/factory-auth",
+  "version": "0.1.25",
+  "description": "Sign in to a Factory (Droid) subscription from Astra, OpenCode or magpie",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md"],
+  "keywords": ["opencode", "opencode-plugin", "magpie", "astra", "factory", "droid"],
+  "license": "MIT",
+  "upstream": { "package": "@magpie-community/opencode-factory-auth", "version": "0.1.25" },
+  "upstreamDiff": ["._internal"]
+}

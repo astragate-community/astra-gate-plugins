@@ -1,0 +1,33 @@
+{
+  "name": "@astragate-community/middleware-model-map",
+  "version": "0.1.1",
+  "description": "New API's model_mapping (模型重定向) as magpie gateway middleware: send the model an agent asks for as another, and keep the asked name in replies",
+  "type": "module",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-middleware",
+    "new-api",
+    "model-mapping",
+    "llm-gateway",
+    "astra"
+  ],
+  "license": "MIT",
+  "magpie": {
+    "middleware": "./index.mjs",
+    "options": {
+      "mapping": {
+        "fast": "deepseek-chat",
+        "/^gpt-4o(-.*)?$/": "deepseek-chat"
+      }
+    }
+  },
+  "upstream": {
+    "package": "@magpie-community/middleware-model-map",
+    "version": "0.1.1"
+  },
+  "upstreamDiff": []
+}
