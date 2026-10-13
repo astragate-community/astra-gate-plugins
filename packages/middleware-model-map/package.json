@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/middleware-model-map",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "New API's model_mapping (模型重定向) as magpie gateway middleware: send the model an agent asks for as another, and keep the asked name in replies",
   "type": "module",
   "files": [

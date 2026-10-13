@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/commandcode-auth",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Command Code plans (Pro, GOAT, Max, Ultra, Go, Teams) in Astra, OpenCode and magpie",
   "type": "module",
   "main": "./index.mjs",
@@ -26,7 +26,7 @@
   ],
   "astra": {
     "name": "Command Code",
-    "icon": "commandcode",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/commandcode.svg",
     "providers": [
       "commandcode-plan"
     ],
@@ -40,5 +40,8 @@
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/commandcode"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/commandcode.svg"
   }
 }

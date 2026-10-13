@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/devin-auth",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Devin subscriptions (the devin CLI's account) provider plugin for Astra and magpie",
   "type": "module",
   "main": "./index.mjs",
@@ -27,7 +27,7 @@
   ],
   "astra": {
     "name": "Devin",
-    "icon": "devin",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/devin-color.svg",
     "providers": [
       "devin"
     ],
@@ -41,5 +41,8 @@
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/devin"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/devin-color.svg"
   }
 }

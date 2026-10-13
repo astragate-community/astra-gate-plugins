@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/grok-auth",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "OpenCode provider plugin: Grok (SuperGrok / X Premium+) through the Grok Build CLI's sign-in",
   "type": "module",
   "main": "./index.mjs",
@@ -28,7 +28,7 @@
   ],
   "astra": {
     "name": "Grok",
-    "icon": "xai",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/grok.svg",
     "providers": [
       "grok"
     ],
@@ -42,5 +42,8 @@
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/grok"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/grok.svg"
   }
 }

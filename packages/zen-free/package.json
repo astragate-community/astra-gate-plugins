@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/zen-free-auth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "OpenCode Zen free models through the public credential, with native streaming protocols",
   "type": "module",
   "main": "./index.mjs",
@@ -19,7 +19,7 @@
   ],
   "license": "MIT",
   "magpie": {
-    "icon": "https://opencode.ai/favicon-v3.ico",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/opencode.svg",
     "maxConcurrency": 2
   },
   "upstream": {
@@ -29,7 +29,7 @@
   "upstreamDiff": [],
   "astra": {
     "name": "OpenCode Zen Free",
-    "icon": "opencode",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/opencode.svg",
     "providers": [
       "opencode-zen-free"
     ],

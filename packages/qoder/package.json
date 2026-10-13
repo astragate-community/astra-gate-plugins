@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/qoder-auth",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Qoder subscriptions in Astra, OpenCode and magpie: Qoder (qoder.com) and Qoder CN (qoder.cn)",
   "type": "module",
   "main": "./index.mjs",
@@ -28,7 +28,7 @@
   ],
   "astra": {
     "name": "Qoder",
-    "icon": "qoder",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qoder-color.svg",
     "providers": [
       "qoder"
     ],
@@ -42,5 +42,8 @@
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/qoder"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qoder-color.svg"
   }
 }

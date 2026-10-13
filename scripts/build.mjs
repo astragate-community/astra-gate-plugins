@@ -1,7 +1,7 @@
 // Bundles each packages/<name>/src/index.mjs (with the kit) into packages/<name>/dist/index.mjs, the one file
 // Astra installs, next to the package.json and README it ships. `node scripts/build.mjs [name…]`.
 import { build } from "esbuild"
-import { cp, mkdir, readdir, rm } from "node:fs/promises"
+import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises"
 import { existsSync } from "node:fs"
 import { join } from "node:path"
 
@@ -24,7 +24,10 @@ for (const name of names) {
     legalComments: "inline",
     logLevel: "warning",
   })
-  for (const f of ["package.json", "README.md"]) if (existsSync(join(dir, f))) await cp(join(dir, f), join(dist, f))
+  // what only the market and the shape check read stays out of the package, so changing it never changes the tarball
+  const { astra: _a, upstream: _u, upstreamDiff: _d, ...shipped } = JSON.parse(await readFile(join(dir, "package.json"), "utf8"))
+  await writeFile(join(dist, "package.json"), JSON.stringify(shipped, null, 2) + "\n")
+  if (existsSync(join(dir, "README.md"))) await cp(join(dir, "README.md"), join(dist, "README.md"))
   // the MIT licence ships with every package, with any licence text a plugin carries of its own
   const own = (await readdir(dir)).filter((f) => /^LICENSE/.test(f))
   for (const f of own) await cp(join(dir, f), join(dist, f))

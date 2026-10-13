@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/zcode-auth",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "OpenCode provider plugin: signs in to Z.ai's or BigModel's (智谱) GLM Coding Plan as ZCode does, including team seats and ZCode's Start Plan",
   "type": "module",
   "main": "./index.mjs",
@@ -30,7 +30,7 @@
   ],
   "astra": {
     "name": "ZCode",
-    "icon": "zcode",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/zai.svg",
     "providers": [
       "zcode"
     ],
@@ -44,5 +44,8 @@
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/zcode"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/zai.svg"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/factory-auth",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "Sign in to a Factory (Droid) subscription from Astra, OpenCode or magpie",
   "type": "module",
   "main": "./index.mjs",

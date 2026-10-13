@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/kiro-auth",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Kiro subscriptions (Free, Pro, Pro+, Power) in OpenCode, magpie and Astra",
   "type": "module",
   "main": "./index.mjs",
@@ -26,7 +26,7 @@
   ],
   "astra": {
     "name": "Kiro",
-    "icon": "kiro-color",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kiro-color.svg",
     "providers": [
       "kiro"
     ],
@@ -40,5 +40,8 @@
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/kiro"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kiro-color.svg"
   }
 }
