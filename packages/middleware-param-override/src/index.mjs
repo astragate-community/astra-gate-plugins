@@ -1,5 +1,5 @@
 // New API's 参数覆盖 (a channel's param_override) as magpie gateway middleware, based on
-// @magpie-community/middleware-param-override 0.1.0 (MIT): the same JSON, so a param_override copied from New
+// an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md): the same JSON, so a param_override copied from New
 // API works here unchanged, on every request an agent sends through the gateway.
 //
 // Two forms, as in New API:

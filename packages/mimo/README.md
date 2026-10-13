@@ -1,8 +1,8 @@
-Based on `@magpie-community/opencode-mimo-auth` 0.1.9 (MIT), refactored into modules for the astra-gate-plugins monorepo; behaviour is unchanged.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md), refactored into modules for the astra-gate-plugins monorepo; behaviour is unchanged.
 
 ---
 
-# @magpie-community/opencode-mimo-auth
+# @astragate-community/mimo-auth
 
 Signs in to **Xiaomi MiMo** with a Xiaomi account, the way the MiMo desktop
 app does, and makes its model requests. Provider id: `mimo-app`.

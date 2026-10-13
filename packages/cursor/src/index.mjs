@@ -1,5 +1,5 @@
 // Cursor subscriptions as an OpenCode provider plugin, served through the
-// API cursor-agent talks to. Based on @magpie-community/opencode-cursor-auth 0.2.11 (MIT), ported from magpie's
+// API cursor-agent talks to. Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md), ported from magpie's
 // built-in Cursor account (internal/provider/cursor*.go, internal/gateway/cursor.go).
 //
 // An account is a Cursor access token, got one of three ways (signin.mjs, session.mjs, cli.mjs):

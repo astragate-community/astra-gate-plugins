@@ -1,12 +1,12 @@
 # Qoder plugin for Astra
 
-Based on `@magpie-community/opencode-qoder-auth` 0.2.14 (MIT). The same plugins, split into modules (`src/`); the protocol is ported from magpie's internal/qoder and CLIProxyAPI (MIT, see LICENSE-CLIProxyAPI).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). The same plugins, split into modules (`src/`); the protocol is ported from magpie's internal/qoder and CLIProxyAPI (MIT, see LICENSE-CLIProxyAPI).
 
 Install: Astra console → Plugins → add the local path of this directory.
 
 ---
 
-# @magpie-community/opencode-qoder-auth
+# @astragate-community/qoder-auth
 
 Your [Qoder](https://qoder.com) subscription in OpenCode and
 [magpie](https://usemagpie.ai). The package serves Qoder's two sites, whose

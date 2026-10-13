@@ -1,0 +1,58 @@
+{
+  "QoderAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Sign in with Qoder",
+          "type": "oauth"
+        }
+      ],
+      "provider": "qoder",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "qoder",
+      "models": "fn"
+    }
+  },
+  "QoderCNAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Sign in with Qoder CN",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Sign in with Qoder CN Enterprise (VPC)",
+          "prompts": [
+            {
+              "key": "vpc",
+              "message": "Your enterprise's VPC instance: its name, or its address (<instance>.vpc.qoder.com.cn)",
+              "placeholder": "acme or acme.vpc.qoder.com.cn",
+              "type": "text",
+              "validate": "fn"
+            }
+          ],
+          "type": "oauth"
+        }
+      ],
+      "provider": "qoder-cn",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "qoder-cn",
+      "models": "fn"
+    }
+  }
+}

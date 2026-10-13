@@ -1,5 +1,5 @@
 // Command Code's plans (commandcode.ai) as an OpenCode provider plugin. Based on
-// @magpie-community/opencode-commandcode-auth 0.1.12 (MIT).
+// an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 //
 // An account is a Command Code API key. It is got the way Command Code's
 // CLI gets one (Studio approves a key for this machine and posts it to a

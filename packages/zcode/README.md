@@ -1,8 +1,8 @@
-Based on `@magpie-community/opencode-zcode-auth` 0.1.17 (MIT). Same behaviour, restructured into modules; the tests-only `_internal` export is gone.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, restructured into modules; the tests-only `_internal` export is gone.
 
 ---
 
-# @magpie-community/opencode-zcode-auth
+# @astragate-community/zcode-auth
 
 Signs in to Z.ai's GLM Coding Plan, or BigModel's (智谱). It does this the
 way [ZCode](https://zcode.z.ai) does, and serves the plan's GLM models

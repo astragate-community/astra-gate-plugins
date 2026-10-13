@@ -1,8 +1,8 @@
-# @magpie-community/middleware-param-override
+# @astragate-community/middleware-param-override
 
 New API's **参数覆盖** (a channel's `param_override`) as [magpie](https://usemagpie.ai) gateway middleware. It sets, deletes, moves and rewrites any field of the requests agents send through magpie, whichever provider serves them. The options are New API's JSON as it is, so you can paste a `param_override` from New API unchanged.
 
-Install it from magpie's **Plugins › Discover**, or with `magpie plugin add @magpie-community/middleware-param-override`. Then set its options under **Plugins › Installed › Options**, or with `magpie plugin options param-override '<json>'`.
+Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-param-override`. Then set its options under **Plugins › Installed › Options**, or with `magpie plugin options param-override '<json>'`.
 
 ## Options
 
@@ -63,4 +63,4 @@ its Jint-based middleware runner). Keep it loadable there:
 
 ---
 
-Based on @magpie-community/middleware-param-override 0.1.0 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

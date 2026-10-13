@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/middleware-param-override",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "New API's param_override (参数覆盖) as magpie gateway middleware: set, delete, move and rewrite any field of what agents send, with conditions",
   "type": "module",
   "files": [
@@ -46,11 +46,6 @@
       ]
     }
   },
-  "upstream": {
-    "package": "@magpie-community/middleware-param-override",
-    "version": "0.1.0"
-  },
-  "upstreamDiff": [],
   "astra": {
     "name": "Param Override",
     "kind": "middleware",

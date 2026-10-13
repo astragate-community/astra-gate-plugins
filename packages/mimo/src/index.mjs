@@ -1,4 +1,4 @@
-// Xiaomi MiMo as an OpenCode provider plugin, based on @magpie-community/opencode-mimo-auth 0.1.9 (MIT).
+// Xiaomi MiMo as an OpenCode provider plugin, based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 // Xiaomi MiMo, as the MiMo desktop app signs in to it: a Xiaomi account
 // signed in on account.xiaomi.com's long-poll page (a QR code for the
 // Xiaomi phone app, or the password), whose passToken signs it on at the

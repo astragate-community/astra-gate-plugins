@@ -1,0 +1,42 @@
+{
+  "GrokAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Sign in with Grok Build (device code)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Use Grok Build's current sign-in",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Import CPA Grok account JSON",
+          "prompts": [
+            {
+              "key": "path",
+              "message": "Path to the CPA xAI account JSON. Stop using this account in CPA after import; its refresh token rotates.",
+              "placeholder": "~/.cli-proxy-api/xai-<email>.json",
+              "type": "text",
+              "validate": "fn"
+            }
+          ],
+          "type": "oauth"
+        }
+      ],
+      "provider": "grok",
+      "refresh": "fn",
+      "refreshLead": 300000,
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "grok",
+      "models": "fn"
+    }
+  }
+}

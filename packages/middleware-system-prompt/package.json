@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/middleware-system-prompt",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "New API's system_prompt (系统提示词) as magpie gateway middleware: give agents' requests a system prompt of yours, in each API's own place for it",
   "type": "module",
   "files": [
@@ -24,11 +24,6 @@
       "position": "append"
     }
   },
-  "upstream": {
-    "package": "@magpie-community/middleware-system-prompt",
-    "version": "0.1.0"
-  },
-  "upstreamDiff": [],
   "astra": {
     "name": "System Prompt",
     "kind": "middleware",

@@ -1,5 +1,5 @@
-// OpenCode Zen's free models as an OpenCode provider plugin. Based on @magpie-community/opencode-zen-free-auth
-// 0.1.1 (MIT).
+// OpenCode Zen's free models as an OpenCode provider plugin. Based on an MIT-licensed
+// community plugin (see THIRD_PARTY_NOTICES.md).
 import { server } from "./plugin.mjs"
 
 export const ZenFreePlugin = server

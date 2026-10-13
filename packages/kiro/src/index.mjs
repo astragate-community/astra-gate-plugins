@@ -15,5 +15,5 @@
 // Messages, and the fetch here sends each request whole to Kiro's own API
 // (runtime.<region>.kiro.dev/generateAssistantResponse, the one kiro-cli
 // talks to) as a conversation, and turns the AWS event stream it answers
-// with back into Messages' events. Based on @magpie-community/opencode-kiro-auth 0.1.9 (MIT).
+// with back into Messages' events. Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 export { KiroAuthPlugin } from "./plugin.mjs"

@@ -1,0 +1,24 @@
+{
+  "FactoryAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Sign in with Factory (device code)",
+          "type": "oauth"
+        },
+        {
+          "label": "Factory API key (fk-…)",
+          "placeholder": "fk-…",
+          "type": "api"
+        }
+      ],
+      "provider": "factory",
+      "refresh": "fn",
+      "refreshLead": 180000,
+      "usage": "fn"
+    },
+    "config": "fn"
+  }
+}

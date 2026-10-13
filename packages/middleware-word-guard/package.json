@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/middleware-word-guard",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "New API's sensitive-word filter (敏感词过滤) as magpie gateway middleware: turn away or mask words and patterns in what agents send, and in replies",
   "type": "module",
   "files": [
@@ -28,11 +28,6 @@
       "check": "last"
     }
   },
-  "upstream": {
-    "package": "@magpie-community/middleware-word-guard",
-    "version": "0.1.1"
-  },
-  "upstreamDiff": [],
   "astra": {
     "name": "Word Guard",
     "kind": "middleware",

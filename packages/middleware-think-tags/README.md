@@ -1,8 +1,8 @@
-# @magpie-community/middleware-think-tags
+# @astragate-community/middleware-think-tags
 
 A model's thinking, where its reply's text is, as [magpie](https://usemagpie.ai) gateway middleware. It either takes thinking out of the text, or puts it in (New API's `thinking_to_content`).
 
-Install it from magpie's **Plugins › Discover**, or with `magpie plugin add @magpie-community/middleware-think-tags`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options think-tags '<json>'`.
+Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-think-tags`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options think-tags '<json>'`.
 
 ## Options
 
@@ -37,4 +37,4 @@ its Jint-based middleware runner). Keep it loadable there:
 
 ---
 
-Based on @magpie-community/middleware-think-tags 0.1.0 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

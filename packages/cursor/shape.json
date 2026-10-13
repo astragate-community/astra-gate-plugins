@@ -1,0 +1,31 @@
+{
+  "CursorAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Cursor (browser)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "cursor-agent's sign-in",
+          "type": "oauth"
+        },
+        {
+          "label": "Cursor API key (cursor.com/dashboard → Integrations)",
+          "type": "api"
+        }
+      ],
+      "provider": "cursor",
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "cursor",
+      "models": "fn"
+    }
+  }
+}

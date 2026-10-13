@@ -1,0 +1,58 @@
+{
+  "WorkBuddyAIAuthPlugin": {
+    "auth": {
+      "checkin": "fn",
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "WorkBuddy AI account (browser)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "WorkBuddy AI desktop's sign-in",
+          "type": "oauth"
+        }
+      ],
+      "provider": "workbuddy-ai",
+      "refresh": "fn",
+      "refreshLead": 300000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "workbuddy-ai",
+      "models": "fn"
+    }
+  },
+  "WorkBuddyAuthPlugin": {
+    "auth": {
+      "checkin": "fn",
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "WorkBuddy account (browser)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "WorkBuddy desktop's sign-in",
+          "type": "oauth"
+        }
+      ],
+      "provider": "workbuddy",
+      "refresh": "fn",
+      "refreshLead": 300000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "workbuddy",
+      "models": "fn"
+    }
+  }
+}

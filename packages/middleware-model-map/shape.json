@@ -1,0 +1,4 @@
+{
+  "onEvent": "throws: Cannot read properties of undefined (reading 'state')",
+  "onResponse": "throws: Cannot read properties of undefined (reading 'state')"
+}

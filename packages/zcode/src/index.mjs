@@ -1,2 +1,2 @@
-// ZCode's GLM Coding Plan as an OpenCode provider plugin. Based on @magpie-community/opencode-zcode-auth 0.1.17 (MIT).
+// ZCode's GLM Coding Plan as an OpenCode provider plugin. Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 export { ZCodeAuthPlugin } from "./plugin.mjs"

@@ -1,8 +1,8 @@
-# @magpie-community/middleware-word-guard
+# @astragate-community/middleware-word-guard
 
 New API's **敏感词过滤** as [magpie](https://usemagpie.ai) gateway middleware. It keeps the words and patterns you list out of what agents send: a request with one is turned away, or has the word masked. It can mask them in replies too.
 
-Install it from magpie's **Plugins › Discover**, or with `magpie plugin add @magpie-community/middleware-word-guard`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options word-guard '<json>'`.
+Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-word-guard`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options word-guard '<json>'`.
 
 ## Options
 
@@ -40,4 +40,4 @@ its Jint-based middleware runner). Keep it loadable there:
 
 ---
 
-Based on @magpie-community/middleware-word-guard 0.1.1 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

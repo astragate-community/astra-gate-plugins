@@ -1,4 +1,4 @@
-# @magpie-community/middleware-system-prompt
+# @astragate-community/middleware-system-prompt
 
 New API's **系统提示词** (a channel's `system_prompt` and its override switch) as [magpie](https://usemagpie.ai) gateway middleware. It gives the requests agents send a system prompt of yours, in each API's own place for one:
 
@@ -9,7 +9,7 @@ New API's **系统提示词** (a channel's `system_prompt` and its override swit
 | Responses | `instructions` |
 | Gemini | `systemInstruction` |
 
-Install it from magpie's **Plugins › Discover**, or with `magpie plugin add @magpie-community/middleware-system-prompt`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options system-prompt '<json>'`.
+Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-system-prompt`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options system-prompt '<json>'`.
 
 ## Options
 
@@ -44,4 +44,4 @@ its Jint-based middleware runner). Keep it loadable there:
 
 ---
 
-Based on @magpie-community/middleware-system-prompt 0.1.0 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

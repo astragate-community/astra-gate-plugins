@@ -1,13 +1,13 @@
 # Devin plugin for Astra
 
-Based on `@magpie-community/opencode-devin-auth` 0.1.14 (MIT). Same behaviour, split into modules under `src/`; the
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, split into modules under `src/`; the
 only difference in what the package exports is the test-only `_internal`, which is gone.
 
 Install: Astra console → Plugins → add the local path of this directory (replaces the market's devin plugin).
 
 ---
 
-# @magpie-community/opencode-devin-auth
+# @astragate-community/devin-auth
 
 Signs in to a [Devin](https://devin.ai) subscription, the account the
 `devin` CLI uses, and makes its requests, in OpenCode and in magpie.

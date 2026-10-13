@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/devin-auth",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Devin subscriptions (the devin CLI's account) provider plugin for Astra and magpie",
   "type": "module",
   "main": "./index.mjs",
@@ -18,13 +18,6 @@
     "windsurf"
   ],
   "license": "MIT",
-  "upstream": {
-    "package": "@magpie-community/opencode-devin-auth",
-    "version": "0.1.14"
-  },
-  "upstreamDiff": [
-    "._internal"
-  ],
   "astra": {
     "name": "Devin",
     "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/devin-color.svg",

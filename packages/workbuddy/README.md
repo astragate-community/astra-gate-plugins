@@ -1,14 +1,14 @@
 # WorkBuddy plugin for Astra (with daily check-in)
 
-Based on `@magpie-community/opencode-workbuddy-auth` 0.1.19 (MIT). One package, both builds: **WorkBuddy** (China, copilot.tencent.com) and **WorkBuddy AI** (international, www.workbuddy.ai). Adds `auth.checkin`, which Astra shows as the 每日签到 card on the provider's accounts tab (on by default, once a Beijing day per account, retried after 30 minutes on failure).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). One package, both builds: **WorkBuddy** (China, copilot.tencent.com) and **WorkBuddy AI** (international, www.workbuddy.ai). Adds `auth.checkin`, which Astra shows as the 每日签到 card on the provider's accounts tab (on by default, once a Beijing day per account, retried after 30 minutes on failure).
 
-Install: `astra plugin add @astragate-community/workbuddy-auth`, or from the console's plugin market (it takes the place of `@magpie-community/opencode-workbuddy-auth`).
+Install: `astra plugin add @astragate-community/workbuddy-auth`, or from the console's plugin market (it takes the place of the community WorkBuddy plugin).
 
 Check-in calls `POST /billing/meter/daily-checkin` (code 0 = claimed, 10001 = already done today) and reads the streak from `/billing/meter/checkin-activity-status`. These are WorkBuddy's undocumented endpoints, taken from public write-ups; not yet verified against a live account.
 
 ---
 
-# @magpie-community/opencode-workbuddy-auth
+# @astragate-community/workbuddy-auth
 
 Signs in to the plans of WorkBuddy, Tencent's desktop agent from CodeBuddy.
 It has one provider for each of WorkBuddy's two builds:

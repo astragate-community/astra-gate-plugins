@@ -1,8 +1,8 @@
-# @magpie-community/middleware-model-map
+# @astragate-community/middleware-model-map
 
 New API's **模型重定向** (a channel's `model_mapping`) as [magpie](https://usemagpie.ai) gateway middleware. The model an agent asks for is sent upstream as another model. Replies then name the model the agent asked for, so an agent that reads its model's name back (Claude Code does, to size its context window) sees the name it asked for.
 
-Install it from magpie's **Plugins › Discover**, or with `magpie plugin add @magpie-community/middleware-model-map`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options model-map '<json>'`.
+Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-model-map`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options model-map '<json>'`.
 
 ## Options
 
@@ -38,4 +38,4 @@ its Jint-based middleware runner). Keep it loadable there:
 
 ---
 
-Based on @magpie-community/middleware-model-map 0.1.1 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

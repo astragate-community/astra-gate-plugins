@@ -1,0 +1,26 @@
+{
+  "DevinAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Devin (browser)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Devin CLI's sign-in",
+          "type": "oauth"
+        }
+      ],
+      "provider": "devin",
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "devin",
+      "models": "fn"
+    }
+  }
+}

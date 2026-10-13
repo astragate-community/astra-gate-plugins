@@ -1,0 +1,30 @@
+{
+  "CommandCodePlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Command Code (browser)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Command Code CLI's sign-in",
+          "type": "oauth"
+        },
+        {
+          "label": "API key (commandcode.ai/settings/keys)",
+          "type": "api"
+        }
+      ],
+      "provider": "commandcode-plan",
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "commandcode-plan",
+      "models": "fn"
+    }
+  }
+}

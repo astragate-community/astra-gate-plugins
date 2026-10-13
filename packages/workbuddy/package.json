@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/workbuddy-auth",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "WorkBuddy (China, copilot.tencent.com) and WorkBuddy AI (international, www.workbuddy.ai) provider plugins for Astra and magpie, with the daily check-in (签到)",
   "type": "module",
   "main": "./index.mjs",
@@ -18,15 +18,6 @@
     "codebuddy"
   ],
   "license": "MIT",
-  "upstream": {
-    "package": "@magpie-community/opencode-workbuddy-auth",
-    "version": "0.1.19"
-  },
-  "upstreamDiff": [
-    ".WorkBuddyAIAuthPlugin.auth.checkin",
-    ".WorkBuddyAuthPlugin.auth.checkin",
-    "._internal"
-  ],
   "astra": {
     "name": "WorkBuddy",
     "icon": "workbuddy-color",

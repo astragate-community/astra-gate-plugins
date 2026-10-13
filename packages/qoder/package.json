@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/qoder-auth",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "Qoder subscriptions in Astra, OpenCode and magpie: Qoder (qoder.com) and Qoder CN (qoder.cn)",
   "type": "module",
   "main": "./index.mjs",
@@ -19,13 +19,6 @@
     "qoder-cn"
   ],
   "license": "MIT",
-  "upstream": {
-    "package": "@magpie-community/opencode-qoder-auth",
-    "version": "0.2.14"
-  },
-  "upstreamDiff": [
-    "._internal"
-  ],
   "astra": {
     "name": "Qoder",
     "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qoder-color.svg",

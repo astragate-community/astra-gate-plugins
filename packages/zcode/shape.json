@@ -1,0 +1,43 @@
+{
+  "ZCodeAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "ZCode: Z.ai GLM Coding Plan",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "ZCode: BigModel (智谱) GLM Coding Plan",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "ZCode app's sign-in",
+          "type": "oauth"
+        },
+        {
+          "label": "GLM Coding Plan API key",
+          "prompts": [
+            {
+              "key": "site",
+              "message": "Where is the key from?",
+              "options": "[…]",
+              "type": "select"
+            }
+          ],
+          "type": "api"
+        }
+      ],
+      "provider": "zcode",
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "zcode",
+      "models": "fn"
+    }
+  }
+}

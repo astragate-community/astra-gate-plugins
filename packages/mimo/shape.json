@@ -1,0 +1,19 @@
+{
+  "MimoAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Xiaomi account",
+          "type": "oauth"
+        }
+      ],
+      "provider": "mimo-app",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "config": "fn"
+  }
+}

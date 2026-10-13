@@ -1,5 +1,5 @@
 // New API's 模型重定向 (a channel's model_mapping) as magpie gateway middleware, based on
-// @magpie-community/middleware-model-map 0.1.1 (MIT): the model an agent asks for is sent as another, and the
+// an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md): the model an agent asks for is sent as another, and the
 // reply names the model the agent asked for again, so an agent that reads its model's name back (Claude Code
 // does, for its context window) sees what it asked for.
 //

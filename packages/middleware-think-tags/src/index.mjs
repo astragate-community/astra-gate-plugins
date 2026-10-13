@@ -1,5 +1,5 @@
 // A model's thinking, where its reply's text is: New API's thinking_to_content, and the other way round. Based on
-// @magpie-community/middleware-think-tags 0.1.0 (MIT).
+// an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 //
 //   {"mode": "strip"}       (the default)
 //   {"mode": "to_content"}

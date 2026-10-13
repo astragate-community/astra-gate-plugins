@@ -1,0 +1,5 @@
+{
+  "onEvent": "throws: Cannot read properties of undefined (reading 'options')",
+  "onRequest": "throws: Cannot read properties of undefined (reading 'options')",
+  "onResponse": "throws: Cannot read properties of undefined (reading 'options')"
+}

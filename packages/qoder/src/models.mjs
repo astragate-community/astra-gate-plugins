@@ -130,7 +130,7 @@ export function modelInfo(raw) {
 // "chat" model the app no longer lists, after the model it followed there,
 // so a pick made before stays served. On 2026-10-12 the app listed Fast
 // (fast, 0.8×) where Performance (1.1×) had been, and chat still listed
-// Performance (magpie-community/plugins#97). A listing with only one scene
+// Performance (community plugins issue #97). A listing with only one scene
 // gives that one. Each key once: the app's entry wins.
 export function sceneModels(listing) {
   const app = Array.isArray(listing?.app) ? listing.app : []

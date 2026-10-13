@@ -20,8 +20,8 @@
 // support (https://github.com/ufec/CLIProxyAPI, MIT).
 //
 // This module is the plugin for one site, as OpenCode and magpie load it; the rest are in modules (sites,
-// signin, session, request, response, models, usage, campaigns). Based on @magpie-community/opencode-qoder-auth
-// 0.2.14 (MIT).
+// signin, session, request, response, models, usage, campaigns). Based on an MIT-licensed
+// community plugin (see THIRD_PARTY_NOTICES.md).
 import { CHAT, RENEW_LEAD } from "./constants.mjs"
 import { createCampaigns, campaignPage } from "./campaigns.mjs"
 import { createChat } from "./chat.mjs"

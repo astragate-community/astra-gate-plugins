@@ -1,0 +1,25 @@
+{
+  "ZenFreePlugin": {
+    "auth": {
+      "icon": "https://opencode.ai/favicon-v3.ico",
+      "loader": "fn",
+      "maxConcurrency": 2,
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Zen 免费访问（密钥填写 public）",
+          "placeholder": "public",
+          "type": "api"
+        }
+      ],
+      "provider": "opencode-zen-free",
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "opencode-zen-free",
+      "models": "fn"
+    }
+  }
+}

@@ -73,7 +73,7 @@ export function workPlace(h) {
 // generateBody is a chat completion request as the CLI asks
 // /alpha/generate, with no structure, branch or status behind it. The
 // working directory and whether it is a git repository are the agent's as
-// magpie tells them (place, yetone magpie-community/plugins#86); untold,
+// magpie tells them (place, community plugins issue #86); untold,
 // the CLI's config outside a git repository, in the user's home.
 export function generateBody(chat, place = {}) {
   const system = []

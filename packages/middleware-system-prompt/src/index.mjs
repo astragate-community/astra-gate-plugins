@@ -1,5 +1,5 @@
 // New API's 系统提示词 (a channel's system_prompt, with its "override" switch) as magpie gateway middleware,
-// based on @magpie-community/middleware-system-prompt 0.1.0 (MIT), in each agent API's own place for it:
+// based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md), in each agent API's own place for it:
 // Anthropic's system, Chat's first system or developer message, Responses' instructions, Gemini's
 // systemInstruction.
 //

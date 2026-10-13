@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/middleware-think-tags",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Take a model's <think>…</think> out of its reply's text, or put a Chat reply's reasoning_content into it (New API's thinking_to_content), as magpie gateway middleware",
   "type": "module",
   "files": [
@@ -23,11 +23,6 @@
       "mode": "strip"
     }
   },
-  "upstream": {
-    "package": "@magpie-community/middleware-think-tags",
-    "version": "0.1.0"
-  },
-  "upstreamDiff": [],
   "astra": {
     "name": "Think Tags",
     "kind": "middleware",

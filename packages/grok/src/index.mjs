@@ -6,5 +6,5 @@
 // time, so a token about to expire is renewed by running the CLI there
 // (`grok models`), never by the plugin itself. Requests go to the CLI's
 // backend, which speaks OpenAI's Responses API, signed as the CLI signs
-// them. Based on @magpie-community/opencode-grok-auth 0.1.14 (MIT).
+// them. Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 export { GrokAuthPlugin } from "./plugin.mjs"

@@ -1,7 +1,7 @@
 // Zed subscriptions (Zed Pro, its trial, a student or business plan) for
 // OpenCode and magpie: the models Zed hosts — Anthropic's, OpenAI's,
 // Google's and xAI's — asked through cloud.zed.dev, as the Zed editor asks
-// them. Based on @magpie-community/opencode-zed-auth 0.1.6 (MIT), ported from
+// them. Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md), ported from
 // magpie's built-in Zed account (internal/zed, internal/provider/zed*.go,
 // internal/gateway/zed.go), which was read from Zed's source
 // (github.com/zed-industries/zed, 1.23.0):

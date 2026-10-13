@@ -1,0 +1,32 @@
+{
+  "KiroAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Kiro (Google, GitHub, AWS Builder ID, IAM Identity Center)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Kiro CLI's or Kiro IDE's sign-in",
+          "type": "oauth"
+        },
+        {
+          "label": "Kiro API key (ksk_…)",
+          "type": "api"
+        }
+      ],
+      "provider": "kiro",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "kiro",
+      "models": "fn"
+    }
+  }
+}

@@ -1,12 +1,12 @@
 # Cursor plugin for Astra
 
-Based on `@magpie-community/opencode-cursor-auth` 0.2.11 (MIT). The same behaviour, split into modules under `src/` and built to one `dist/index.mjs`.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). The same behaviour, split into modules under `src/` and built to one `dist/index.mjs`.
 
 Install: Astra console → Plugins → add the local path of the `dist/` directory.
 
 ---
 
-# @magpie-community/opencode-cursor-auth
+# @astragate-community/cursor-auth
 
 Signs in to a [Cursor](https://cursor.com) subscription (Pro, Pro+, Ultra,
 Teams) and makes its requests on the API `cursor-agent` talks to, in

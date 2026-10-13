@@ -1,4 +1,4 @@
-// New API's 敏感词过滤 as magpie gateway middleware, based on @magpie-community/middleware-word-guard 0.1.1 (MIT):
+// New API's 敏感词过滤 as magpie gateway middleware, based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md):
 // words or patterns you list are kept out of what agents send, turned away or masked, and can be masked in what
 // comes back.
 //

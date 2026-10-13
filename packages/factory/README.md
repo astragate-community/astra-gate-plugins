@@ -1,12 +1,12 @@
 # Factory plugin for Astra
 
-Based on `@magpie-community/opencode-factory-auth` 0.1.25 (MIT). Same behaviour, restructured into modules (see `src/`) with tests; the test-only `_internal` export is gone.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, restructured into modules (see `src/`) with tests; the test-only `_internal` export is gone.
 
 Install: Astra console → Plugins → add the local path of this directory.
 
 ---
 
-# @magpie-community/opencode-factory-auth
+# @astragate-community/factory-auth
 
 Signs in to a [Factory](https://factory.ai) (Droid) subscription and sends
 model requests to Factory's API the way `droid` sends them. Provider id:
@@ -88,7 +88,7 @@ The list is not included:
 ## Use
 
 ```sh
-magpie plugin add @magpie-community/opencode-factory-auth
+astra plugin add @astragate-community/factory-auth
 magpie plugin login factory
 ```
 

@@ -6,7 +6,7 @@ OpenCode Zen's free models in magpie and OpenCode. Provider id:
 ## Install
 
 ```sh
-magpie plugin add @magpie-community/opencode-zen-free-auth
+astra plugin add @astragate-community/zen-free-auth
 magpie plugin login opencode-zen-free
 ```
 
@@ -38,4 +38,4 @@ to `todo_write`, `webfetch` to `web_fetch`), when exactly one does. A
 call with no such tool returns an error that names it. Tools run in the
 agent.
 
-Based on `@magpie-community/opencode-zen-free-auth` 0.1.1 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

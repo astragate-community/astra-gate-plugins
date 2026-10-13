@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/cursor-auth",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "description": "Cursor subscriptions (Pro, Pro+, Ultra, Teams) in Astra, OpenCode and magpie, through the API cursor-agent talks to",
   "type": "module",
   "main": "./index.mjs",
@@ -17,13 +17,6 @@
     "cursor"
   ],
   "license": "MIT",
-  "upstream": {
-    "package": "@magpie-community/opencode-cursor-auth",
-    "version": "0.2.11"
-  },
-  "upstreamDiff": [
-    "._internal"
-  ],
   "astra": {
     "name": "Cursor",
     "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/cursor.svg",

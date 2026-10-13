@@ -1,6 +1,6 @@
 # Kiro plugin for Astra
 
-Based on `@magpie-community/opencode-kiro-auth` 0.1.9 (MIT). Same behaviour, restructured into modules.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, restructured into modules.
 
 Signs in to a [Kiro](https://kiro.dev) subscription (Free, Pro, Pro+,
 Power) and makes its requests, in OpenCode and in magpie. Provider id:

@@ -1,0 +1,21 @@
+{
+  "ZedAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Sign in with Zed (browser)",
+          "type": "oauth"
+        }
+      ],
+      "provider": "zed",
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "zed",
+      "models": "fn"
+    }
+  }
+}

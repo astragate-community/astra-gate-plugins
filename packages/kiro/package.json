@@ -1,6 +1,6 @@
 {
   "name": "@astragate-community/kiro-auth",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Kiro subscriptions (Free, Pro, Pro+, Power) in OpenCode, magpie and Astra",
   "type": "module",
   "main": "./index.mjs",
@@ -17,13 +17,6 @@
     "kiro"
   ],
   "license": "MIT",
-  "upstream": {
-    "package": "@magpie-community/opencode-kiro-auth",
-    "version": "0.1.9"
-  },
-  "upstreamDiff": [
-    "._internal"
-  ],
   "astra": {
     "name": "Kiro",
     "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kiro-color.svg",

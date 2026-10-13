@@ -1,10 +1,10 @@
 # Zed plugin for Astra
 
-Based on `@magpie-community/opencode-zed-auth` 0.1.6 (MIT). Same behaviour, split into modules; install: Astra console → Plugins → add the local path of this directory.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, split into modules; install: Astra console → Plugins → add the local path of this directory.
 
 ---
 
-# @magpie-community/opencode-zed-auth
+# @astragate-community/zed-auth
 
 Signs in to a **Zed** subscription (Zed Pro, its trial, a student or business
 plan) and calls the models Zed hosts: Anthropic's, OpenAI's, Google's and

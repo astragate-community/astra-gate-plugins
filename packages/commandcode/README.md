@@ -1,6 +1,6 @@
 # Command Code plugin for Astra
 
-Based on `@magpie-community/opencode-commandcode-auth` 0.1.12 (MIT); same behaviour, split into modules.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md); same behaviour, split into modules.
 
 Signs in to a [Command Code](https://commandcode.ai) plan (Pro, GOAT, Max,
 Ultra, Go, Teams Pro) and makes its requests, in OpenCode and in magpie.

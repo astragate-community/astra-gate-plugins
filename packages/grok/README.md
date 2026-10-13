@@ -1,10 +1,10 @@
 # Grok plugin for Astra
 
-Based on `@magpie-community/opencode-grok-auth` 0.1.14 (MIT).
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 
 ---
 
-# @magpie-community/opencode-grok-auth
+# @astragate-community/grok-auth
 
 Grok with a SuperGrok or X Premium+ subscription, through the sign-in of
 xAI's [Grok Build CLI](https://x.ai/cli). Provider id: `grok`.
