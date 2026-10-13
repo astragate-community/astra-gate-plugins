@@ -1,0 +1,9 @@
+{
+  "name": "@astragate-community/plugin-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": "./src/index.mjs",
+  "license": "MIT"
+}
