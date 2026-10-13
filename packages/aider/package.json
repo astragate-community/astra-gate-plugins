@@ -1,0 +1,20 @@
+{
+  "name": "@astragate-community/aider",
+  "version": "0.1.1",
+  "description": "Aider (aider.chat) as an agent for Astra: pick one of the gateway's models for it on the Clients page",
+  "type": "module",
+  "files": ["index.mjs", "README.md"],
+  "keywords": ["magpie", "magpie-agent", "astra", "aider", "llm-gateway"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/astragate-community/astra-gate-plugins.git", "directory": "packages/aider" },
+  "magpie": { "agent": "./index.mjs", "icon": "https://aider.chat/assets/icons/apple-touch-icon.png" },
+  "astra": {
+    "name": "Aider",
+    "kind": "agent",
+    "icon": "https://aider.chat/assets/icons/apple-touch-icon.png",
+    "summary": {
+      "en": "Aider (aider.chat) on the Clients page: pick one of the gateway's models for it, and switch it off to put its config back.",
+      "zh": "把 Aider（aider.chat）加到客户端页：给它选网关的模型，关掉即恢复它原来的配置。"
+    }
+  }
+}

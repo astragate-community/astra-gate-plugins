@@ -1,0 +1,46 @@
+{
+  "MiniMaxCodeAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "MiniMax Code account",
+          "type": "oauth"
+        }
+      ],
+      "provider": "minimax-code",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "minimax-code",
+      "models": "fn"
+    }
+  },
+  "MiniMaxCodeGlobalAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "MiniMax Code (Global) account",
+          "type": "oauth"
+        }
+      ],
+      "provider": "minimax-code-global",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "minimax-code-global",
+      "models": "fn"
+    }
+  }
+}

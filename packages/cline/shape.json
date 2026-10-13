@@ -1,0 +1,32 @@
+{
+  "ClinePlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Sign in to Cline (browser)",
+          "type": "oauth"
+        },
+        {
+          "label": "Cline API key (app.cline.bot → Settings → API Keys)",
+          "type": "api"
+        }
+      ],
+      "provider": "cline",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "cline",
+      "models": "fn"
+    }
+  },
+  "default": {
+    "id": "cline",
+    "server": "fn"
+  }
+}

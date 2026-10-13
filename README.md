@@ -45,6 +45,8 @@ See `THIRD_PARTY_NOTICES.md`: the published plugins are MIT (upstream's code, up
 
 | package dir | kind |
 | --- | --- |
+| `aider` | agent |
+| `cline` | provider |
 | `commandcode` | provider |
 | `cursor` | provider |
 | `devin` | provider |
@@ -57,7 +59,9 @@ See `THIRD_PARTY_NOTICES.md`: the published plugins are MIT (upstream's code, up
 | `middleware-think-tags` | middleware |
 | `middleware-word-guard` | middleware |
 | `mimo` | provider |
+| `minimax` | provider |
 | `qoder` | provider |
+| `trae` | provider |
 | `workbuddy` | provider |
 | `zcode` | provider |
 | `zed` | provider |

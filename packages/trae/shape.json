@@ -1,0 +1,46 @@
+{
+  "TraeCNAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Trae CN account (browser)",
+          "type": "oauth"
+        }
+      ],
+      "provider": "trae-cn",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "trae-cn",
+      "models": "fn"
+    }
+  },
+  "TraeGlobalAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Trae Global account (browser)",
+          "type": "oauth"
+        }
+      ],
+      "provider": "trae-global",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "chat.headers": "fn",
+    "config": "fn",
+    "provider": {
+      "id": "trae-global",
+      "models": "fn"
+    }
+  }
+}

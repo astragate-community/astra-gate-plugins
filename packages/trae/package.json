@@ -1,0 +1,43 @@
+{
+  "name": "@astragate-community/trae-auth",
+  "version": "0.2.11",
+  "description": "Trae CN (trae.cn) and Trae Global (trae.ai) accounts, free tier included, with Trae's own browser sign-in, in OpenCode, magpie and Astra",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "trae",
+    "trae-cn",
+    "trae-global",
+    "bytedance"
+  ],
+  "license": "MIT",
+  "astra": {
+    "name": "Trae",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/trae.svg",
+    "providers": [
+      "trae-cn",
+      "trae-global"
+    ],
+    "summary": {
+      "en": "Trae CN (trae.cn) and Trae international (trae.ai) models with your own account, free tier included — Trae's own browser sign-in. Experimental.",
+      "zh": "用 Trae CN（trae.cn）与 Trae 国际版（trae.ai）账号使用各自的模型，含免费版，使用 Trae 自己的浏览器登录。实验性。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/trae"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/trae.svg"
+  }
+}

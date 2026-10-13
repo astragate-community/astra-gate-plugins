@@ -1,0 +1,40 @@
+{
+  "name": "@astragate-community/cline-auth",
+  "version": "0.1.7",
+  "description": "Cline (cline.bot) on your own account — usage billing, ClinePass and the free models — in OpenCode, magpie and Astra",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "cline",
+    "clinepass"
+  ],
+  "license": "MIT",
+  "astra": {
+    "name": "Cline",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/cline.svg",
+    "providers": [
+      "cline"
+    ],
+    "summary": {
+      "en": "Cline's models on your own Cline account — usage billing, ClinePass and Cline's free models — with Cline's device sign-in or an API key.",
+      "zh": "用自己的 Cline 账号使用 Cline 的模型——用量计费、ClinePass 与免费模型——支持 Cline 设备登录或 API key。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/cline"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/cline.svg"
+  }
+}

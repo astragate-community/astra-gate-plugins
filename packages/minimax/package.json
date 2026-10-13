@@ -1,0 +1,42 @@
+{
+  "name": "@astragate-community/minimax-auth",
+  "version": "0.1.1",
+  "description": "Provider plugins for MiniMax Code accounts: their credits and M Plan, China (minimax-code) and international (minimax-code-global), with MiniMax Code's own device sign-in",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "minimax",
+    "mcode",
+    "minimax-code"
+  ],
+  "license": "MIT",
+  "astra": {
+    "name": "MiniMax Code",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/minimax-color.svg",
+    "providers": [
+      "minimax-code",
+      "minimax-code-global"
+    ],
+    "summary": {
+      "en": "MiniMax Code account credits and M Plan, with MiniMax Code's own device sign-in.",
+      "zh": "用 MiniMax Code 账号的积分与 M Plan，使用 MiniMax Code 自己的设备登录。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/minimax"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/minimax-color.svg"
+  }
+}

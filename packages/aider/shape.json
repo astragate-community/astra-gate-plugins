@@ -1,0 +1,17 @@
+{
+  "agent": {
+    "bin": "aider",
+    "config": "~/.aider.conf.yml",
+    "icon": "https://aider.chat/assets/icons/apple-touch-icon.png",
+    "id": "aider",
+    "model": "model",
+    "name": "Aider",
+    "notice": "Aider reads its settings when it starts: restart it to use the new model.",
+    "prefix": "openai/",
+    "ua": [
+      "aider",
+      "litellm"
+    ]
+  },
+  "connect": "throws: Cannot read properties of undefined (reading 'v1')"
+}
