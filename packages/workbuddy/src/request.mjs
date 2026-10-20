@@ -1,5 +1,6 @@
 // WorkBuddy: shaping a chat request — its session and turn ids, flagged words, the system prompt, tool choice.
 import { createHash, randomBytes } from "node:crypto"
+import { anthropicApi } from "./sites.mjs"
 
 export const hex = () => randomBytes(16).toString("hex")
 
@@ -57,7 +58,10 @@ function answeredBefore(msgs, i) {
   const prev = msgs[i - 1]
   if (prev === null || typeof prev !== "object") return false
   if (prev.role === "tool") return true
-  return prev.role === "assistant" && Array.isArray(prev.tool_calls) && prev.tool_calls.length > 0
+  if (prev.role !== "assistant") return false
+  if (Array.isArray(prev.tool_calls) && prev.tool_calls.length > 0) return true
+  // Anthropic's shape: the calls are tool_use parts, answered by a user message of tool_result parts
+  return Array.isArray(prev.content) && prev.content.some((p) => p?.type === "tool_use")
 }
 
 // turnKey names the user send a chat answers: the body's last user message
@@ -132,6 +136,21 @@ export function attend(headers, body, session) {
     headers.set("X-Conversation-Request-ID", turn ? idFor("turn", `${conv}|${turn}`) : hex())
   }
   if (conv && !headers.has("X-Conversation-ID")) headers.set("X-Conversation-ID", idFor("conversation", conv))
+}
+
+// messagesUrl is where an Anthropic Messages request to site goes: WorkBuddy's
+// own route, /v1/messages on the build's host (see speaksAnthropic). The AI
+// SDK builds it from the base the loader gave, so it comes as /v2/messages,
+// which is a 404; the query (?beta=true) is kept. null for any other request.
+export function messagesUrl(site, url) {
+  let u
+  try {
+    u = new URL(String(url))
+  } catch {
+    return null
+  }
+  if (u.origin !== site.endpoint || !/\/messages$/.test(u.pathname)) return null
+  return anthropicApi(site) + "/messages" + u.search
 }
 
 // FLAGGED are the words WorkBuddy refuses a chat for, "Illegal API

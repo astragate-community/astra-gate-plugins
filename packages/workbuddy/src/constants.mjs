@@ -9,3 +9,4 @@ export const LEAD_MS = 5 * 60 * 1000 // and this close, magpie renews it ahead o
 export const KEEP_RENEWED_MS = 60 * 1000
 
 export const NPM = "@ai-sdk/openai-compatible"
+export const NPM_ANTHROPIC = "@ai-sdk/anthropic" // what a model on WorkBuddy's Anthropic route is said to be on (see speaksAnthropic)

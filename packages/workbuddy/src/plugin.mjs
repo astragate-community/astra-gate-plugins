@@ -2,7 +2,7 @@
 import { LEAD_MS, NPM } from "./constants.mjs"
 import { api } from "./sites.mjs"
 import { configModels, liveModels, modelOf } from "./models.mjs"
-import { SESSION, attend, normalizeToolChoice, sessionOf, withSystem } from "./request.mjs"
+import { SESSION, attend, messagesUrl, normalizeToolChoice, sessionOf, withSystem } from "./request.mjs"
 import { current, refreshed } from "./session.mjs"
 import { meter, sign } from "./api.mjs"
 import { fitted, renamed } from "./tools.mjs"
@@ -76,6 +76,17 @@ export function makePlugin(site) {
             sign(site, a, headers)
             let body = init?.body
             if (body === undefined && req) body = await req.clone().text()
+            // an Anthropic Messages request (a model on WorkBuddy's own route for it) goes there as it is: the
+            // chat route's mending below — a system message, tools of OpenAI's shape, tool_choice's string — is
+            // for chat completions and would break this body; the route needs none of it. The ids and the
+            // account's headers are the same.
+            const messages = messagesUrl(site, req ? req.url : input)
+            if (messages) {
+              if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) body = new TextDecoder().decode(body)
+              attend(headers, body, session)
+              const res = await fetch(messages, { ...init, method: init?.method ?? req?.method, headers, body })
+              return res.status >= 400 ? explained(res) : kept(res)
+            }
             body = withSystem(body)
             const fit = fitted(body)
             body = normalizeToolChoice(fit.body)

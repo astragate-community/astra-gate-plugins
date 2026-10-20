@@ -71,6 +71,17 @@ built-in WorkBuddy does.
 Chats are chat completions (`@ai-sdk/openai-compatible`) at `<API>/chat/completions`.
 They are streamed only; WorkBuddy refuses a chat that isn't.
 
+The exception is `hy3` and `hy3-x` of the China build, which WorkBuddy also answers on its own
+Anthropic Messages route, `https://copilot.tencent.com/v1/messages` (not under `/v2`). They are
+`@ai-sdk/anthropic` models there, so a client of Anthropic's shape (Claude Code, Claude Desktop)
+reaches them as it is, without being made over into a chat completion; the loader moves the AI SDK's
+`/v2/messages` to that address. The route takes the request whole, so the mending below (a system
+message, tools of OpenAI's shape, `tool_choice`) is not done for it; the ids and the headers
+below are. It answers a request that isn't streamed. It ignores a thinking switch (`thinking`,
+`output_config.effort`, `reasoning_effort`), so these models list no reasoning levels. Every other
+model answers 500 there, and WorkBuddy AI has no such route (tried 2026-10-20; see `speaksAnthropic`
+in `src/sites.mjs` before adding a model to it).
+
 Each chat carries WorkBuddy's headers:
 - `Authorization`, `X-User-Id`, `X-Domain`, `X-Product: SaaS`, `X-IDE-Type: WorkBuddy`;
 - `User-Agent: WorkBuddy/5.5.6`. Without it, WorkBuddy answers error 10085;
@@ -133,7 +144,8 @@ is used.
 - Kimi-K3, Kimi-K2.6
 - MiniMax-M3
 
-A model's reasoning levels are its variants (`reasoningEffort`).
+A model's reasoning levels are its variants (`reasoningEffort`), except for the models on the
+Anthropic route, which have none.
 
 ## Credits in magpie
 

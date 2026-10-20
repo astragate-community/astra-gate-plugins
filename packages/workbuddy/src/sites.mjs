@@ -48,6 +48,8 @@ export const SITES = {
     platform: "workbuddy",
     ai: false,
     models: CN_MODELS,
+    // models WorkBuddy answers on its Anthropic route (see speaksAnthropic)
+    anthropic: /^hy3(-x)?$/,
   },
   "workbuddy-ai": {
     id: "workbuddy-ai",
@@ -77,4 +79,29 @@ export const SITES = {
 export function textOnly(site, model) {
   return !!site.noImages?.test(model)
 }
+
+// speaksAnthropic says whether WorkBuddy answers model on its own Anthropic
+// Messages route, so a client of that shape is passed through as it is
+// rather than made over into a chat completion. Tried on 2026-10-20 with a
+// real WorkBuddy (China) account: POST https://copilot.tencent.com/v1/messages
+// (not under /v2, where /v2/messages is a 404) answers hy3 and hy3-x with
+// Anthropic's own stream (message_start .. message_stop, thinking, tool_use
+// and input_json_delta blocks, cache_read_input_tokens), taking tools of any
+// shape, any tool_choice, and the Claude Code system prompt the chat route
+// refuses. Every other model of the plan (deepseek, glm, kimi, minimax,
+// auto, hy4-preview, ...) answers 500 "internal server error" there, the
+// same each time, while its chat completion works; WorkBuddy AI has no such
+// route at all (404). The route ignores a thinking switch: thinking
+// disabled, budget_tokens, output_config.effort and reasoning_effort none
+// all leave hy3's thinking as it was, where the chat route's
+// reasoning_effort "none" turns it off. So these models have no reasoning
+// levels (see modelOf). Revisit when WorkBuddy wires more models to it:
+// POST each with {"model", "max_tokens", "stream": true, "messages"} and look
+// for 200 text/event-stream.
+export function speaksAnthropic(site, model) {
+  return !!site.anthropic?.test(model)
+}
+
 export const api = (site) => site.endpoint + "/v2"
+// anthropicApi is the base of that route: its /messages is under /v1
+export const anthropicApi = (site) => site.endpoint + "/v1"

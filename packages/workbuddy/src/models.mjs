@@ -1,6 +1,6 @@
 // WorkBuddy: the models an account has.
-import { api, textOnly } from "./sites.mjs"
-import { APP_VERSION, NPM, UA_VERSION } from "./constants.mjs"
+import { anthropicApi, api, speaksAnthropic, textOnly } from "./sites.mjs"
+import { APP_VERSION, NPM, NPM_ANTHROPIC, UA_VERSION } from "./constants.mjs"
 import { sign } from "./api.mjs"
 
 // ---- models -----------------------------------------------------------------
@@ -15,16 +15,20 @@ export function configModels(site) {
     name,
     limit: { context, output: 0 },
     tool_call: true,
-    ...(efforts ? { reasoning: true, variants: variants(efforts) } : {}),
+    // a model on WorkBuddy's Anthropic route is said to be on the Anthropic AI SDK package, at that route's base;
+    // its levels are left out, as that route takes none (see speaksAnthropic)
+    ...(speaksAnthropic(site, id) ? { provider: { npm: NPM_ANTHROPIC, api: anthropicApi(site) } } : {}),
+    ...(efforts ? { reasoning: true, ...(speaksAnthropic(site, id) ? {} : { variants: variants(efforts) }) } : {}),
   }]))
 }
 
 export function modelOf(site, provider, m) {
+  const native = speaksAnthropic(site, m.id)
   return {
     id: m.id,
     providerID: provider.id,
     name: m.name,
-    api: { id: m.id, url: api(site), npm: NPM },
+    api: native ? { id: m.id, url: anthropicApi(site), npm: NPM_ANTHROPIC } : { id: m.id, url: api(site), npm: NPM },
     status: "active",
     headers: {},
     options: {},
@@ -40,7 +44,7 @@ export function modelOf(site, provider, m) {
       interleaved: false,
     },
     release_date: "",
-    variants: variants(m.efforts),
+    variants: native ? {} : variants(m.efforts),
     // magpie's own: served at no cost to the plan's credits
     free: !!m.free,
     // magpie's own: the credits a request costs, as a multiple (0: none)
