@@ -6,15 +6,17 @@ export const BIGMODEL_API = "https://bigmodel.cn" // BigModel's business API, wh
 export const ZAI_BASE = "https://api.z.ai/api/anthropic"
 export const BIGMODEL_BASE = "https://open.bigmodel.cn/api/anthropic"
 export const START_BASE = ZCODE + "/api/v1/zcode-plan/anthropic"
-export const APP_VERSION = "3.14.3" // the ZCode whose sign-in this makes
+export const APP_VERSION = "3.17.2" // the ZCode whose sign-in this makes
 export const UA = "ZCode/" + APP_VERSION
 
 // ZCode's models before its config is read; the Start Plan has all but GLM-5.3.
+// ZCode's config (revision 43, 3.17.2) gives every model a 1M window, a 128K
+// output and the two-step reasoning switch alone (none/high).
 export const MODELS = [
-  { id: "GLM-5.3", context: 1_000_000, output: 128_000, efforts: ["low", "high", "max"] },
-  { id: "GLM-5.3-Flash", context: 1_000_000, output: 128_000, efforts: ["low", "high", "max"] },
-  { id: "GLM-5.2", context: 1_000_000, output: 128_000, efforts: ["none", "high", "max"] },
-  { id: "GLM-5-Turbo", context: 200_000, output: 64_000, efforts: ["none", "high"] },
+  { id: "GLM-5.3", context: 1_000_000, output: 128_000, efforts: ["none", "high"] },
+  { id: "GLM-5.3-Flash", context: 1_000_000, output: 128_000, efforts: ["none", "high"] },
+  { id: "GLM-5.2", context: 1_000_000, output: 128_000, efforts: ["none", "high"] },
+  { id: "GLM-5-Turbo", context: 1_000_000, output: 128_000, efforts: ["none", "high"] },
 ]
 export const START_MODELS = MODELS.filter((m) => m.id !== "GLM-5.3")
 

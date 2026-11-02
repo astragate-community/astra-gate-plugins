@@ -495,18 +495,18 @@
         "zh": "Z.ai 与智谱 GLM Coding Plan，支持团队席位。"
       },
       "community": true,
-      "latest": "0.1.20",
+      "latest": "0.1.21",
       "description": "OpenCode provider plugin: signs in to Z.ai's or BigModel's (智谱) GLM Coding Plan as ZCode does, including team seats and ZCode's Start Plan",
       "license": "MIT",
       "repository": "https://github.com/astragate-community/astra-gate-plugins",
       "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/zcode",
       "tarballs": [
         {
-          "version": "0.1.20",
-          "url": "https://github.com/astragate-community/astra-gate-plugins/releases/download/zcode-v0.1.20/zcode-0.1.20.tgz",
-          "sha256": "37b7f51ac0e2f9f9669957b19ac565e38786f47c66d4a6225c388a22c824ee03",
-          "sha512": "hj5/9N4VnuvWUqNzwGuqwWtoBvYe7O7ldF4ingp+hnhZirMRncENMsMHP+w1TW/uk+uVProQA+jQI8zwIty1Jg==",
-          "size": 24550
+          "version": "0.1.21",
+          "url": "https://github.com/astragate-community/astra-gate-plugins/releases/download/zcode-v0.1.21/zcode-0.1.21.tgz",
+          "sha256": "bde21d756eb08f770c6e521ace2e2352ec8f78526581fdd84082fbf49f9904e6",
+          "sha512": "+EF/NRfmrhC2EFN/DdMNUZNWxIK19HJEDhe7S9TIkJ2aE/rKuw3ebokVBbYPa8SasdtDWQhX6mPjKCO09MvSbg==",
+          "size": 22619
         }
       ]
     },

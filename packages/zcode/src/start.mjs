@@ -2,12 +2,13 @@
 // zcode.z.ai serves the Start Plan only to what looks like ZCode's own
 // request, and turns others away with 405 "request has been blocked due to
 // unusual activity" (code 3012). A Start Plan request goes as the plugin
-// the plan serves (ARNO's "Freeflow", provider zcode-start) sends it: its
-// headers (startHeaders) and its body (dress). The texts are prompt.mjs.
+// the plan serves (the glm CLI, provider zcode-start) sends it: its headers
+// (startHeaders) and its body (dress). The texts are prompt.mjs.
 import { arch, release } from "node:os"
+import { basename } from "node:path"
 import { APP_VERSION, UA, ZCODE } from "./constants.mjs"
 import PROMPT from "./prompt.mjs"
-import { platform, uuid } from "./util.mjs"
+import { first, platform, uuid } from "./util.mjs"
 
 /** modelOf reads the model a Messages body asks for. */
 export function modelOf(text) {
@@ -21,6 +22,10 @@ export function modelOf(text) {
 
 const osVersion = () => `${process.platform} ${release()} ${arch()}`
 const osCategory = () => (process.platform === "darwin" ? "macos" : process.platform === "win32" ? "windows" : "linux")
+
+// the shell the CLI's own environment names: the login shell's basename
+// (the plugin runs where magpie runs, the same user's shell as the agent's)
+const shell = () => basename(first(process.env.SHELL, process.env.ComSpec, process.env.COMSPEC)) || "unknown"
 
 function intl() {
   try {
@@ -79,23 +84,20 @@ export function workPlace(h) {
   return place
 }
 
-// environment is the prompt's environment section; provider and model
-// name the powered-by line, left out with no model. The plugin runs in
-// magpie, not in the agent's folder: the working directory and whether it
-// is a git repository are the agent's, as magpie tells them (place), and
-// each is left out when it isn't told rather than said as magpie's own
-// (#86). The agent's shell isn't known here either, so it isn't said; the
-// platform and OS version are this computer's, as ZCode's X-Os-* headers
-// say them.
-export function environment(provider, model, place = {}) {
+// environment is the environment attachment the CLI puts before the agent's
+// turns. The plugin runs in magpie, not in the agent's folder: the working
+// directory and whether it is a git repository are the agent's, as magpie
+// tells them (place), and each is left out when it isn't told rather than
+// said as magpie's own (#86). The platform, the shell and the OS version
+// are this computer's, as the CLI's own environment says them.
+export function environment(place = {}) {
   const e = PROMPT.environment
   const lines = [e.heading, e.invokedLine]
   if (place.dir) {
-    lines.push(`- ${e.cwdLabel}: ${place.dir}`)
-    if (place.git) lines.push(`- ${e.gitLabel}: ${place.git === "yes" ? "yes" : e.gitNo}`)
+    lines.push(` - ${e.cwdLabel}: ${place.dir}`)
+    if (place.git) lines.push(` - ${e.gitLabel}: ${place.git === "yes" ? "true" : "false"}`)
   }
-  lines.push(`- ${e.platformLabel}: ${process.platform}`, `- ${e.osVersionLabel}: ${osVersion()}`)
-  if (model) lines.push(e.poweredByLine.replace("{provider}", provider).replace("{model}", model))
+  lines.push(` - ${e.platformLabel}: ${process.platform}`, ` - ${e.shellLabel}: ${shell()}`, ` - ${e.osVersionLabel}: ${osVersion()}`, ` - ${e.untrustedLine}`)
   return lines.join("\n")
 }
 
@@ -105,23 +107,29 @@ export function today(now = new Date()) {
   return `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`
 }
 
-// contextPrefix is the user turn ZCode puts before the agent's: the day in
-// a <system-reminder>, the tags hugging the text.
-function contextPrefix() {
-  const c = PROMPT.context
-  const body = [c.intro, c.currentDateHeading + "\n" + c.currentDateLine.replace("{date}", today()), "", c.outro].join("\n")
-  return { role: "user", content: [{ type: "text", text: "<system-reminder>" + body + "</system-reminder>" }] }
+// reminder is one of the CLI's attachments: a user turn whose text is the
+// body hugged by a <system-reminder> tag, one line off each.
+const reminder = (body) => ({ role: "user", content: [{ type: "text", text: "<system-reminder>\n" + body + "\n</system-reminder>" }] })
+
+// reminders are the turns the CLI puts before the agent's: its environment,
+// the powered-by line (left out with no model, as the CLI leaves it), the day.
+function reminders(provider, model, place) {
+  const out = [reminder(environment(place))]
+  if (model) out.push(reminder(PROMPT.poweredBy.replace("{provider}", provider).replace("{model}", model)))
+  out.push(reminder(PROMPT.date.replace("{date}", today())))
+  return out
 }
 
 const cached = (t) => ({ type: "text", text: t, cache_control: { type: "ephemeral" } })
 
-// dress is a Messages request body as ZCode sends it: ZCode's three cached
-// system blocks, then the agent's own system text uncached; the context
-// prefix as the first turn; no cache mark in the turns but on the last
-// block of the last; none on the tools; metadata.user_id naming the
-// sign-in's device. site names the powered-by line's provider, place where
-// the agent works (workPlace). A body that isn't a Messages request goes as
-// it is.
+// dress is a Messages request body as the CLI sends it: ZCode's prefix
+// uncached, its identity section and its dynamic sections cached, the
+// agent's own system text after them uncached; the environment, the
+// powered-by line and the day as <system-reminder> turns before the agent's
+// turns; no cache mark in the turns but on the last block of the last; none
+// on the tools; metadata.user_id naming the sign-in's device. site names
+// the powered-by line's provider, place where the agent works (workPlace).
+// A body that isn't a Messages request goes as it is.
 export function dress(text, site, device, place) {
   if (typeof text !== "string" || !text.includes("messages")) return text
   let b
@@ -139,13 +147,8 @@ export function dress(text, site, device, place) {
   } else if (Array.isArray(b.system)) {
     for (const x of b.system) if (x?.type === "text" && typeof x.text === "string" && x.text) own.push({ type: "text", text: x.text })
   }
-  b.system = [
-    cached(PROMPT.cliPrefix),
-    cached(PROMPT.stableSections.join("\n\n")),
-    cached("\n\n" + [PROMPT.beforeEnvironment, environment(provider, model, place), PROMPT.afterEnvironment].join("\n\n")),
-    ...own,
-  ]
-  b.messages = [contextPrefix(), ...b.messages]
+  b.system = [{ type: "text", text: PROMPT.cliPrefix }, cached(PROMPT.identity), cached("\n\n" + PROMPT.dynamic), ...own]
+  b.messages = [...reminders(provider, model, place), ...b.messages]
   let last = null
   for (const m of b.messages) {
     if (!m || m.role === "system") continue

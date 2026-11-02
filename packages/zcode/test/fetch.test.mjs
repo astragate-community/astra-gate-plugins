@@ -39,7 +39,8 @@ test("a Start Plan account sends the dressed body to zcode.z.ai with its token",
   assert.equal(calls[0].headers.get("x-magpie-work-dir"), null)
   const b = JSON.parse(calls[0].init.body)
   assert.equal(b.system.length, 3)
-  assert.match(b.system[2].text, /Primary working directory: \/w/)
+  assert.match(b.messages[0].content[0].text, /^<system-reminder>\n# Environment\n/)
+  assert.match(b.messages[0].content[0].text, /Primary working directory: \/w/)
   assert.equal(JSON.parse(b.metadata.user_id).device_id, "dev")
 })
 

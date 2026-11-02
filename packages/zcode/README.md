@@ -26,9 +26,10 @@ over Anthropic's Messages API. Provider id: `zcode`.
     ZCode client's own, and refuses others with HTTP 405 "request has been
     blocked due to unusual activity". So a Start Plan request goes as
     ZCode's does: ZCode's headers, ZCode's system prompt ahead of the
-    agent's, the day in a `<system-reminder>` turn before the agent's
-    turns, and the sign-in's device id in `metadata.user_id`. GLM Coding
-    Plan and team requests go as the agent sent them.
+    agent's, the environment, the powered-by line and the day each in a
+    `<system-reminder>` turn before the agent's turns, and the sign-in's
+    device id in `metadata.user_id`. GLM Coding Plan and team requests go
+    as the agent sent them.
   - The Start Plan's token can't be refreshed. When it runs out, sign in
     again.
 - **ZCode app's sign-in**
@@ -123,10 +124,10 @@ minutes. When the config can't be read, the plugin falls back to this list:
 
 | Model | Context | Output | Efforts |
 |---|---|---|---|
-| GLM-5.3 | 1M | 128K | low, high, max |
-| GLM-5.3-Flash | 1M | 128K | low, high, max |
-| GLM-5.2 | 1M | 128K | none, high, max |
-| GLM-5-Turbo | 200K | 64K | none, high |
+| GLM-5.3 | 1M | 128K | none, high |
+| GLM-5.3-Flash | 1M | 128K | none, high |
+| GLM-5.2 | 1M | 128K | none, high |
+| GLM-5-Turbo | 1M | 128K | none, high |
 
 The Start Plan's config has all of these except GLM-5.3. An account
 with no GLM Coding Plan also lists every model its gift plans serve under
