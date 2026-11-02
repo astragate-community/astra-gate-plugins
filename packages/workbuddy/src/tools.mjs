@@ -179,8 +179,9 @@ export function fitted(body) {
 }
 
 // namedBack gives the model's calls in a chat answer (one JSON body, or an
-// SSE stream's chunks) the names the client gave its tools.
-function namedBack(v, names) {
+// SSE stream's chunks, or a folded stream — reply.mjs) the names the client
+// gave its tools.
+export function namedBack(v, names) {
   let changed = false
   for (const c of Array.isArray(v?.choices) ? v.choices : []) {
     for (const at of [c?.message, c?.delta]) {

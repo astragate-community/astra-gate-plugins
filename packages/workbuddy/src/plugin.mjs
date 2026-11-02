@@ -2,10 +2,11 @@
 import { LEAD_MS, NPM } from "./constants.mjs"
 import { api } from "./sites.mjs"
 import { configModels, liveModels, modelOf } from "./models.mjs"
-import { SESSION, attend, messagesUrl, normalizeToolChoice, sessionOf, withOwnSystem, withSystem } from "./request.mjs"
+import { SESSION, attend, messagesUrl, normalizeToolChoice, sessionOf, streamed, withOwnSystem, withSystem } from "./request.mjs"
 import { current, refreshed } from "./session.mjs"
 import { meter, sign } from "./api.mjs"
 import { fitted, renamed } from "./tools.mjs"
+import { whole } from "./reply.mjs"
 import { explained } from "./refusals.mjs"
 import { kept } from "@astragate-community/plugin-kit"
 import { enterpriseUsageOf, packagesOf, runsOutOf, usageOf } from "./usage.mjs"
@@ -92,9 +93,14 @@ export function makePlugin(site) {
             body = withSystem(body)
             const fit = fitted(body)
             body = normalizeToolChoice(fit.body)
+            // WorkBuddy answers streams only: a chat sent unstreamed (a session-title or summary ask)
+            // is made one, and its answer folded back into the single body that chat's client waits for
+            const ask = streamed(body)
+            body = ask.body
             attend(headers, body, session)
             const res = await fetch(req ? req.url : input, { ...init, method: init?.method ?? req?.method, headers, body })
-            return res.status >= 400 ? explained(res) : kept(await renamed(res, fit.names))
+            if (res.status >= 400) return explained(res)
+            return kept(ask.forced ? await whole(res, fit.names) : await renamed(res, fit.names))
           },
         }
       },

@@ -69,7 +69,9 @@ built-in WorkBuddy does.
 ## Requests
 
 Chats are chat completions (`@ai-sdk/openai-compatible`) at `<API>/chat/completions`.
-They are streamed only; WorkBuddy refuses a chat that isn't.
+They are streamed only; WorkBuddy refuses a chat that isn't, so the loader turns an
+unstreamed chat (a client's session-title or summary ask) into a streamed one and
+folds the answer back into the single body that chat's client waits for.
 
 The exception is `hy3` and `hy3-x` of the China build, which WorkBuddy also answers on its own
 Anthropic Messages route, `https://copilot.tencent.com/v1/messages` (not under `/v2`). They are

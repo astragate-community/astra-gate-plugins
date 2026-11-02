@@ -5,7 +5,8 @@ import { SITES } from "../src/sites.mjs"
 import { meter, postMeter } from "../src/api.mjs"
 import { checkinOf } from "../src/checkin.mjs"
 import { configModels, modelOf } from "../src/models.mjs"
-import { attend, messagesUrl, withOwnSystem } from "../src/request.mjs"
+import { attend, messagesUrl, streamed, withOwnSystem } from "../src/request.mjs"
+import { whole } from "../src/reply.mjs"
 
 // a fetch that answers from a queue and remembers what it was asked
 function fake(...replies) {
@@ -249,6 +250,115 @@ test("a chat completion still goes to /v2/chat/completions, with the chat route'
   await f("https://copilot.tencent.com/v2/chat/completions", { method: "POST", headers: {}, body })
   assert.equal(sent[0].url, "https://copilot.tencent.com/v2/chat/completions")
   assert.deepEqual(JSON.parse(sent[0].body).messages[0], { role: "system", content: "You are a helpful assistant." })
+})
+
+test("a chat sent unstreamed is made a stream, its answer folded back into the one body its client waits for", async () => {
+  const sent = spy({
+    status: 200,
+    body: [
+      'data: {"id":"c1","object":"chat.completion.chunk","created":1730000000,"model":"deepseek-v4.1-flash","choices":[{"index":0,"delta":{"role":"assistant","content":"<title>"},"finish_reason":null}]}',
+      "",
+      'data: {"id":"c1","object":"chat.completion.chunk","created":1730000000,"model":"deepseek-v4.1-flash","choices":[{"index":0,"delta":{"content":"问候"},"finish_reason":null}]}',
+      "",
+      'data: {"id":"c1","object":"chat.completion.chunk","created":1730000000,"model":"deepseek-v4.1-flash","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":9,"completion_tokens":7}}',
+      "",
+      "data: [DONE]",
+      "",
+    ].join("\n"),
+    headers: { "content-type": "text/event-stream" },
+  })
+  const f = await loaderFetch()
+  // a session-title ask: no stream switch, a system message of its own, max_tokens small
+  const body = JSON.stringify({
+    model: "deepseek-v4.1-flash",
+    messages: [
+      { role: "system", content: "You write short session titles. Reply with only the tagged fields the prompt asks for." },
+      { role: "user", content: "Here is the session description:\n<description>您好</description>\n" },
+    ],
+    max_tokens: 200,
+  })
+  const res = await f("https://copilot.tencent.com/v2/chat/completions", { method: "POST", headers: {}, body })
+  assert.equal(JSON.parse(sent[0].body).stream, true)
+  assert.equal(res.headers.get("content-type"), "application/json")
+  assert.equal(res.headers.get("x-magpie-sign-in"), "kept")
+  assert.deepEqual(JSON.parse(await res.text()), {
+    id: "c1",
+    object: "chat.completion",
+    created: 1730000000,
+    model: "deepseek-v4.1-flash",
+    choices: [{ index: 0, message: { role: "assistant", content: "<title>问候" }, finish_reason: "stop" }],
+    usage: { prompt_tokens: 9, completion_tokens: 7 },
+  })
+})
+
+test("a made stream's calls are folded, and named back to the client's own tools", async () => {
+  const sent = spy({
+    status: 200,
+    body: [
+      'data: {"id":"c2","object":"chat.completion.chunk","created":2,"model":"m","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_1","function":{"name":"mcp_weather_get","arguments":""}}]},"finish_reason":null}]}',
+      "",
+      'data: {"id":"c2","object":"chat.completion.chunk","created":2,"model":"m","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\\"city\\":\\"北京\\"}"}}]},"finish_reason":null}]}',
+      "",
+      'data: {"id":"c2","object":"chat.completion.chunk","created":2,"model":"m","choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}]}',
+      "",
+      "data: [DONE]",
+      "",
+    ].join("\n"),
+    headers: { "content-type": "text/event-stream" },
+  })
+  const f = await loaderFetch()
+  const body = JSON.stringify({
+    model: "deepseek-v4.1-flash",
+    stream: false,
+    messages: [{ role: "user", content: "北京天气" }],
+    tools: [{ type: "function", function: { name: "mcp.weather:get", parameters: { type: "object", properties: {} } } }],
+  })
+  const res = await f("https://copilot.tencent.com/v2/chat/completions", { method: "POST", headers: {}, body })
+  assert.equal(JSON.parse(sent[0].body).tools[0].function.name, "mcp_weather_get")
+  const out = JSON.parse(await res.text())
+  assert.deepEqual(out.choices[0].message.tool_calls, [
+    { id: "call_1", type: "function", function: { name: "mcp.weather:get", arguments: '{"city":"北京"}' } },
+  ])
+  assert.equal(out.choices[0].finish_reason, "tool_calls")
+})
+
+test("a made stream carrying WorkBuddy's refusal is explained, not folded; one saying nothing is answered as ended", async () => {
+  const sent = spy({
+    status: 200,
+    body: 'data: {"error":{"message":"Illegal API invocation from an unapproved channel"}}\n\n',
+    headers: { "content-type": "text/event-stream" },
+  })
+  const f = await loaderFetch()
+  const res = await f("https://copilot.tencent.com/v2/chat/completions", {
+    method: "POST",
+    headers: {},
+    body: JSON.stringify({ model: "deepseek-v4.1-flash", messages: [{ role: "user", content: "hi" }] }),
+  })
+  assert.equal(res.status, 502)
+  assert.match((await res.json()).error.message, /refuses chats from Codex and Claude Code/)
+  assert.equal(sent[0].headers.get("x-conversation-id") !== null, true)
+  const empty = await whole(new Response("data: [DONE]\n\n", { status: 200, headers: { "content-type": "text/event-stream" } }))
+  assert.equal(empty.status, 502)
+  assert.match((await empty.json()).error.message, /ended without an answer/)
+  // an answer that isn't a stream is given back as it came
+  const plain = new Response("{}", { status: 200, headers: { "content-type": "application/json" } })
+  assert.equal(await whole(plain), plain)
+})
+
+test("streamed makes an unstreamed chat a stream, and leaves the rest alone", () => {
+  for (const body of [
+    JSON.stringify({ model: "m", messages: [{ role: "user", content: "hi" }] }),
+    JSON.stringify({ model: "m", stream: false, messages: [{ role: "user", content: "hi" }] }),
+  ]) {
+    const s = streamed(body)
+    assert.equal(s.forced, true)
+    assert.equal(JSON.parse(s.body).stream, true)
+  }
+  const on = JSON.stringify({ model: "m", stream: true, messages: [{ role: "user", content: "hi" }] })
+  assert.deepEqual(streamed(on), { body: on, forced: false })
+  assert.deepEqual(streamed("not json"), { body: "not json", forced: false })
+  // a body that isn't a chat has no switch to put on
+  assert.deepEqual(streamed(JSON.stringify({ model: "m" })), { body: JSON.stringify({ model: "m" }), forced: false })
 })
 
 test("in Anthropic's shape a tool's result is not a new send: every step of one send has one request id", () => {

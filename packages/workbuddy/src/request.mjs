@@ -1,4 +1,4 @@
-// WorkBuddy: shaping a chat request — its session and turn ids, flagged words, the system prompt, tool choice.
+// WorkBuddy: shaping a chat request — its session and turn ids, flagged words, the system prompt, tool choice, the stream switch.
 import { createHash, randomBytes } from "node:crypto"
 import { anthropicApi } from "./sites.mjs"
 
@@ -301,6 +301,26 @@ export function withOwnSystem(body) {
     return JSON.stringify(b)
   } catch {
     return body
+  }
+}
+
+// streamed puts a chat's stream switch on when its client left it off:
+// WorkBuddy's chat endpoint answers streams only and refuses a chat that
+// isn't one — a session-title or summary ask, which a client sends to wait
+// for one body. It says whether it put the switch on, for the answer then
+// coming as a stream to be folded back into the one body that client waits
+// for (whole, in reply.mjs). A body that isn't a chat is left as it was.
+export function streamed(body) {
+  if (typeof body !== "string") return { body, forced: false }
+  try {
+    const b = JSON.parse(body)
+    if (!b || typeof b !== "object" || Array.isArray(b) || !Array.isArray(b.messages) || b.stream === true) {
+      return { body, forced: false }
+    }
+    b.stream = true
+    return { body: JSON.stringify(b), forced: true }
+  } catch {
+    return { body, forced: false }
   }
 }
 
