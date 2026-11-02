@@ -87,11 +87,14 @@ export function textOnly(site, model) {
 // (not under /v2, where /v2/messages is a 404) answers hy3 and hy3-x with
 // Anthropic's own stream (message_start .. message_stop, thinking, tool_use
 // and input_json_delta blocks, cache_read_input_tokens), taking tools of any
-// shape, any tool_choice, and the Claude Code system prompt the chat route
-// refuses. Every other model of the plan (deepseek, glm, kimi, minimax,
-// auto, hy4-preview, ...) answers 500 "internal server error" there, the
-// same each time, while its chat completion works; WorkBuddy AI has no such
-// route at all (404). The route ignores a thinking switch: thinking
+// shape, any tool_choice, and, at first, the Claude Code system prompt the
+// chat route refuses — until by 2026-11 it began refusing that too, so the
+// loader moves the prompt into the messages and sends WorkBuddy's own in
+// system (see withOwnSystem in request.mjs). Every other model of the plan
+// (deepseek, glm, kimi, minimax, auto, hy4-preview, ...) answers 500
+// "internal server error" there, the same each time, while its chat
+// completion works; WorkBuddy AI has no such route at all (404). The
+// route ignores a thinking switch: thinking
 // disabled, budget_tokens, output_config.effort and reasoning_effort none
 // all leave hy3's thinking as it was, where the chat route's
 // reasoning_effort "none" turns it off. So these models have no reasoning

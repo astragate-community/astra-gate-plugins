@@ -206,6 +206,9 @@ function unflag(messages) {
   return changed
 }
 
+// OWN_SYSTEM is the prompt WorkBuddy's own app opens a chat with.
+const OWN_SYSTEM = "You are a helpful assistant."
+
 // withSystem gives a chat that doesn't open with a system message
 // WorkBuddy's default one, as its app does, takes FLAGGED's words out of it,
 // and applies the request spellings WorkBuddy's chat endpoint accepts. The
@@ -231,10 +234,71 @@ export function withSystem(body) {
       changed = true
     }
     if (b.messages[0]?.role !== "system") {
-      b.messages.unshift({ role: "system", content: "You are a helpful assistant." })
+      b.messages.unshift({ role: "system", content: OWN_SYSTEM })
       changed = true
     }
     return changed ? JSON.stringify(b) : body
+  } catch {
+    return body
+  }
+}
+
+// CLAUDE_CODE names Claude Code's system prompt, by the words its opening
+// line has both before and after FLAGGED's rewrite of it: whatever else
+// that prompt says, it starts with them.
+const CLAUDE_CODE = /You are Claude Code/
+
+// a tool's result part, in either spelling: Anthropic's shape keeps the
+// results opening the user message that answers a tool_use, so nothing is
+// put before them
+const TOOL_RESULT = /^tool[_-]result$/
+
+// systemParts are a system prompt's own parts — its string as one text
+// block, its blocks as they are, a cache breakpoint on them kept — none
+// for a shape with no text in it.
+function systemParts(system) {
+  if (typeof system === "string") return system ? [{ type: "text", text: system }] : []
+  if (!Array.isArray(system)) return []
+  return system.filter((p) => typeof p?.text === "string" && p.text !== "")
+}
+
+// contentParts is a message's content as the parts it is made of: a string
+// as one text block, a list as it is, null for a shape this doesn't know.
+function contentParts(content) {
+  if (typeof content === "string") return content ? [{ type: "text", text: content }] : []
+  return Array.isArray(content) ? content : null
+}
+
+// withOwnSystem moves a Claude Code system prompt out of a chat's system
+// field and lodges it in the messages, opening the first user message —
+// the field is where WorkBuddy's Anthropic route now reads it and refuses
+// the chat, as its chat route always did ("Illegal API invocation from an
+// unapproved channel", magpie #182), having taken it whole when probed on
+// 2026-10-20 (see speaksAnthropic). WorkBuddy's own prompt (OWN_SYSTEM) is
+// left in system, the one its app's chats open with. FLAGGED's words are
+// rewritten in the messages, the moved prompt among them, as for a chat
+// completion: WorkBuddy reads every message too. Any other body — another
+// client's system prompt, or none — is given back as it was.
+export function withOwnSystem(body) {
+  // a body magpie or OpenCode hands over as bytes is read as the text it is
+  if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) body = new TextDecoder().decode(body)
+  if (typeof body !== "string") return body
+  try {
+    const b = JSON.parse(body)
+    if (!Array.isArray(b?.messages) || !b.messages.length) return body
+    const parts = systemParts(b.system)
+    if (!parts.length || !CLAUDE_CODE.test(parts.map((p) => p.text).join(""))) return body
+    const first = b.messages[0]
+    const had = first?.role === "user" ? contentParts(first.content) : null
+    if (had === null) b.messages.unshift({ role: "user", content: parts })
+    else {
+      let at = 0
+      while (at < had.length && TOOL_RESULT.test(String(had[at]?.type ?? ""))) at++
+      first.content = [...had.slice(0, at), ...parts, ...had.slice(at)]
+    }
+    b.system = OWN_SYSTEM
+    unflag(b.messages)
+    return JSON.stringify(b)
   } catch {
     return body
   }

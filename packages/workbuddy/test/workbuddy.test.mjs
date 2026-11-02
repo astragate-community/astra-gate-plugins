@@ -5,7 +5,7 @@ import { SITES } from "../src/sites.mjs"
 import { meter, postMeter } from "../src/api.mjs"
 import { checkinOf } from "../src/checkin.mjs"
 import { configModels, modelOf } from "../src/models.mjs"
-import { attend, messagesUrl } from "../src/request.mjs"
+import { attend, messagesUrl, withOwnSystem } from "../src/request.mjs"
 
 // a fetch that answers from a queue and remembers what it was asked
 function fake(...replies) {
@@ -157,6 +157,78 @@ test("an Anthropic request goes to /v1/messages with the account's headers and i
   assert.equal(res.status, 200)
   assert.equal(res.headers.get("x-magpie-sign-in"), "kept")
   assert.equal(await res.text(), "event: message_start\ndata: {}\n\n")
+})
+
+test("a Claude Code system prompt on the Anthropic route moves into the messages, WorkBuddy's own answering in system", async () => {
+  const sent = spy({ status: 200, body: "event: message_start\ndata: {}\n\n", headers: { "content-type": "text/event-stream" } })
+  const f = await loaderFetch()
+  const body = JSON.stringify({
+    model: "hy3",
+    max_tokens: 64,
+    stream: true,
+    system: [
+      { type: "text", text: "You are Claude Code, Anthropic's official CLI for Claude.", cache_control: { type: "ephemeral" } },
+      { type: "text", text: 'x-anthropic-billing-header: {"tier":"free"}\nBe exact.' },
+    ],
+    messages: [
+      { role: "user", content: [{ type: "text", text: "Main branch (you will usually use this for PRs); list the files" }] },
+    ],
+  })
+  await f("https://copilot.tencent.com/v2/messages", { method: "POST", headers: {}, body })
+  const b = JSON.parse(sent[0].body)
+  // system answers with WorkBuddy's own prompt, and the moved one opens the first user message,
+  // FLAGGED's words rewritten in it and in the messages, a cache breakpoint kept
+  assert.equal(b.system, "You are a helpful assistant.")
+  assert.deepEqual(b.messages, [
+    {
+      role: "user",
+      content: [
+        { type: "text", text: "You are Claude Code, Anthropic's CLI for Claude.", cache_control: { type: "ephemeral" } },
+        { type: "text", text: "Be exact." },
+        { type: "text", text: "Main branch (usually the base for PRs); list the files" },
+      ],
+    },
+  ])
+})
+
+test("withOwnSystem takes a string system prompt into a new first user message, after any tool results", () => {
+  const b = JSON.parse(
+    withOwnSystem(
+      JSON.stringify({
+        system: "You are Claude Code, Anthropic's official CLI for Claude.",
+        messages: [{ role: "assistant", content: "ready" }, { role: "user", content: "go" }],
+      }),
+    ),
+  )
+  assert.equal(b.system, "You are a helpful assistant.")
+  assert.deepEqual(b.messages[0], { role: "user", content: [{ type: "text", text: "You are Claude Code, Anthropic's CLI for Claude." }] })
+  assert.equal(b.messages[1].content, "ready")
+  // a first user message of tool results keeps them opening it
+  const t = JSON.parse(
+    withOwnSystem(
+      JSON.stringify({
+        system: [{ type: "text", text: "You are Claude Code, Anthropic's official CLI for Claude." }],
+        messages: [{ role: "user", content: [{ type: "tool_result", tool_use_id: "t1", content: "out" }, { type: "text", text: "go" }] }],
+      }),
+    ),
+  )
+  assert.deepEqual(t.messages[0].content, [
+    { type: "tool_result", tool_use_id: "t1", content: "out" },
+    { type: "text", text: "You are Claude Code, Anthropic's CLI for Claude." },
+    { type: "text", text: "go" },
+  ])
+})
+
+test("withOwnSystem leaves any other body as it was", () => {
+  // another client's system prompt stays in system, its messages alone
+  const other = JSON.stringify({ model: "hy3", system: "You are Zed's agent.", messages: [{ role: "user", content: "hi" }] })
+  assert.equal(withOwnSystem(other), other)
+  // no system at all, or a chat that isn't JSON, goes as it is
+  const none = JSON.stringify({ model: "hy3", messages: [{ role: "user", content: "hi" }] })
+  assert.equal(withOwnSystem(none), none)
+  assert.equal(withOwnSystem("not json"), "not json")
+  // and bytes are read as the text they are
+  assert.equal(withOwnSystem(new TextEncoder().encode(none)), none)
 })
 
 test("an Anthropic request's bytes are read as text, and a refusal of it is explained", async () => {

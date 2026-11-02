@@ -76,7 +76,10 @@ Anthropic Messages route, `https://copilot.tencent.com/v1/messages` (not under `
 `@ai-sdk/anthropic` models there, so a client of Anthropic's shape (Claude Code, Claude Desktop)
 reaches them as it is, without being made over into a chat completion; the loader moves the AI SDK's
 `/v2/messages` to that address. The route takes the request whole, so the mending below (a system
-message, tools of OpenAI's shape, `tool_choice`) is not done for it; the ids and the headers
+message, tools of OpenAI's shape, `tool_choice`) is not done for it, with one exception: WorkBuddy
+came to refuse Claude Code's system prompt on this route as on the chat route, so the loader moves
+that prompt into the opening of the first user message and sends WorkBuddy's default system prompt
+in `system` (the flagged-word rewrites below apply to the messages too); the ids and the headers
 below are. It answers a request that isn't streamed. It ignores a thinking switch (`thinking`,
 `output_config.effort`, `reasoning_effort`), so these models list no reasoning levels. Every other
 model answers 500 there, and WorkBuddy AI has no such route (tried 2026-10-20; see `speaksAnthropic`
