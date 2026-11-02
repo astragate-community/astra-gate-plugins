@@ -1,0 +1,28 @@
+{
+  "AntigravityAuthPlugin": {
+    "auth": {
+      "loader": "fn",
+      "methods": [
+        {
+          "authorize": "fn",
+          "label": "Antigravity (Google account — sign in on this machine)",
+          "type": "oauth"
+        },
+        {
+          "authorize": "fn",
+          "label": "Antigravity (Google account — paste the address the sign-in ends on)",
+          "type": "oauth"
+        }
+      ],
+      "provider": "antigravity",
+      "refresh": "fn",
+      "refreshLead": 600000,
+      "usage": "fn"
+    },
+    "config": "fn",
+    "provider": {
+      "id": "antigravity",
+      "models": "fn"
+    }
+  }
+}

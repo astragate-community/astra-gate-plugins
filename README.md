@@ -27,6 +27,9 @@ Astra's market reads `registry.json` from this repository's `main` branch and do
 GitHub Release it lists, checking the sha256 — no npm account is involved.
 
 1. Bump `version` in the package's `package.json` (a released tarball is never replaced: a changed tarball is a new version).
+   A package whose `astra` block lists `injectEnv` (antigravity's OAuth client) bakes those
+   variables into its bundle at build time: source them (the `.env` beside the repository holds
+   them) before `npm run registry`.
 2. `npm run registry` — builds, packs every package (deterministic, so an unchanged package keeps its hash) and rewrites
    `registry.json` with the Release URLs and hashes. Commit it and push.
 3. `GH_TOKEN=… npm run release` — creates the `<dir>-v<version>` Release, with the tarball, for each version that has none.

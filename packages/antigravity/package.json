@@ -1,0 +1,45 @@
+{
+  "name": "@astragate-community/antigravity-auth",
+  "version": "0.1.0",
+  "description": "Antigravity (Google's agentic IDE) on your own Google account — Claude, Gemini and GPT-OSS models — in OpenCode, magpie and Astra",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "antigravity",
+    "google",
+    "gemini"
+  ],
+  "license": "MIT",
+  "astra": {
+    "name": "Antigravity",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/antigravity-color.svg",
+    "providers": [
+      "antigravity"
+    ],
+    "injectEnv": [
+      "ANTIGRAVITY_CLIENT_ID",
+      "ANTIGRAVITY_CLIENT_SECRET"
+    ],
+    "summary": {
+      "en": "Antigravity's Claude, Gemini and GPT-OSS models on your own Google account — Antigravity's own Google sign-in, with the quota of each model family.",
+      "zh": "用自己的 Google 账号使用 Antigravity 的 Claude、Gemini 与 GPT-OSS 模型——沿用 Antigravity 自己的 Google 登录，并显示各模型族的额度。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/antigravity"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/antigravity-color.svg"
+  }
+}
