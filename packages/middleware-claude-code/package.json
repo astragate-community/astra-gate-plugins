@@ -1,0 +1,37 @@
+{
+  "name": "@astragate-community/middleware-claude-code",
+  "version": "0.1.0",
+  "description": "Astra gateway middleware: present one channel's requests as the official Claude Code CLI's (headers, system prompt, metadata)",
+  "type": "module",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "astra",
+    "magpie-middleware",
+    "claude-code",
+    "llm-gateway"
+  ],
+  "license": "MIT",
+  "magpie": {
+    "middleware": "./index.mjs",
+    "options": {
+      "providers": [],
+      "protocol": "anthropic"
+    }
+  },
+  "astra": {
+    "name": "Claude Code Identity",
+    "kind": "middleware",
+    "summary": {
+      "en": "For channels that serve only the official Claude Code CLI: send that channel's requests with Claude Code's headers and system prompt.",
+      "zh": "适用于只接受官方 Claude Code CLI 的渠道：发往该渠道的请求带上 Claude Code 的请求头和系统提示词。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/middleware-claude-code"
+  }
+}
