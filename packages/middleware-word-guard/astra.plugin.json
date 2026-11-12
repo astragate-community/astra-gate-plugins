@@ -1,0 +1,31 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.word-guard",
+  "version": "2.0.0",
+  "name": { "en": "Word Guard", "zh": "敏感词过滤" },
+  "description": {
+    "en": "New API's sensitive-word filter: turn away or mask words and patterns in what you send, and in replies.",
+    "zh": "New API 的敏感词过滤：拒绝或替换你发出的内容和回复里的词与正则。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/middleware-word-guard",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "gateway": "src/gateway.js",
+  "permissions": ["storage", "ui", "gateway.request:rewrite", "gateway.request:reject", "gateway.response:rewrite"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "ui.settings": "settings",
+    "gateway.hooks": [
+      {
+        "id": "guard",
+        "on": ["request", "event", "response"],
+        "view": "raw",
+        "reads": ["settings"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/middleware-word-guard" }]
+}

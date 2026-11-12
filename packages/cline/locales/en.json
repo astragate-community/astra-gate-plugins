@@ -1,0 +1,17 @@
+{
+  "signIn.title": "Sign in to Cline",
+  "signIn.body": "Use your Cline account (approved in the browser) or an API key from app.cline.bot, Settings, API Keys.",
+  "signIn.browser": "Sign in with the browser",
+  "signIn.useKey": "Use an API key",
+  "signIn.approve": "Approve the sign-in in the browser. Check that the code below is the one Cline shows.",
+  "signIn.open": "Open Cline's approval page",
+  "signIn.waiting": "Waiting for the approval",
+  "signIn.back": "Back",
+  "signIn.done": "Signed in to Cline",
+  "signIn.key.title": "Cline API key",
+  "signIn.key.label": "API key",
+  "signIn.key.hint": "Kept encrypted by Astra; never shown again.",
+  "signIn.key.save": "Add account",
+  "signIn.key.empty": "Enter the API key",
+  "signIn.key.account": "Cline API key"
+}

@@ -1,113 +1,76 @@
-# Kiro plugin for Astra
+# Kiro (Astra v2 plugin)
 
-Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, restructured into modules.
+[Kiro](https://kiro.dev) subscriptions (Free, Pro, Pro+, Power) as an Astra provider. Plugin id
+`astragate-community.kiro`, provider id `kiro`. It replaces the v1 package `@astragate-community/kiro-auth`.
 
-Signs in to a [Kiro](https://kiro.dev) subscription (Free, Pro, Pro+,
-Power) and makes its requests, in OpenCode and in magpie. Provider id:
-`kiro`.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 
-## Signing in
+## The reply
 
-- **Kiro (Google, GitHub, AWS Builder ID, IAM Identity Center)**: the Kiro
-  IDE's own sign-in.
-  - Kiro's page (`app.kiro.dev/signin`) sends the browser back to one of
-    the ports the IDE listens on (3128, 4649, 6588, 8008, 9091, 49153,
-    50153–53153) on `127.0.0.1`. While the IDE is signing in, those ports
-    may be busy.
-  - Google and GitHub come back with a code. Kiro's auth service trades it
-    for tokens.
-  - Builder ID and Identity Center come back with an AWS sign-in URL and
-    region. The plugin registers a client with AWS's OIDC service, sends
-    the browser to AWS, and trades the code AWS returns.
-  - The account is named by the email Kiro has for it (`Get-Usage-Limits`),
-    and its plan is read from the same call.
-  - A company's own identity provider (`external_idp`) is not supported
-    here. Sign in with `kiro-cli login` and use the next method instead.
-- **Kiro CLI's or Kiro IDE's sign-in**: uses the account kiro-cli is signed
-  in to, or else the Kiro IDE's. Nothing is copied. It is read each time
-  from where they keep it:
-  - kiro-cli: its SQLite database's `auth_kv` table.
-    - macOS: `~/Library/Application Support/kiro-cli/data.sqlite3`
-    - Linux: `~/.local/share/kiro-cli/data.sqlite3`
-    - Windows: `%APPDATA%\kiro-cli\data.sqlite3`
-  - The IDE: `~/.aws/sso/cache/kiro-auth-token.json`.
+Kiro answers with a binary AWS event stream. The provider declares `reply: { framing: "aws-eventstream", output:
+"anthropic" }`: the host cuts the stream into messages (checking their CRCs) and `transformResponse` turns each into
+Anthropic Messages events (text, `reasoningContentEvent` thinking with its signature, tool calls with arguments in
+pieces, usage, stop reason), or, for a non-streaming request, one message. Kiro's own words are kept: a throttle is
+`rate limited: …`, a quota or rate-limit error before any of the answer is a 429 (else 502) so another account can take
+over, `MONTHLY_REQUEST_COUNT` is a 429, `INSUFFICIENT_MODEL_CAPACITY` a 503, "input is too long" a 400; a 401 / 403
+passes through so `refresh` runs. An error after part of the answer ends the stream with an `error` event.
 
-  kiro-cli refreshes its own token first (`kiro-cli debug refresh-auth-token`).
-  A token the plugin refreshes itself is written back, so kiro-cli and the
-  IDE go on with it.
-- **Kiro API key (`ksk_…`)**: sent with `tokentype: API_KEY`. Its profile is
-  found with `GetProfile`.
+Limits of the host seam: the reply step cannot see the request, so (1) `<thinking>…</thinking>` at the head of the text
+is always split into a thinking block (v1 did it only when the request asked to think), and (2) the names of tools
+shortened for Kiro are remembered by `prepare` in the plugin's memory (a few thousand) and mapped back from there; after
+the plugin's engine restarts mid-conversation a shortened name comes back as sent.
 
-A browser sign-in is kept where OpenCode keeps sign-ins (`auth.json`; in
-magpie, `plugin-auth.json`) as an `oauth` entry. The entry holds the
-tokens, the profile ARN, the region and, for AWS, the registered client.
-Refreshing such a sign-in:
+## Sign in
 
-- magpie renews the token 10 minutes before it expires, through the
-  plugin's `auth.refresh`, once for the account and before its requests,
-  models and usage need it. magpie saves the new token. A failed renewal,
-  even one Kiro refused, doesn't mark the account: it is tried again.
-- OpenCode doesn't call that hook: there the token is refreshed 2 minutes
-  before it expires, before a request, and saved.
-- Either way, a token Kiro turns down (a 403) is refreshed and the request
-  tried once more.
-- Only one refresh runs at a time, magpie's renewal included, and a token
-  refreshed but not yet saved is used rather than spending the old refresh
-  token again.
-- kiro-cli's and the IDE's sign-ins aren't renewed by magpie: they are
-  refreshed before a request, as above, and written back.
+Add an account on the provider's page. The flow offers:
 
-Tokens are refreshed through:
+- **Sign in with Kiro** (Google, GitHub, AWS Builder ID, IAM Identity Center): Kiro's page (`app.kiro.dev/signin`) is
+  opened with the IDE's own parameters and sends the browser back to `localhost:3128`. A plugin cannot listen on a
+  port, so that page will not load: copy its whole address from the browser's address bar and paste it back.
+  - Google and GitHub come back with a code, which Kiro's auth service trades for tokens.
+  - Builder ID and Identity Center come back with an AWS sign-in address and region: the plugin registers a client
+    with AWS's OIDC service, opens AWS's page, and a second pasted address (`127.0.0.1:3128/oauth/callback?code=…`)
+    is traded for the tokens.
+  - The account is named by the email Kiro has for it (`Get-Usage-Limits`), which also gives its plan.
+  - A company's own identity provider (`external_idp`) is not supported.
+- **Kiro API key (`ksk_…`)**: sent with `tokentype: API_KEY`; its profile is found with `GetProfile`, so a key Kiro
+  turns down is refused at once.
 
-- Google/GitHub: through `prod.<region>.auth.desktop.kiro.dev/refreshToken`.
-- Builder ID/Identity Center: through AWS's `oidc.<region>.amazonaws.com/token`.
+The sign-in (tokens, profile ARN, region and, for AWS, the registered client) is the account's secret in the host.
+Tokens are refreshed two minutes before their end and after a 401 / 403 (`refresh`): Google / GitHub through
+`prod.<region>.auth.desktop.kiro.dev/refreshToken`, Builder ID / Identity Center through AWS's
+`oidc.<region>.amazonaws.com/token`; one refresh at a time, since a refresh may replace the refresh token. The
+Identity Center region must be one of the AWS regions listed in the manifest's `net:` permissions.
 
 ## Requests
 
-Kiro has no API OpenCode speaks. The models are declared on Anthropic's
-Messages (`@ai-sdk/anthropic`), and the plugin's `fetch` handles each
-request:
+`prepare` takes the Messages request the gateway chose for the model and sends it to
+`runtime.<region>.kiro.dev/generateAssistantResponse` (the region is the profile ARN's) with kiro-cli's headers, as a
+Kiro conversation:
 
-- It sends the request to `runtime.<region>.kiro.dev/generateAssistantResponse`,
-  the API kiro-cli uses, with kiro-cli's headers. The region is the one the
-  profile ARN names.
-- It turns the request into a Kiro conversation:
-  - The system prompt goes at the head of the first message.
-  - Tool calls and results are paired: an unanswered call gets an error
-    result, and a result longer than 250,000 characters is cut.
-  - Tool ids Kiro wouldn't take are rewritten. A tool name over 64
-    characters (an MCP plugin's, in Claude Code) is sent shortened with a
-    hash and its calls come back under the full name.
-  - A tool's images (a screenshot, Codex's view_image) go with the
-    message that answers the call, as Kiro's tool results hold text alone.
-  - Only the latest images are sent.
-  - Tools the history used but the request doesn't offer are declared.
-- It turns the AWS event stream Kiro answers with back into Messages'
-  events (streamed) or one message. The reply includes text, thinking,
-  tool calls and usage. When Kiro reports only how full the context is,
-  input tokens are estimated from that.
-- Thinking (Claude models and Auto) is asked for the way kiro-cli asks, in
-  the prompt, with a budget: low 10k, medium 20k, high 30k, max 50k. The
-  `<thinking>` block of the reply comes back as thinking.
-- Kiro's failures keep their meaning:
-  - input too long → 400
-  - no capacity → 503
-  - usage limit → 429
-  - throttling → "rate limited"
+- the system prompt goes at the head of the first message, with `<thinking_mode>` when the request asked to think;
+- tool calls and results are paired (an unanswered call gets an error result, a result over 250,000 characters is
+  cut); tool ids and names Kiro wouldn't take are rewritten (a name over 64 characters is shortened with a hash);
+- only the latest images are sent, as bytes; documents go in as text.
 
-## Models
+## Models and credits
 
-The `config` hook declares `auto` (Kiro picks the model). Once signed in,
-the `provider.models` hook replaces it with the account's own list from
-`List-Available-Models`, with the default first. Each model carries its
-context window, output limit and whether it takes images. Claude models
-and Auto have the thinking variants.
+`models()` is `List-Available-Models` (the default first); Auto is the offline bootstrap. `usage()` is the credits
+card: the plan, the email, each allowance and a running free trial.
 
-## Not included
+## Not carried over from v1
 
-- Usage and quota (credits, the monthly window).
-- Switching between several accounts. OpenCode keeps one sign-in per
-  provider.
-- Signing in with a company's own identity provider in the browser (use
-  kiro-cli's sign-in).
-- magpie's web-search stand-in for Kiro.
+Reading kiro-cli's or the Kiro IDE's own sign-in from disk (a plugin has no file access; sign in again here or use an
+API key); the sign-in that listens on a local port (paste the address instead).
+
+Permissions: `providers`, `ui` (the sign-in flow), and `net:` for Kiro's runtime, management and auth hosts in
+`us-east-1` and `eu-central-1`, and AWS's OIDC host in the listed regions.
+
+## Develop
+
+```sh
+npm install --workspaces=false --no-package-lock
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.kiro-2.1.0.tgz
+```

@@ -1,0 +1,14 @@
+{
+  "chat.noAccount": "{name} has no signed-in account to chat with.",
+  "chat.only": "{name} serves chat completions only.",
+  "signIn.title": "Sign in to {name}",
+  "signIn.step1": "1. Open the {host} authorization page and sign in there, then allow the sign-in.",
+  "signIn.open": "Open the {name} sign-in page",
+  "signIn.step2": "2. The page then sends the browser to {callback}, which shows an error because nothing listens there. That is expected: copy the full address from the browser's address bar.",
+  "signIn.paste.label": "The address the browser ended on",
+  "signIn.paste.hint": "It starts with the address above and carries the sign-in. Treat it like a password.",
+  "signIn.submit": "Finish sign-in",
+  "signIn.nothing": "That address carries no sign-in. Paste the whole address, including everything after the ?",
+  "signIn.note": "This sign-in uses device {id}; Trae sees every request from that device.",
+  "signIn.done": "{name} is signed in"
+}

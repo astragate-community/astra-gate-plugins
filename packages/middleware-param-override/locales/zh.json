@@ -1,0 +1,11 @@
+{
+  "title": "参数覆盖",
+  "description": "New API 的 param_override，原样使用：从 New API 复制一份粘贴过来即可。它对 agent 经网关发出的每个请求生效，不论由哪个服务商处理。内容为空时什么也不做。",
+  "json.label": "覆盖规则（JSON）",
+  "json.hint": "可以是要原样设置的键，如 {\"temperature\": 0.2}，也可以是按顺序执行的 {\"operations\": [...]}。路径是 gjson 的写法（a.b.0、messages.-1、tools.*.name）。模式有：set、delete、move、copy、prepend、append、trim_prefix、trim_suffix、ensure_prefix、ensure_suffix、trim_space、to_lower、to_upper、replace、regex_replace、return_error、prune_objects。条件先在请求体里找，再找 model、request_path、protocol、agent 和 stream。JSON 有效时，修改会边输入边保存。",
+  "error.json": "没有保存，这不是有效的 JSON：{message}",
+  "error.object": "没有保存：覆盖规则必须是 JSON 对象 {…}。",
+  "example.label": "示例",
+  "example.hint": "把 max_tokens 限制在 32000，并对名称含 “reasoner” 的模型去掉 temperature。会替换编辑器里现有的内容。",
+  "example.use": "使用示例"
+}

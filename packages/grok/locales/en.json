@@ -1,0 +1,15 @@
+{
+  "signIn.title": "Sign in to Grok",
+  "signIn.device": "Sign in with xAI (device code)",
+  "signIn.deviceBody": "Opens xAI's sign-in page and shows a code to confirm there. No Grok Build install is needed.",
+  "signIn.start": "Start sign-in",
+  "signIn.confirm": "Confirm this code on the page that opened:",
+  "signIn.open": "Open the sign-in page again",
+  "signIn.waiting": "Waiting for you to confirm in the browser…",
+  "signIn.continue": "I confirmed it, keep waiting",
+  "signIn.import": "Import a Grok Build or CPA sign-in",
+  "signIn.importBody": "Paste the contents of Grok Build's auth.json (or one entry of it) or a CPA xAI account file. Its refresh token rotates: stop using that sign-in in Grok Build or CPA afterwards, or sign in here with the device code instead.",
+  "signIn.json": "Sign-in JSON",
+  "signIn.importSave": "Import account",
+  "signIn.done": "Grok account added"
+}

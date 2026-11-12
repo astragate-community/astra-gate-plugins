@@ -1,0 +1,35 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.aider",
+  "version": "2.0.0",
+  "name": { "en": "Aider", "zh": "Aider" },
+  "description": {
+    "en": "Aider (aider.chat) on the Clients page: pick one of the gateway's models for it, and switch it off to put its config back.",
+    "zh": "把 Aider（aider.chat）加到客户端页：给它选网关的模型，关掉即恢复它原来的配置。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/aider",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": ["clients"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "clients": [
+      {
+        "id": "aider",
+        "name": { "en": "Aider", "zh": "Aider" },
+        "config": "~/.aider.conf.yml",
+        "format": "yaml",
+        "model": "model",
+        "prefix": "openai/",
+        "bin": "aider",
+        "icon": "https://aider.chat/assets/icons/apple-touch-icon.png",
+        "notice": "Aider reads its settings when it starts: restart it to use the new model.",
+        "ua": ["aider", "litellm"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/aider" }]
+}

@@ -1,119 +1,83 @@
-# Grok plugin for Astra
+# Grok (Astra v2 plugin)
 
-Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
+Grok models with a SuperGrok or X Premium+ subscription, through the Grok Build backend (`https://cli-chat-proxy.grok.com/v1`,
+the OpenAI Responses API) and its xAI sign-in. Plugin id `astragate-community.grok`, provider id `grok`. It replaces the v1
+package `@astragate-community/grok-auth`.
 
----
+## What changed from v1, and why
 
-# @astragate-community/grok-auth
+v1 did not sign in itself: it ran the locally installed Grok Build CLI (`grok login --device-auth`, `grok models` to renew a
+token) and read the CLI's `auth.json`. A v2 plugin has no file system and starts no processes, so all of that is gone. In
+its place the plugin speaks the xAI sign-in server (`https://auth.x.ai`, OpenID Connect with the Grok Build client id)
+directly, as the standards write it. **This was written from v1's source and the standards, and not run against the live
+service** (no network was used): treat the device-code flow and the token refresh as untested until you have signed in once.
 
-Grok with a SuperGrok or X Premium+ subscription, through the sign-in of
-xAI's [Grok Build CLI](https://x.ai/cli). Provider id: `grok`.
+## Signing in
 
-It needs Grok Build installed:
+Open the provider's page and press "Add account". Two ways:
 
-```sh
-curl -fsSL https://x.ai/cli/install.sh | bash          # macOS, Linux
-irm https://x.ai/cli/install.ps1 | iex                 # Windows
-```
+- **Device code.** Opens xAI's page and shows a code to confirm; the plugin polls for about 40 seconds at a time (a view
+  action has a wall-clock limit) and "I confirmed it, keep waiting" polls again. The credential is the plugin's own, so Grok
+  Build's own sign-in is untouched. The device-authorization and token endpoints come from the issuer's discovery document
+  (only endpoints at `auth.x.ai` are used), with `/oauth2/device/code` and `/oauth2/token` as the fallback.
+- **Import.** Paste the contents of Grok Build's `~/.grok/auth.json` (or one entry of it), or a CPA (CLIProxyAPI) xAI account
+  file (the same checks as v1: an enabled xAI OAuth account for the Grok Build client). The refresh token rotates, so stop
+  using that sign-in in Grok Build or CPA afterwards; a second client spending the same token signs both out.
 
-## Sign in
-
-- **Sign in with Grok Build (device code)** runs `grok login --device-auth`
-  and opens the page it prints. Approve the sign-in there, and the CLI
-  finishes it.
-  - If the CLI isn't signed in yet, the sign-in goes to the CLI's own home
-    (`GROK_HOME`, else `~/.grok`), as if you had run `grok login`.
-  - If it is signed in, the sign-in goes to a home of this plugin's,
-    `$XDG_CONFIG_HOME/opencode-grok-auth/<random>` (else under
-    `~/.config`). Grok Build's own sign-in stays as it is.
-- **Use Grok Build's current sign-in** takes the account the CLI is
-  signed in to, with nothing to approve.
-- **Import CPA Grok account JSON** copies one enabled xAI OAuth account from
-  a CLIProxyAPI (CPA) account JSON file (CPA keeps it as
-  `~/.cli-proxy-api/xai-<email>.json`) into a private home for this plugin.
-  CPA and Grok Build rotate the same refresh token, so stop using that
-  account in CPA before importing it. The file is read, never rewritten.
-
-## Where the sign-in is kept
-
-The CLI keeps the sign-in in its home, as `auth.json`. OpenCode (or
-magpie) keeps where that home is, the token and its expiry. Importing a CPA
-account writes only its translated xAI OAuth fields to a private home owned
-by this plugin; the selected CPA file is left unchanged.
-
-The plugin reads `auth.json`; Grok Build refreshes the token, which changes
-each time. The plugin runs `grok models` in that home, so the CLI renews
-it, then reads it again:
-
-- magpie renews the token 5 minutes before it ends, through the plugin's
-  `auth.refresh`, once for the account and before its requests, models
-  and usage need it. magpie saves what the CLI gave.
-- OpenCode doesn't call that hook: there the token is renewed when it is
-  5 minutes from expiring, before a request.
-- The CLI runs once for a home at a time: a request or renewal that
-  comes while it runs waits for it and reads what it gave. A token the
-  CLI already renewed is taken as it is.
-- When the CLI no longer holds a sign-in in that home (`grok logout`),
-  the account has to be signed in again. When it couldn't renew a token
-  that has ended, magpie tries again later.
+An account's credential (kept by Astra as the account's secret) holds the access token, the refresh token and its expiry.
+The token is renewed five minutes before it ends (the refresh token is spent once, so only one renewal runs per account);
+after a 401/403 Astra calls the plugin's `refresh`; an account xAI signed out is marked expired.
 
 ## Requests
 
-Requests go to `https://cli-chat-proxy.grok.com/v1`, OpenAI's Responses
-API (`@ai-sdk/openai`), signed as the CLI signs them:
-
-- `Authorization: Bearer <token>`
-- `x-xai-token-auth: xai-grok-cli`
-- `x-grok-client-identifier: grok-shell`
-- `x-grok-client-mode: headless`
-- `x-grok-client-version` and `User-Agent: grok-shell/<version> (<os>; <arch>)`.
-  The version is 1.0.41, or the installed CLI's if it is newer.
-- `x-grok-model-override`: the request's model. A window suffix
-  (`grok-4.7@500k`) is the plain model (`grok-4.7`) here and in the body.
-- `x-grok-context-window`: the token count a suffixed model names
-  (`500000` for `@500k`). The plain id sends no such header and stays on
-  the default window.
-- `x-grok-conv-id`: the request's `prompt_cache_key`.
-
-The backend turns away some of what a request may carry, so the plugin
-leaves these out:
-
-- tools of types it doesn't take (a freeform `apply_patch`, namespaces)
-- `external_web_access` on web search
-- a `tool_choice` naming a dropped type
-- a reasoning item's `"content": null`
-
-Plain Codex collaboration items (`agent_message`) reach Grok as user
-messages, with their sender, recipient and content preserved. Sealed or
-unrecognized content stays unchanged; the plugin does not decrypt tasks.
+Responses requests only, to `/v1/responses` (and sub-paths) of the backend, signed as the Grok CLI signs them
+(`x-grok-client-version`, `x-xai-token-auth`, `x-grok-client-identifier`, `x-grok-client-mode`, user agent). The body is
+reshaped as in v1: tools of types Grok refuses are dropped, `external_web_access` removed, a union at the root of a
+function's parameters folded into an object, Codex `agent_message` items turned into user messages, reasoning items'
+`"content": null` removed. A model id `grok-4.7@500k` is sent as `grok-4.7` with `x-grok-context-window: 500000`; the
+conversation's `prompt_cache_key` becomes `x-grok-conv-id`.
 
 ## Models
 
-Grok 4.7 until signed in. Signed in, the models are the ones the account
-lists at `/v1/models` (Responses models only), each with its reasoning
-efforts as variants.
+The built-in list is `grok-4.7`; for an account the plugin asks the backend (Responses models only), and offers each listed
+context window beside the default as `<id>@<window>`.
 
-`context_window` is the default window and keeps the plain id, so a saved
-`grok-4.7` stays a 256k model. Each other size in `context_windows` is
-offered beside it, named `Grok 4.7 @ 500k` with id `grok-4.7@500k` and
-that many tokens as its window. A request for it sends
-`x-grok-context-window: 500000`. The proxy serves up to its largest
-window either way and refuses past it; the header names the window the
-caller asked to compact against. Pick `grok-4.7@500k` where a client
-compacts at the advertised window, such as Claude Code.
+## Usage card
 
-## Usage
+The credits of the current period (weekly for SuperGrok), what on-demand spending has used of its cap, and a "Rate limit"
+window made from the account's last 429 (billing says nothing of a plan's rate limit: a free account reads 0% used while
+every request answers 429). The window runs until the reset the 429 named (`Retry-After`, or a `*ratelimit*reset*` header),
+or five minutes when it named none, and ends sooner when a request goes through.
 
-magpie's card shows the credits of the current period
-(`/v1/billing?format=credits`): weekly for SuperGrok, with on-demand
-spending beside it when it has a cap.
+## Replies
 
-Grok's billing says nothing of a plan's rate limit, so a free account can
-read 0% used while its requests come back 429. After a 429 the card shows
-a spent "Rate limit" window until the reset it named (`Retry-After`, or a
-`*ratelimit*reset*` header). When it named none, the window stays until a
-request goes through, or for 5 minutes.
+The manifest declares `reply: { framing: ndjson, output: responses }`; the plugin's `transformResponse` only reads each
+reply's status and headers to keep the rate-limit note above (the events pass on as they came, as Responses event pairs,
+or as one JSON body). `ndjson` on purpose: an `sse` reader would swallow a plain JSON body (a non-streaming request) as a
+stream with no events, so the plugin takes the lines and puts the `event:` / `data:` pairs back together (a `data:` event
+spanning several lines would not survive; the Responses API writes none). The note is kept in the plugin's memory, so a
+reload forgets it.
 
-Grok Bot's separate allowance is shown by the [Cursor plugin](../cursor/README.md#usage).
-Sign in there with the Cursor account linked in Grok Bot, including for
-access through SuperGrok.
+Every call that carries a credential (the model list, billing, the sign-in server) is made with `redirect: 'error'`, so a
+bearer token is never sent anywhere a redirect points.
+
+## Not carried over from v1
+
+- Using the installed Grok Build CLI (its `auth.json`, renewing through `grok models`, `grok login`).
+- The client version is always the plugin's own (1.0.41): v1 used the installed CLI's when newer. The user agent says
+  `x86_64` whatever the machine, since the plugin cannot see the CPU.
+- Marking the sign-in kept or renewed on replies (v1's header); Astra decides that from `refresh` instead.
+- Reasoning-effort model variants (v2 models have none); a client sends `reasoning.effort` in its own request.
+
+Permissions: `providers`, `ui` (the sign-in flow) and `net:` for `cli-chat-proxy.grok.com` and `auth.x.ai`.
+
+## Develop
+
+```sh
+npm install --workspaces=false --no-package-lock   # in this directory
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.grok-2.1.0.tgz
+```
+
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

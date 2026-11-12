@@ -1,0 +1,11 @@
+{
+  "title": "Parameter override",
+  "description": "New API's param_override, as it is: paste one from New API and it works unchanged. It runs on every request an agent sends through the gateway, whichever provider serves it. Nothing happens while it is empty.",
+  "json.label": "Override (JSON)",
+  "json.hint": "Either keys to set as they are, {\"temperature\": 0.2}, or {\"operations\": [...]} run in order. A path is gjson's (a.b.0, messages.-1, tools.*.name). Modes: set, delete, move, copy, prepend, append, trim_prefix, trim_suffix, ensure_prefix, ensure_suffix, trim_space, to_lower, to_upper, replace, regex_replace, return_error, prune_objects. Conditions look in the body first, then in model, request_path, protocol, agent and stream. Changes are saved as you type, once the JSON is valid.",
+  "error.json": "Not saved, this is not valid JSON: {message}",
+  "error.object": "Not saved: the override must be a JSON object, {…}.",
+  "example.label": "An example",
+  "example.hint": "Caps max_tokens at 32000 and drops temperature for models whose name contains \"reasoner\". Replaces what is in the editor.",
+  "example.use": "Use the example"
+}

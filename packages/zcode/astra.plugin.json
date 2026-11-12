@@ -1,0 +1,47 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.zcode",
+  "version": "2.1.0",
+  "name": { "zh": "ZCode（GLM Coding Plan）", "en": "ZCode (GLM Coding Plan)" },
+  "description": {
+    "zh": "接入 Z.ai 与智谱 BigModel 的 GLM Coding Plan（含团队席位与 ZCode 免费 Start Plan），通过 Anthropic Messages 协议提供 GLM 模型。",
+    "en": "Z.ai and BigModel GLM Coding Plan, with team seats and ZCode's free Start Plan, serving the GLM models over Anthropic Messages."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/zcode",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": [
+    "providers",
+    "storage",
+    "ui",
+    "net:https://zcode.z.ai",
+    "net:https://api.z.ai",
+    "net:https://bigmodel.cn",
+    "net:https://open.bigmodel.cn"
+  ],
+  "contributes": {
+    "providers": [
+      {
+        "id": "zcode",
+        "name": { "zh": "ZCode", "en": "ZCode" },
+        "icon": "assets/icon.svg",
+        "protocols": ["anthropic"],
+        "reply": { "framing": "ndjson", "output": "anthropic" },
+        "models": [
+          { "id": "GLM-5.3", "name": "GLM-5.3", "protocol": "anthropic", "context": 1000000, "output": 128000, "reasoning": true },
+          { "id": "GLM-5.3-Flash", "name": "GLM-5.3-Flash", "protocol": "anthropic", "context": 1000000, "output": 128000, "reasoning": true },
+          { "id": "GLM-5.2", "name": "GLM-5.2", "protocol": "anthropic", "context": 1000000, "output": 128000, "reasoning": true },
+          { "id": "GLM-5-Turbo", "name": "GLM-5-Turbo", "protocol": "anthropic", "context": 1000000, "output": 128000, "reasoning": true }
+        ],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [
+      { "id": "signIn", "view": "signIn", "title": { "zh": "登录 ZCode", "en": "Sign in to ZCode" } }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/zcode-auth" }]
+}

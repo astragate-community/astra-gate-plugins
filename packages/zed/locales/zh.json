@@ -1,0 +1,12 @@
+{
+  "signIn.title": "添加 Zed 账号",
+  "signIn.body": "Zed 自带的浏览器登录需要本机回调端口，插件无法打开。请粘贴 Zed 编辑器保存在系统钥匙串中（zed.dev）的用户 ID 和访问令牌。",
+  "signIn.user.label": "用户 ID",
+  "signIn.user.empty": "请输入用户 ID",
+  "signIn.token.label": "访问令牌",
+  "signIn.token.hint": "由 Astra 加密保存，之后不再显示。Zed 没有刷新令牌，令牌有效到 Zed 拒绝为止。",
+  "signIn.token.empty": "请输入访问令牌",
+  "signIn.refused": "Zed 拒绝了这个用户 ID 和令牌",
+  "signIn.done": "已添加 {who}",
+  "signIn.save": "添加账号"
+}

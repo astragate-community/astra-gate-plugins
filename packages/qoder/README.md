@@ -1,259 +1,69 @@
-# Qoder plugin for Astra
+# Qoder (Astra v2 plugin)
 
-Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). The same plugins, split into modules (`src/`); the protocol is ported from magpie's internal/qoder and CLIProxyAPI (MIT, see LICENSE-CLIProxyAPI).
+[Qoder](https://qoder.com) and Qoder CN ([qoder.cn](https://qoder.cn)) subscriptions as Astra providers. Plugin id
+`astragate-community.qoder`, provider ids `qoder` and `qoder-cn`. It replaces the v1 package
+`@astragate-community/qoder-auth`. The protocol (endpoints, COSY envelope, device flow) is ported from magpie's
+`internal/qoder`, which ported it from CLIProxyAPI's Qoder support (MIT, see `LICENSE-CLIProxyAPI`). Based on an
+MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).
 
-Install: Astra console → Plugins → add the local path of this directory.
+## Use
 
----
-
-# @astragate-community/qoder-auth
-
-Your [Qoder](https://qoder.com) subscription in OpenCode and
-[magpie](https://usemagpie.ai). The package serves Qoder's two sites, whose
-accounts exist only on their own:
-
-| Provider id | Site | Accounts | Plugin export |
-|---|---|---|---|
-| `qoder` | qoder.com (international) | Google, GitHub or email | `QoderAuthPlugin` |
-| `qoder-cn` | qoder.cn ([Qoder CN](#qoder-cn)) | Alibaba Cloud or phone number | `QoderCNAuthPlugin` |
-
-What follows is about `qoder`. Qoder CN works the same way on its own
-hosts; [its section](#qoder-cn) says what differs.
-
-## Sign-in
-
-**Sign in with Qoder** is the sign-in Qoder's desktop client uses:
-
-1. A PKCE device flow opens qoder.com's account page.
-2. openapi.qoder.sh is polled every 2 s until you authorize, for at most
-   15 minutes.
-3. The device token is traded for a job token, and the account's email and
-   name are read.
-
-What is kept: the job token, its refresh token and expiry, the uid, the
-device token and a machine id made for this sign-in. OpenCode keeps them in
-`auth.json`; magpie keeps them in `plugin-auth.json`.
-
-Refreshing:
-- Qoder spends a refresh token once, so the plugin never sends one twice.
-- magpie renews the job token 10 minutes before it runs out, through the
-  plugin's `auth.refresh`, once for the account and before its requests,
-  models and usage need it; magpie saves the new pair. OpenCode doesn't
-  call that hook: there the job token is refreshed 5 minutes before it runs
-  out, before a request, and the new pair is saved straight away.
-- Only one refresh runs at a time. A request that reads the sign-in before
-  magpie saved a renewal uses the renewed pair, and a renewal handed a pair
-  a request already spent gives what that request got.
-- The device token, which reads usage, has no end on record: it is rotated
-  when Qoder refuses it. On a [Qoder CN](#qoder-cn) device-token account it
-  is the chat token too, and is renewed as above.
-- When Qoder refuses a refresh (401 or 403), the account needs signing in
-  again. Any other failure is tried again later.
+Install the plugin, open the provider's page and press "Add account": the flow opens the site's device page, you authorize
+this device in the browser, and the flow polls Qoder for the device token (in slices of about 40 seconds: press "I have signed
+in" if the wait ends first), trades it for the job token the model calls use and adds the account. Qoder CN, whose CLI never
+makes a job token, chats on the device token when qoder.cn refuses to trade it. Tokens renew themselves (a refresh token is
+spent once, so the new pair is saved at once, under a lock), and a refused chat triggers the plugin's `refresh`.
 
 ## Requests
 
-Qoder serves its models on the API its client talks to:
-`api3.qoder.sh/algo/api/v2/service/pro/sse/agent_chat_generation`. The
-plugin's `fetch` takes the chat completion OpenCode sends and does the rest
-itself.
+`prepare` takes the gateway's chat completion, finds the model in the account's own listing (signed `model/list`, cached while
+the plugin runs, asked again for an unknown model), writes it as Qoder's `agent_chat_generation` body (system text, tools,
+tool results with images, thinking effort fitted to what the model offers, the context window grown only when the
+conversation needs it) and signs it with the COSY envelope: `crypto.aes` (CBC) for the account blob, `crypto.rsa` (PKCS#1
+v1.5, Qoder's embedded key) for the wrapped key, `crypto.digest('md5')` for the signature.
 
-**Writing the request**
+The signature covers the body's bytes, and the host writes the body a plugin returns itself (System.Text.Json's default
+escaping). The plugin therefore signs `hostJson(body)`, a serializer that reproduces that escaping (pinned by a test against
+the host's own output), not `JSON.stringify`.
 
-- It writes the chat completion as Qoder's request:
-  - Qoder's own system line comes before yours.
-  - Messages become text and image blocks.
-  - Tool calls and results become OpenAI tool turns. Images a tool returned
-    follow in a user turn.
-  - Your tools become Qoder's native function tools.
-  - The model's own configuration from Qoder's list goes with it.
-- It picks the reasoning effort from the model's own levels:
-  - The nearest level to the one asked, the higher one on a tie.
-  - The model's default when none is asked.
-  - The lowest level for "none", when the model can't turn thinking off.
-- It picks the context window (`context_length`) from the model's own
-  windows (Qoder's Context setting: 200K, 400K, 1M): the default while the
-  request fits it, else the smallest that holds it, else the largest. A
-  larger window may cost more, so it is asked for only when needed.
-- It encodes the body with the client's codec and signs the call with the
-  client's COSY envelope. The envelope carries:
-  - the account, AES-encrypted, with the key wrapped by Qoder's RSA key;
-  - an MD5 signature;
-  - the machine id and the client's headers.
+## The reply
 
-**Reading the reply**
+Qoder always streams an SSE whose lines are an envelope `{ statusCodeValue, body }`, the body being an OpenAI chunk as a
+string. The provider declares `reply: { framing: "sse", output: "chat" }`: the host frames the SSE and `transformResponse`
+unwraps each envelope into chat chunks. Tool calls Qoder writes as XML or JSON in its text (`<tool_call>…</tool_call>`) are
+lifted out as tool calls (held back across frames until a whole block has come); native `tool_calls` keep Qoder's ids;
+`reasoning_content` is passed on; the usage chunk that follows the finish is carried into the last chunk. A non-streaming
+request gets one gathered `chat.completion`. Failures are read as Qoder's client reads them: an error envelope or a refused
+reply with code 10605/queued is a 503, a quota code a 429, a refused request (406, 416, …) a 400; a bare 401/403 is passed on
+so the host's refresh and failover see it.
 
-- Qoder's SSE comes back as a chat completion, streamed or not, with
-  reasoning and usage.
-- Tool calls Qoder writes as XML or JSON in its text become tool calls.
-  Tool calls it sends the OpenAI way keep Qoder's id.
+## Not carried over from v1, and why
 
-**Errors**
+- **Encoded request bodies.** v1 sent `Encode=1` and a body in Qoder's own codec (a shuffled base64 alphabet), which is not
+  JSON; a v2 `prepare` can only return a JSON body. This plugin leaves `Encode` off and sends the plain JSON, with the
+  signature computed over exactly those bytes. **Whether Qoder's gateway accepts the unencoded form is not verified**: that
+  was never tried against the live service. If it does not, requests fail upstream (a 4xx the gateway shows) and the fix needs
+  a host feature that lets `prepare` return a text body. The model list keeps `Encode=1` as v1 did (its body is empty).
+- **Enterprise VPC sign-in (Qoder CN).** An instance's own hosts (`<name>-openapi.vpc.qoder.com.cn`, …) differ per account and
+  `net:` permissions are fixed origins (one per `{config.x}` setting), so they cannot be reached.
+- **Per-model effort variants.** v1 registered an effort variant for each model; a v2 model record has none. The effort a
+  client asks for (`reasoning_effort`) is still fitted to what the model offers.
+- **Usage and the campaign pages** (`usage` percentages, the claim-a-promotion pages): the host does not call `usage` yet, and
+  the campaign pages were an OpenCode-only fetch interception with no v2 surface.
+- **Price and "free" marks** (`rate`, `rateWas`, `free`) of the model list: v2 model records have no such fields. The reading
+  of them is kept in `src/models.js` (tested), unused by the host for now.
+- **The machine's architecture** in the `Cosy-MachineOS` header: the sandbox knows the platform, not the CPU, so `x86_64` is
+  always named.
+- **The `retryAfter`** of a queued model: only a status and a message reach the gateway, so "try again in Ns" is in the message.
 
-| What Qoder says | What the request returns |
-|---|---|
-| A refused sign-in (no code, or code 105) | 401 |
-| A quota (codes 110, 112–119, 122) | 429 |
-| Busy or queued for the model (code 10605) | 503, with `Retry-After` from Qoder's `retryAfterSeconds` (30s when it gives none); the sign-in is untouched |
-| A refusal of the request itself (codes 406, 416, 430, 80411, 80412, 100400–100403) | 400, with Qoder's words |
-| A failure before the answer starts | Qoder's status |
-| A failure after the answer has started | The stream ends with an error |
+Permissions: `providers`, `ui` (the sign-in flow) and `net:` for `api3.qoder.sh`, `openapi.qoder.sh`, `gateway.qoder.com.cn`
+and `openapi.qoder.com.cn`.
 
-## Models
+## Develop
 
-The `provider.models` hook reads the account's own list, as Qoder's client
-asks for it (`/algo/api/v2/model/list`). It keeps the enabled models of the
-listing's `app` scene, the list Qoder's app shows and the one a request
-names (`session_type: "app"`), and adds any model only the `chat` scene
-still lists after the model it follows there, so a model picked before
-stays served (since 0.2.13, #97: the app listed Fast, 0.8×, where chat
-lists Performance, 1.1×). It leaves out "auto" and "default", which route
-inside Qoder. It takes
-each model's reasoning levels from its `thinking_config`, and its context
-from its `context_config`: the largest window it offers (Qoder's docs
-give Qwen3.8-Flash 200K, 400K and 1M), not `max_input_tokens` (180K
-there), which is only what a request naming no window gets. A model listed
-with no windows keeps `max_input_tokens`.
-
-The `config` hook declares the list as it was on 2026-09-30, with the
-app's Fast from 2026-10-12:
-
-- Ultimate, Fast, Performance, Efficient
-- Sonus, Cantus
-- Qwen3.8-Max, Qwen3.8-Flash, Qwen3.7-Max, Qwen3.7-Plus
-- Kimi-K3, Kimi-K2.8-Preview
-- GLM-5.3, GLM-5.3-Flash
-- DeepSeek-V4-Pro, DeepSeek-Flash
-- MiniMax-M3
-
-Every model speaks chat completions (`@ai-sdk/openai-compatible`).
-
-## Qoder CN
-
-`qoder-cn` is for accounts on [qoder.cn](https://qoder.cn), the China site.
-Those accounts sign in with Alibaba Cloud or a phone number and can't sign
-in through `qoder`. Qoder CN speaks the same protocol as qoder.com:
-
-- the same device flow, poll, job token and refresh paths;
-- the same COSY envelope and body codec;
-- the same model list, chat and usage paths.
-
-Only the hosts and the sign-in's client id differ. The plugin uses the ones
-Qoder CN's own CLI builds in for its `cn` build (`@qodercn-ai/qoderclicn`
-1.1.65):
-
-| | `qoder` | `qoder-cn` |
-|---|---|---|
-| Sign-in page | qoder.com | qoder.cn |
-| Accounts: poll, tokens, user info, usage | openapi.qoder.sh | openapi.qoder.com.cn |
-| Models and chat | api3.qoder.sh | gateway.qoder.com.cn |
-| Device-flow client id | Qoder's desktop client's | Qoder CN's CLI's (production) |
-| `redirect_uri` on the sign-in page | `qoder-app://` | none, as the CLI sends |
-
-Qoder CN's CLI chats with the device token itself and never makes a job
-token. The plugin asks qoder.cn for a job token first, as it does on
-qoder.com. If qoder.cn refuses it (a 4xx), the account works the way the
-CLI does:
-
-- the device token signs the model calls;
-- it is renewed with `/api/v1/deviceToken/refresh`, the chat and account
-  tokens being one pair;
-- a refused renewal (401 or 403) means signing in again.
-
-Until you sign in, the `config` hook declares the tiers Qoder CN's CLI names
-(Ultimate, Performance, Efficient, Lite). Once you are signed in, the
-account's own list from gateway.qoder.com.cn replaces them.
-
-Neither magpie's built-in Qoder CN nor this plugin has been checked against
-every kind of qoder.cn account. If a sign-in or a chat fails, please open
-an issue with the error.
-
-### Enterprise VPC
-
-A Qoder CN enterprise on its own VPC instance signs in with **Sign in with
-Qoder CN Enterprise (VPC)** (since 0.2.8). It asks for the instance: its
-name (`acme`) or one of its addresses (`acme.vpc.qoder.com.cn`,
-`https://acme.vpc.qoder.com.cn`). Only https and hosts under
-`vpc.qoder.com.cn` are taken.
-
-The account then uses the instance's own hosts, as Qoder CN's CLI
-(`@qodercn-ai/qoderclicn` 1.1.64) does once a VPC instance is set. The
-paths, client id and protocol are the public ones:
-
-| | Public Qoder CN | VPC instance `acme` |
-|---|---|---|
-| Sign-in page | qoder.cn | acme.vpc.qoder.com.cn |
-| Accounts: poll, tokens, user info, usage | openapi.qoder.com.cn | acme-openapi.vpc.qoder.com.cn |
-| Models and chat | gateway.qoder.com.cn | acme-gateway.vpc.qoder.com.cn |
-
-- The instance is kept with the account, so its refreshes, models, usage
-  and check-in go to the instance too. An account kept with an instance
-  that isn't one is asked to sign in again; it is never sent to the public
-  hosts.
-- The account is named `<email> (<instance>)`, so it is listed apart from
-  the same person's public account.
-- An enterprise's usage shows as the Enterprise plan.
-- **Sign in with Qoder CN** is unchanged and still the first way. An
-  account signed in without an instance works as before.
-
-The hosts and reply shapes come from a real VPC account's report
-(yetone/magpie#312). This plugin has not been tried with a VPC account.
-
-## Daily check-in
-
-Qoder gives credits for a daily claim (the Qoder client's campaign
-`CLAIM_BENEFIT`, 100 Credits a day as reported), on both sites. magpie can
-claim it for each account when its Qoder check-in switch is on
-(Settings). It asks these pages through this plugin's fetch (since 0.2.7),
-which sends them as the account, on the device token (`Bearer`,
-`Cosy-ClientType: 10`) as usage is read; a refused device token is
-rotated once and the page asked again.
-
-International campaigns also need Qoder's native device identity:
-`Cosy-MachineToken` and `Cosy-MachineType`. Without them, the server can
-return HTTP 200 but omit the daily claim. The plugin reads them from
-Qoder's own `runtime-info` helper for the signed-in uid, sharing an
-in-flight read and caching it in memory for an hour. The same identity
-goes on the list, the claim and a device-token retry; it is not saved in
-the account's credentials.
-
-- Install Qoder desktop, or sign in to Qoder CLI once, to make its native
-  runtime available. The plugin finds the desktop's `resources/umid`
-  (`Qoder.app` on macOS, `%LOCALAPPDATA%\Programs\Qoder` on Windows,
-  `/opt/Qoder` on Linux) or the runtime the CLI caches in `~/.qoder/.bin`
-  (`runtime-info-<platform>-<arch>-*` on macOS and Linux,
-  `umid-win32-x64-*\runtime-info.exe` on Windows; `QODER_CONFIG_DIR`,
-  `QODER_CLI_HOME` and `QODER_CONFIG_DIR_NAME` move it as they move the
-  CLI's folder).
-- For another installation location, set `QODER_RUNTIME_INFO` to the
-  absolute path of Qoder's installed `runtime-info` executable
-  (`runtime-info.exe` on Windows), with its accompanying SDK files.
-- A missing helper or invalid identity is an error, rather than a false
-  "no activity" result. Qoder CN keeps its existing requests and does
-  not need this local helper.
-
-- **List:** `GET <openapi>/sash/api/v1/me/campaigns`: `campaigns[]` with
-  `campaignId`, `actionType`, `claimStatus` (`CLAIMABLE`, `CLAIMED`),
-  `startAt`, `endAt`, `benefit.amount`.
-- **Claim:** `POST <openapi>/sash/api/v1/me/campaigns/{id}/claim`, body
-  `{}`: `status` `CLAIMED` (or under `data`).
-- `<openapi>` is `openapi.qoder.sh` (Qoder) or `openapi.qoder.com.cn`
-  (Qoder CN). Other pages on those hosts are still refused.
-
-Taken from [wallechfox/qoder-checkin](https://github.com/wallechfox/qoder-checkin),
-which a user reports works, and Qoder desktop 0.4.3's campaign requests.
-International campaign discovery was checked with a real account on
-2026-10-08: the native identity exposed the claimable 100 credits, and
-omitting either header hid them. This verification only queried the
-activity; a live claim was not performed.
-
-## Not here
-
-- Qoder's usage and quota display.
-- Several accounts at once.
-- magpie's web-search stand-in.
-
-## Credits
-
-The protocol (endpoints, COSY envelope, body codec and device flow) comes
-from [CLIProxyAPI](https://github.com/ufec/CLIProxyAPI)'s Qoder support, by
-way of magpie. Its MIT license is in `LICENSE-CLIProxyAPI`.
+```sh
+npm install --workspaces=false --no-package-lock   # in this directory
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.qoder-2.1.0.tgz
+```

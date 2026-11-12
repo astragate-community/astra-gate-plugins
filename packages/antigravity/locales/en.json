@@ -1,0 +1,18 @@
+{
+  "signIn.title": "Sign in to Antigravity",
+  "signIn.body": "Sign in with the Google account to use Antigravity with, the way the Antigravity app does.",
+  "signIn.risk.title": "Risk to the account",
+  "signIn.risk.body": "Google may suspend an account it sees used outside Antigravity. Use a Google account you can afford to lose.",
+  "signIn.noClient": "This build carries no Antigravity OAuth client. Set the client ID and secret in the plugin's settings.",
+  "signIn.start": "Open Google sign-in",
+  "signIn.open": "Open the sign-in page again",
+  "signIn.paste.body": "Sign in with Google. The page it ends on will not load: copy its whole address from the browser's address bar and paste it below (or just the code in it).",
+  "signIn.paste.label": "Address the sign-in ended on",
+  "signIn.finish": "Finish sign-in",
+  "signIn.done": "Signed in to Antigravity",
+  "signIn.error.empty": "Paste the address the sign-in ended on.",
+  "signIn.error.notAddress": "That isn't the address the sign-in page came back to.",
+  "signIn.error.google": "Google refused the sign-in: {detail}",
+  "signIn.error.otherSignIn": "That address is from another sign-in; start this one again.",
+  "signIn.error.noCode": "That address holds no code."
+}

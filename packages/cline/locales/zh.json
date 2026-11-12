@@ -1,0 +1,17 @@
+{
+  "signIn.title": "登录 Cline",
+  "signIn.body": "使用 Cline 账号（在浏览器里批准），或 app.cline.bot 设置里的 API Key。",
+  "signIn.browser": "用浏览器登录",
+  "signIn.useKey": "改用 API Key",
+  "signIn.approve": "请在浏览器里批准这次登录，并确认下面的代码与 Cline 页面显示的一致。",
+  "signIn.open": "打开 Cline 的批准页面",
+  "signIn.waiting": "等待批准",
+  "signIn.back": "返回",
+  "signIn.done": "已登录 Cline",
+  "signIn.key.title": "Cline API Key",
+  "signIn.key.label": "API Key",
+  "signIn.key.hint": "由 Astra 加密保存，之后不再显示。",
+  "signIn.key.save": "添加账号",
+  "signIn.key.empty": "请输入 API Key",
+  "signIn.key.account": "Cline API Key"
+}

@@ -1,0 +1,8 @@
+{
+  "title": "回复正文里的思考内容",
+  "description": "有些模型和中转会把模型的思考写进回复的正文。选择是把它去掉，还是把 Chat 回复的思考内容放进正文。",
+  "mode.strip": "去掉正文里的 <think>",
+  "mode.strip.hint": "回复正文开头的 <think>…</think> 块会被去掉，这样 agent 不会把它存进历史、每一轮再发回来。只去掉开头的块；模型在后面写的 <think>（比如代码里的）会保留。被拆在多个流式分片里的标签也能识别。支持 Anthropic、Chat 和 Responses 的回复，流式或完整。",
+  "mode.to_content": "把思考内容放进正文",
+  "mode.to_content.hint": "把 Chat 回复的 reasoning_content（或 reasoning）以 <think>…</think> 的形式放进正文，给只显示正文的客户端用（New API 的 thinking_to_content）。只对 Chat 回复生效：Anthropic 的 thinking 块带签名，变成文本后下一轮会失败。它会改变 agent 保存并回传的内容，所以更适合聊天客户端，不适合编程 agent。"
+}

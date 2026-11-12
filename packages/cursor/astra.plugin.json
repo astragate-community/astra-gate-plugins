@@ -1,0 +1,34 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.cursor",
+  "version": "2.1.0",
+  "name": { "zh": "Cursor", "en": "Cursor" },
+  "description": {
+    "zh": "Cursor 订阅（Pro、Pro+、Ultra、Teams）：登录、对话（agent API）、模型列表与用量。",
+    "en": "Cursor subscriptions (Pro, Pro+, Ultra, Teams): sign-in, chat (agent API), model list and usage."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/cursor",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": ["providers", "storage", "ui", "net:https://api2.cursor.sh", "net:https://cursor.com"],
+  "contributes": {
+    "providers": [
+      {
+        "id": "cursor",
+        "name": { "zh": "Cursor", "en": "Cursor" },
+        "icon": "assets/icon.svg",
+        "protocols": ["chat"],
+        "reply": { "framing": "connect", "output": "chat" },
+        "models": [{ "id": "auto", "name": "Auto", "protocol": "chat", "context": 200000, "vision": true }],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [
+      { "id": "signIn", "view": "signIn", "title": { "zh": "登录 Cursor", "en": "Sign in to Cursor" } }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/cursor-auth" }]
+}

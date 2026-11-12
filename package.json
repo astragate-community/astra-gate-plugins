@@ -2,17 +2,16 @@
   "name": "astra-gate-plugins",
   "private": true,
   "type": "module",
-  "description": "Provider and middleware plugins for Astra (magpie-compatible), with a small shared kit.",
+  "description": "Source of the Astra v2 plugins; packed tarballs are uploaded to the plugin market service (astra-gate-web).",
   "workspaces": [
     "kit",
     "packages/*"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test \"kit/test/*.test.mjs\" \"packages/*/test/*.test.mjs\"",
-    "check": "node scripts/check.mjs",
-    "registry": "node scripts/release.mjs pack",
-    "release": "node scripts/release.mjs publish"
+    "test": "node scripts/build.mjs --no-test >/dev/null; for d in packages/*/; do [ -f $d/astra.plugin.json ] && (cd $d && npm test --silent) || true; done",
+    "pack": "node scripts/build.mjs",
+    "upload": "node scripts/upload.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

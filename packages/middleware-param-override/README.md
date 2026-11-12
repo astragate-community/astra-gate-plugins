@@ -1,12 +1,12 @@
-# @astragate-community/middleware-param-override
+# Param Override (Astra v2 plugin)
 
-New API's **参数覆盖** (a channel's `param_override`) as [magpie](https://usemagpie.ai) gateway middleware. It sets, deletes, moves and rewrites any field of the requests agents send through magpie, whichever provider serves them. The options are New API's JSON as it is, so you can paste a `param_override` from New API unchanged.
+`astragate-community.param-override` — New API's **参数覆盖** (a channel's `param_override`) as an Astra gateway hook. It sets, deletes, moves and rewrites any field of the requests agents send through the gateway, whichever provider serves them. The settings hold New API's JSON as it is, so you can paste a `param_override` from New API unchanged.
 
-Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-param-override`. Then set its options under **Plugins › Installed › Options**, or with `magpie plugin options param-override '<json>'`.
+It replaces the v1 package `@astragate-community/middleware-param-override`; Astra offers the upgrade and carries the old options over as the JSON.
 
-## Options
+## Settings
 
-There are two forms, as in New API:
+Plugins › Param Override › Settings is one JSON editor, saved as you type once the JSON is valid (otherwise the last good version keeps running and the editor says what is wrong). There are two forms, as in New API:
 
 ```json
 { "temperature": 0.2, "max_tokens": 8000 }
@@ -32,34 +32,36 @@ The operations run in order. Keys set beside `operations` are applied first.
 | `path` | A gjson path: `a.b.0`. `messages.-1` counts from the end, `tools.*.name` matches every item, and `\.` is a dot inside a key. |
 | `mode` | `set` (`keep_origin`: only when missing), `delete`, `move` / `copy` (`from`, `to`), `prepend` / `append` (arrays joined, strings joined, objects merged; `keep_origin` keeps keys already there), `trim_prefix`, `trim_suffix`, `ensure_prefix`, `ensure_suffix`, `trim_space`, `to_lower`, `to_upper`, `replace` / `regex_replace` (`from`, `to`; Go's `${1}` works), `return_error`, `prune_objects` |
 | `value` | What to set, join or trim. For `return_error`, a message or `{message, status_code}`; the agent gets the error in its own API's shape. For `prune_objects`, a `type` or `{type, where, conditions, logic, recursive}`. |
-| `conditions` | `[{path, mode, value, invert, pass_missing_key}]`, where `mode` is `full`, `prefix`, `suffix`, `contains`, `gt`, `gte`, `lt` or `lte`. A path is looked up in the body first, then in the request: `model`, `request_path`, `protocol` (`anthropic`, `chat`, `responses`, `gemini`), `agent`, `stream`. |
+| `conditions` | `[{path, mode, value, invert, pass_missing_key}]`, where `mode` is `full`, `prefix`, `suffix`, `contains`, `gt`, `gte`, `lt` or `lte`. A path is looked up in the body first, then in the request: `model`, `request_path`, `protocol` (`anthropic`, `chat`, `responses`, `gemini`), `agent` (the Astra client id, also available as `client`), `stream`. |
 | `logic` | `OR` (New API's default) or `AND`. |
 
-Some of New API's modes have nothing to act on here and are left out: the header modes (`set_header`, `pass_headers`…), `sync_fields`, and conditions on retries, users and groups. The middleware sees only the body.
+Some of New API's modes have nothing to act on here and are left out: the header modes (`set_header`, `pass_headers`…), `sync_fields`, and conditions on retries, users and groups. The hook sees only the body.
 
-Unlike New API, an operation that can't apply is skipped (a `move` from a missing path, `trim_prefix` on a number) and the request goes on. If the middleware itself fails, magpie sends the request as it came.
+Unlike New API, an operation that can't apply is skipped (a `move` from a missing path, `trim_prefix` on a number) and the request goes on. If the hook itself fails, Astra sends the request as it came.
 
 ## Recipes
 
-- Cap `max_tokens` for a provider with a lower limit: the first example above.
+- Cap `max_tokens` for a provider with a lower limit: the first operation above.
 - Drop a parameter a provider refuses: `{"path": "tools.*.input_examples", "mode": "delete"}`.
 - Strip a vendor prefix from model names: `{"path": "model", "mode": "trim_prefix", "value": "openai/"}`.
 - Keep an agent off a model: `return_error` with a `model` condition.
 - Remove old thinking blocks: `{"path": "messages", "mode": "prune_objects", "value": "thinking"}`.
 
-中文：New API 的「参数覆盖」，作为 magpie 网关中间件。配置是 New API 的同一份 JSON，可以原样粘贴过来。
+## Permissions
 
-## Running in Astra and magpie
+`gateway.request:rewrite` (change the request), `gateway.request:reject` (`return_error`), `storage` (the override), `ui` (the settings view). No network.
 
-This package builds to one file, `dist/index.mjs`, which both hosts load as an ES module (Astra evaluates it in
-its Jint-based middleware runner). Keep it loadable there:
+## Development
 
-- It exports only the hooks the middleware uses (`onRequest`); the helper modules under `src/` are bundled into the
-  file, not exported.
-- It imports nothing at run time: no package, no `node:` module, no kit helper that pulls one in. Astra resolves
-  only relative files inside the plugin's folder.
-- `package.json`'s `magpie.middleware` points at `./index.mjs` (upstream's was `./param-override.middleware.js`), the file
-  the build produces; its `magpie.options` example is unchanged.
+```sh
+npm install --workspaces=false --no-package-lock   # SDK is a file: dependency until it is on npm
+npm test                  # vitest, on the SDK harness
+npm run build             # astra-plugin build  -> dist/
+npm run validate          # astra-plugin validate
+npm run pack              # astra-plugin pack dist -> dist/astragate-community.param-override-<version>.tgz (+ sha256 / sha512)
+```
+
+Layout: `astra.plugin.json`, `src/gateway.js` (the hook), `src/{paths,conditions,operations,prune,json}.js` (the New API engine, unchanged from v1), `src/main.js` (settings view, v1 options migration), `src/settings.js`, `locales/{en,zh}.json`, `assets/icon.svg`. `test/engine.test.js` is v1's test suite, ported to vitest.
 
 ---
 

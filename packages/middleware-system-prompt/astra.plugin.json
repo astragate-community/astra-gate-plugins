@@ -1,0 +1,31 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.system-prompt",
+  "version": "2.0.0",
+  "name": { "en": "System Prompt", "zh": "系统提示词" },
+  "description": {
+    "en": "New API's system prompt: add your own to every request, or only some agents' or models', in each API's own place for it.",
+    "zh": "New API 的系统提示词：给每个请求（或指定 agent、模型）加上自己的提示词，放在各 API 自己的位置。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/middleware-system-prompt",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "gateway": "src/gateway.js",
+  "permissions": ["storage", "ui", "gateway.request:rewrite"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "ui.settings": "settings",
+    "gateway.hooks": [
+      {
+        "id": "prompt",
+        "on": ["request"],
+        "view": "raw",
+        "reads": ["settings"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/middleware-system-prompt" }]
+}

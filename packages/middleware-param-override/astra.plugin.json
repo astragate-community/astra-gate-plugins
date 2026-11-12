@@ -1,0 +1,31 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.param-override",
+  "version": "2.0.0",
+  "name": { "en": "Param Override", "zh": "参数覆盖" },
+  "description": {
+    "en": "New API's parameter override: set, delete, move or rewrite fields of every request, by model or by condition.",
+    "zh": "New API 的参数覆盖：按模型或条件设置、删除、移动或改写每个请求的字段。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/middleware-param-override",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "gateway": "src/gateway.js",
+  "permissions": ["storage", "ui", "gateway.request:rewrite", "gateway.request:reject"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "ui.settings": "settings",
+    "gateway.hooks": [
+      {
+        "id": "override",
+        "on": ["request"],
+        "view": "raw",
+        "reads": ["settings"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/middleware-param-override" }]
+}

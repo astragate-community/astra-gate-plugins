@@ -1,0 +1,9 @@
+{
+  "signIn.title": "登录 {site}",
+  "signIn.body": "在浏览器中登录 {site} 并授权此设备，其余由打开的页面完成。",
+  "signIn.start": "使用 {site} 登录",
+  "signIn.open": "重新打开登录页面",
+  "signIn.continue": "我已完成登录",
+  "signIn.waiting": "正在等待浏览器登录…",
+  "signIn.done": "已登录 {site}"
+}

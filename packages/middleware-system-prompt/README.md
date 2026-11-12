@@ -1,6 +1,6 @@
-# @astragate-community/middleware-system-prompt
+# System Prompt (Astra v2 plugin)
 
-New API's **系统提示词** (a channel's `system_prompt` and its override switch) as [magpie](https://usemagpie.ai) gateway middleware. It gives the requests agents send a system prompt of yours, in each API's own place for one:
+`astragate-community.system-prompt` — New API's **系统提示词** (a channel's `system_prompt` and its override switch) as an Astra gateway hook. It gives the requests agents send a system prompt of yours, in each API's own place for one:
 
 | API | Where the prompt goes |
 | --- | --- |
@@ -9,38 +9,36 @@ New API's **系统提示词** (a channel's `system_prompt` and its override swit
 | Responses | `instructions` |
 | Gemini | `systemInstruction` |
 
-Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-system-prompt`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options system-prompt '<json>'`.
+It replaces the v1 package `@astragate-community/middleware-system-prompt`; Astra offers the upgrade and carries the old options over.
 
-## Options
+## Settings
 
-```json
-{ "system_prompt": "Reply in the language the user writes in.",
-  "override": true, "position": "append",
-  "agents": ["claude"], "models": ["deepseek"] }
+Plugins › System Prompt › Settings:
+
+- **Prompt.** A request without a system prompt gets yours. While it is empty nothing is added.
+- **Add it to prompts agents already have** (`override`). Off: a request that has its own prompt keeps it unchanged. On: yours goes in as well, placed by **Where it goes**.
+  - *After the agent's prompt* (the default) keeps the agent's own prompt first, so the provider's prompt cache on it still hits.
+  - *Before the agent's prompt* is New API's way. It makes the provider read the whole prompt again on every turn.
+- **Agents.** When given, the prompt applies only to these Astra client ids (`claude-code`, `codex`, …).
+- **Models.** When given, the prompt applies only to models whose names begin with one of these prefixes.
+
+Codex sends its own model instructions, and changing them can change how its models behave. Use **Agents** to leave Codex out if you don't want that.
+
+## Permissions
+
+`gateway.request:rewrite` (add the prompt), `storage` (the settings), `ui` (the settings view). No network.
+
+## Development
+
+```sh
+npm install --workspaces=false --no-package-lock   # SDK is a file: dependency until it is on npm
+npm test                  # vitest, on the SDK harness
+npm run build             # astra-plugin build  -> dist/
+npm run validate          # astra-plugin validate
+npm run pack              # astra-plugin pack dist -> dist/astragate-community.system-prompt-<version>.tgz (+ sha256 / sha512)
 ```
 
-- **No system prompt yet.** A request without one gets yours.
-- **`override`.** A request that has its own prompt keeps it unchanged, unless `override` is `true`. Then yours goes in as well, placed by `position`:
-  - `"append"` (the default) puts yours after it. Agents cache their own prompt, so adding after it keeps that cache.
-  - `"prepend"` puts yours before it, as New API does. This makes the provider read the whole prompt again on every turn.
-- **`agents`.** When given, the prompt applies only to these agents, by magpie's agent ids: `claude`, `codex`, `opencode`, and so on.
-- **`models`.** When given, the prompt applies only to models whose names begin with one of these prefixes.
-
-Codex sends its own model instructions, and changing them can change how its models behave. Use `agents` to leave Codex out if you don't want that.
-
-中文：New API 的「系统提示词」，作为 magpie 网关中间件。默认把你的提示词加在 agent 自己的提示词之后，这样不会破坏提示缓存。
-
-## Running in Astra and magpie
-
-This package builds to one file, `dist/index.mjs`, which both hosts load as an ES module (Astra evaluates it in
-its Jint-based middleware runner). Keep it loadable there:
-
-- It exports only the hooks the middleware uses (`onRequest`); the helper modules under `src/` are bundled into the
-  file, not exported.
-- It imports nothing at run time: no package, no `node:` module, no kit helper that pulls one in. Astra resolves
-  only relative files inside the plugin's folder.
-- `package.json`'s `magpie.middleware` points at `./index.mjs` (upstream's was `./system-prompt.middleware.js`), the file
-  the build produces; its `magpie.options` example is unchanged.
+Layout: `astra.plugin.json`, `src/gateway.js` (the hook), `src/apis.js` (each API's place for a system prompt, unchanged from v1 apart from the agent filter), `src/main.js` (settings view, v1 options migration), `src/settings.js`, `locales/{en,zh}.json`, `assets/icon.svg`.
 
 ---
 

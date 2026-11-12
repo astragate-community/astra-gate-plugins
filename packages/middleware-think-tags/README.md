@@ -1,39 +1,41 @@
-# @astragate-community/middleware-think-tags
+# Think Tags (Astra v2 plugin)
 
-A model's thinking, where its reply's text is, as [magpie](https://usemagpie.ai) gateway middleware. It either takes thinking out of the text, or puts it in (New API's `thinking_to_content`).
+`astragate-community.think-tags` — a model's thinking, where its reply's text is, as Astra gateway hooks. It either takes thinking out of the text, or puts it in (New API's `thinking_to_content`).
 
-Install it from Astra's plugin market, or with `astra plugin add @astragate-community/middleware-think-tags`. Set its options under **Plugins › Installed › Options**, or with `magpie plugin options think-tags '<json>'`.
+It replaces the v1 package `@astragate-community/middleware-think-tags`; Astra offers the upgrade and carries the old option over.
 
-## Options
+## Settings
 
-```json
-{ "mode": "strip" }
-```
+Plugins › Think Tags › Settings holds one choice, the mode:
 
-**`strip`** (the default). Some models (open reasoning models served by vLLM, Ollama and many relays) write their thinking into the reply as `<think>…</think>`. This mode takes that block out, so an agent doesn't keep it in its history and send it back every turn.
+**Take `<think>` out of the text** (`strip`, the default). Some models (open reasoning models served by vLLM, Ollama and many relays) write their thinking into the reply as `<think>…</think>`. This mode takes that block out, so an agent doesn't keep it in its history and send it back every turn.
 
 - Only a block at the start of the text is taken out. A `<think>` the model writes later, in code for example, stays.
 - A tag split across streamed chunks is still found.
 - It works on Anthropic, Chat and Responses replies, streamed or whole.
 
-**`to_content`**. A Chat reply's `reasoning_content` (or `reasoning`) is put into its text as `<think>…</think>`, for a client that shows only the text.
+**Put reasoning into the text** (`to_content`). A Chat reply's `reasoning_content` (or `reasoning`) is put into its text as `<think>…</think>`, for a client that shows only the text.
 
 - This mode works on Chat replies only. An Anthropic thinking block carries a signature, and turned into text it would fail the next turn.
 - It changes what the agent keeps and sends back, so it suits a chat client better than a coding agent.
 
-中文：`strip` 去掉回复开头模型写出的 `<think>…</think>`；`to_content` 把 Chat 回复的 reasoning_content 放进正文（New API 的 thinking_to_content）。
+Replies to a failed request (status 400 and up) are left alone.
 
-## Running in Astra and magpie
+## Permissions
 
-This package builds to one file, `dist/index.mjs`, which both hosts load as an ES module (Astra evaluates it in
-its Jint-based middleware runner). Keep it loadable there:
+`gateway.response:rewrite` (change the reply), `storage` (the mode), `ui` (the settings view). No network, and the plugin never touches a request.
 
-- It exports only the hooks the middleware uses (`onEvent` and `onResponse`); the helper modules under `src/` are bundled into the
-  file, not exported.
-- It imports nothing at run time: no package, no `node:` module, no kit helper that pulls one in. Astra resolves
-  only relative files inside the plugin's folder.
-- `package.json`'s `magpie.middleware` points at `./index.mjs` (upstream's was `./think-tags.middleware.js`), the file
-  the build produces; its `magpie.options` example is unchanged.
+## Development
+
+```sh
+npm install --workspaces=false --no-package-lock   # SDK is a file: dependency until it is on npm
+npm test                  # vitest, on the SDK harness
+npm run build             # astra-plugin build  -> dist/
+npm run validate          # astra-plugin validate
+npm run pack              # astra-plugin pack dist -> dist/astragate-community.think-tags-<version>.tgz (+ sha256 / sha512)
+```
+
+Layout: `astra.plugin.json`, `src/gateway.js` (the hooks), `src/think.js` / `src/strip.js` / `src/reasoning.js` (the tag matching, streamed and whole, per API — unchanged from v1), `src/main.js` (settings view, v1 options migration), `src/settings.js`, `locales/{en,zh}.json`, `assets/icon.svg`.
 
 ---
 

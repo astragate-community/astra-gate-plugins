@@ -1,0 +1,18 @@
+{
+  "signIn.title": "登录 Antigravity",
+  "signIn.body": "用要拿来使用 Antigravity 的 Google 账号登录，方式与 Antigravity 应用相同。",
+  "signIn.risk.title": "账号风险",
+  "signIn.risk.body": "Google 可能封停在 Antigravity 之外被使用的账号，请使用你承受得起损失的 Google 账号。",
+  "signIn.noClient": "此版本未内置 Antigravity 的 OAuth 客户端，请在插件设置里填写客户端 ID 与密钥。",
+  "signIn.start": "打开 Google 登录",
+  "signIn.open": "重新打开登录页",
+  "signIn.paste.body": "用 Google 登录。登录结束后的页面会打不开：请从浏览器地址栏复制它的完整地址，粘贴到下面（也可以只粘贴其中的 code）。",
+  "signIn.paste.label": "登录结束时的地址",
+  "signIn.finish": "完成登录",
+  "signIn.done": "已登录 Antigravity",
+  "signIn.error.empty": "请粘贴登录结束时的地址。",
+  "signIn.error.notAddress": "这不是登录页返回的地址。",
+  "signIn.error.google": "Google 拒绝了登录：{detail}",
+  "signIn.error.otherSignIn": "这个地址来自另一次登录，请重新开始。",
+  "signIn.error.noCode": "这个地址里没有 code。"
+}

@@ -1,62 +1,18 @@
 {
   "name": "@astragate-community/middleware-param-override",
-  "version": "0.1.3",
-  "description": "New API's param_override (参数覆盖) as magpie gateway middleware: set, delete, move and rewrite any field of what agents send, with conditions",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Astra v2 plugin: New API's param_override (参数覆盖) as a gateway hook with a settings view",
   "type": "module",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "magpie",
-    "magpie-middleware",
-    "new-api",
-    "param-override",
-    "llm-gateway",
-    "astra"
-  ],
   "license": "MIT",
-  "magpie": {
-    "middleware": "./index.mjs",
-    "options": {
-      "operations": [
-        {
-          "path": "max_tokens",
-          "mode": "set",
-          "value": 32000,
-          "conditions": [
-            {
-              "path": "max_tokens",
-              "mode": "gt",
-              "value": 32000
-            }
-          ]
-        },
-        {
-          "path": "temperature",
-          "mode": "delete",
-          "conditions": [
-            {
-              "path": "model",
-              "mode": "contains",
-              "value": "reasoner"
-            }
-          ]
-        }
-      ]
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "pack": "npm run build --silent && astra-plugin pack dist --out ../../out/astragate-community.param-override-2.0.0.tgz",
+    "test": "vitest run"
   },
-  "astra": {
-    "name": "Param Override",
-    "kind": "middleware",
-    "summary": {
-      "en": "New API's parameter override: set, delete, move or rewrite fields of every request, by model or by condition.",
-      "zh": "New API 的参数覆盖：按模型或条件设置、删除、移动或改写每个请求的字段。"
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
-    "directory": "packages/middleware-param-override"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

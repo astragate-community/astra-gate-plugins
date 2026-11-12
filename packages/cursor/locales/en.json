@@ -1,0 +1,17 @@
+{
+  "signIn.title": "Sign in to Cursor",
+  "signIn.body": "Use the browser login cursor-agent does, or a Cursor API key (cursor.com/dashboard → Integrations).",
+  "signIn.browser": "Sign in with the browser",
+  "signIn.key": "Use a Cursor API key",
+  "signIn.waiting": "Waiting for Cursor",
+  "signIn.waiting.body": "Sign in to Cursor in the browser; this finishes by itself. If the page did not open, use the link below.",
+  "signIn.open": "Open the sign-in page",
+  "signIn.polling": "Waiting for the browser sign-in",
+  "signIn.key.title": "Cursor API key",
+  "signIn.key.label": "API key",
+  "signIn.key.hint": "From cursor.com/dashboard → Integrations.",
+  "signIn.key.submit": "Add the key",
+  "signIn.key.empty": "Enter the key",
+  "signIn.back": "Back",
+  "signIn.done": "Cursor account added"
+}

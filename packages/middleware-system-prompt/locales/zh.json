@@ -1,0 +1,18 @@
+{
+  "title": "系统提示词",
+  "description": "给 agent 发出的请求加上你自己的系统提示词，放在各 API 自己的位置：Anthropic 的 system、Chat 的第一条 system 或 developer 消息、Responses 的 instructions、Gemini 的 systemInstruction。提示词为空时什么都不加。",
+  "prompt.label": "提示词",
+  "prompt.hint": "没有系统提示词的请求会得到这一条。",
+  "override.label": "也加到 agent 已有的提示词上",
+  "override.hint": "关闭时，自带系统提示词的请求保持原样。Codex 会发自己的模型指令，改动它们可能改变模型的行为：可以用 agent 过滤把 Codex 排除。",
+  "position.label": "放在哪里",
+  "position.hint": "只在加到已有提示词上时生效。",
+  "position.append": "放在 agent 的提示词之后",
+  "position.prepend": "放在 agent 的提示词之前",
+  "filters.title": "只对部分请求生效",
+  "filters.description": "两项都留空则对所有请求生效。",
+  "agents.label": "Agent",
+  "agents.hint": "Astra 的客户端 id，如 claude-code 或 codex。只有这些 agent 会加上提示词。",
+  "models.label": "模型",
+  "models.hint": "模型名前缀，如 claude 或 deepseek。只有这些模型会加上提示词。"
+}

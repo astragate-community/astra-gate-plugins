@@ -1,0 +1,59 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.antigravity",
+  "version": "2.1.0",
+  "name": { "zh": "Antigravity", "en": "Antigravity" },
+  "description": {
+    "zh": "用自己的 Google 账号使用 Antigravity 的 Claude、Gemini 与 GPT-OSS 模型，并显示各模型族的额度。",
+    "en": "Antigravity's Claude, Gemini and GPT-OSS models on your own Google account, with the quota of each model family."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/antigravity",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": [
+    "providers",
+    "storage",
+    "ui",
+    "net:https://daily-cloudcode-pa.googleapis.com",
+    "net:https://cloudcode-pa.googleapis.com",
+    "net:https://oauth2.googleapis.com",
+    "net:https://www.googleapis.com",
+    "net:https://antigravity-hub-auto-updater-974169037036.us-central1.run.app"
+  ],
+  "contributes": {
+    "configuration": {
+      "properties": {
+        "clientId": { "type": "string", "title": { "zh": "OAuth 客户端 ID", "en": "OAuth client ID" }, "description": { "zh": "留空则使用插件内置的 Antigravity 客户端。", "en": "Leave empty to use the Antigravity client the plugin carries." }, "default": "" },
+        "clientSecret": { "type": "string", "title": { "zh": "OAuth 客户端密钥", "en": "OAuth client secret" }, "description": { "zh": "桌面应用的“密钥”随应用分发，并非机密。留空则使用内置值。", "en": "A desktop app's \"secret\" ships inside the app and is no secret. Leave empty to use the built-in value." }, "default": "" }
+      }
+    },
+    "providers": [
+      {
+        "id": "antigravity",
+        "name": { "zh": "Antigravity", "en": "Antigravity" },
+        "icon": "assets/icon.svg",
+        "protocols": ["gemini"],
+        "reply": { "framing": "sse", "output": "gemini" },
+        "models": [
+          { "id": "gemini-3.8-flash-high", "name": "Gemini 3.8 Flash (High)", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "gemini-pro-agent", "name": "Gemini 3.1 Pro (High)", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "gemini-3-flash", "name": "Gemini 3 Flash", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "claude-opus-5-5-high", "name": "Claude Opus 5.5 (High)", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "claude-sonnet-5-5-high", "name": "Claude Sonnet 5.5 (High)", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "claude-opus-4-6-thinking", "name": "Claude Opus 4.6 (Thinking)", "protocol": "gemini", "reasoning": true, "vision": true },
+          { "id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6", "protocol": "gemini", "vision": true },
+          { "id": "gpt-oss-120b-medium", "name": "GPT-OSS 120B (Medium)", "protocol": "gemini", "reasoning": true }
+        ],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [
+      { "id": "signIn", "view": "signIn", "title": { "zh": "登录 Antigravity", "en": "Sign in to Antigravity" } }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/antigravity-auth" }]
+}

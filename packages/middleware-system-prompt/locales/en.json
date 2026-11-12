@@ -1,0 +1,18 @@
+{
+  "title": "System prompt",
+  "description": "Give the requests agents send a system prompt of yours, in each API's own place for one: Anthropic's system, the first system or developer message of Chat, Responses' instructions, Gemini's systemInstruction. Nothing is added while the prompt is empty.",
+  "prompt.label": "Prompt",
+  "prompt.hint": "A request without a system prompt gets this one.",
+  "override.label": "Add it to prompts agents already have",
+  "override.hint": "Off: a request that has its own system prompt keeps it unchanged. Codex sends its own model instructions, and changing them can change how its models behave: leave Codex out with the agent filter.",
+  "position.label": "Where it goes",
+  "position.hint": "Only when adding to an existing prompt.",
+  "position.append": "After the agent's prompt",
+  "position.prepend": "Before the agent's prompt",
+  "filters.title": "Only for some requests",
+  "filters.description": "Leave both empty to apply to every request.",
+  "agents.label": "Agents",
+  "agents.hint": "Astra client ids, such as claude-code or codex. Only these agents get the prompt.",
+  "models.label": "Models",
+  "models.hint": "Model name prefixes, such as claude or deepseek. Only these models get the prompt."
+}

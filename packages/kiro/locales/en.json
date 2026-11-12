@@ -1,0 +1,23 @@
+{
+  "signIn.title": "Sign in to Kiro",
+  "signIn.body": "Sign in with Kiro's page (Google, GitHub, AWS Builder ID or IAM Identity Center), or save a Kiro API key.",
+  "signIn.browser": "Sign in with Kiro",
+  "signIn.or": "or",
+  "signIn.key.label": "Kiro API key",
+  "signIn.key.hint": "Starts with ksk_",
+  "signIn.key.save": "Save API key",
+  "signIn.key.empty": "Paste a Kiro API key.",
+  "signIn.open": "Open the sign-in page again",
+  "signIn.paste.kiro": "Sign in on Kiro's page. It ends on an address that will not load (localhost:3128): copy its whole address from the browser's address bar and paste it below.",
+  "signIn.paste.aws": "Kiro sent you on to AWS. Sign in there too; it also ends on an address that will not load: copy that whole address and paste it below.",
+  "signIn.paste.label": "Address the sign-in ended on",
+  "signIn.finish": "Finish sign-in",
+  "signIn.done": "Signed in to Kiro",
+  "signIn.error.empty": "Paste the address the sign-in ended on.",
+  "signIn.error.refused": "The sign-in was refused: {detail}",
+  "signIn.error.otherSignIn": "That address is from another sign-in; start this one again.",
+  "signIn.error.noCode": "That address holds no code.",
+  "signIn.error.noIssuer": "Kiro's page didn't say where to sign in at AWS.",
+  "signIn.error.external": "A company's own identity provider can't be signed in to here; use a Kiro API key or another method.",
+  "signIn.error.unknown": "Kiro's page came back with a sign-in this plugin doesn't know ({detail})."
+}

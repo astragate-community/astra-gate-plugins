@@ -3,3 +3,5 @@ packages/*/dist/
 *.tgz
 .env
 out/
+.DS_Store
+packages/*/legacy-v1/dist/

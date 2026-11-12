@@ -1,0 +1,20 @@
+{
+  "signIn.title": "Sign in to Factory",
+  "signIn.body": "Use your Factory (Droid) subscription: confirm a code in the browser, or paste an API key.",
+  "signIn.device": "Sign in with Factory (device code)",
+  "signIn.key": "Use a Factory API key (fk-…)",
+  "signIn.confirm": "Confirm this code on Factory's page; this window continues by itself.",
+  "signIn.open": "Open Factory's page",
+  "signIn.copy": "Copy code",
+  "signIn.waiting": "Waiting for you to confirm the code…",
+  "signIn.cancel": "Cancel",
+  "signIn.back": "Back",
+  "signIn.cancelled": "The sign-in was cancelled",
+  "signIn.expired": "The code expired; start again",
+  "signIn.denied": "The sign-in was declined",
+  "signIn.key.label": "Factory API key",
+  "signIn.key.hint": "Sent as the bearer token with droid's headers and never renewed.",
+  "signIn.key.save": "Save key",
+  "signIn.key.empty": "Enter the key",
+  "signIn.done": "Factory account added"
+}

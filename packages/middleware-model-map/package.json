@@ -1,41 +1,18 @@
 {
   "name": "@astragate-community/middleware-model-map",
-  "version": "0.1.4",
-  "description": "New API's model_mapping (模型重定向) as magpie gateway middleware: send the model an agent asks for as another, and keep the asked name in replies",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Astra v2 plugin: New API's model_mapping (模型重定向) as a gateway hook with a settings view",
   "type": "module",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "magpie",
-    "magpie-middleware",
-    "new-api",
-    "model-mapping",
-    "llm-gateway",
-    "astra"
-  ],
   "license": "MIT",
-  "magpie": {
-    "middleware": "./index.mjs",
-    "options": {
-      "mapping": {
-        "fast": "deepseek-chat",
-        "/^gpt-4o(-.*)?$/": "deepseek-chat"
-      }
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "pack": "npm run build --silent && astra-plugin pack dist --out ../../out/astragate-community.model-map-2.0.0.tgz",
+    "test": "vitest run"
   },
-  "astra": {
-    "name": "Model Map",
-    "kind": "middleware",
-    "summary": {
-      "en": "New API's model redirection: send a model under another name, by name or pattern; replies keep the name asked for.",
-      "zh": "New API 的模型重定向：按名称或正则把模型换成另一个发出，回复里仍是原来的名字。"
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
-    "directory": "packages/middleware-model-map"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

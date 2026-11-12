@@ -1,0 +1,15 @@
+{
+  "signIn.title": "登录 Grok",
+  "signIn.device": "用 xAI 登录（设备码）",
+  "signIn.deviceBody": "打开 xAI 的登录页面并显示一个要在页面上确认的代码，无需安装 Grok Build。",
+  "signIn.start": "开始登录",
+  "signIn.confirm": "在打开的页面上确认这个代码：",
+  "signIn.open": "重新打开登录页面",
+  "signIn.waiting": "等待你在浏览器中确认…",
+  "signIn.continue": "我已确认，继续等待",
+  "signIn.import": "导入 Grok Build 或 CPA 的登录",
+  "signIn.importBody": "粘贴 Grok Build 的 auth.json（或其中一项）或 CPA 的 xAI 账号文件的内容。它的刷新令牌会轮换：导入后请不要再在 Grok Build 或 CPA 里使用该登录，或改用设备码在这里登录。",
+  "signIn.json": "登录 JSON",
+  "signIn.importSave": "导入账号",
+  "signIn.done": "已添加 Grok 账号"
+}

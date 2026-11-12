@@ -1,0 +1,258 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.qoder",
+  "version": "2.1.0",
+  "name": {
+    "zh": "Qoder",
+    "en": "Qoder"
+  },
+  "description": {
+    "zh": "Qoder 订阅（qoder.com 与 Qoder CN）：Qoder 自己的设备登录，COSY 签名，工具调用还原。",
+    "en": "Qoder subscriptions (qoder.com and Qoder CN) with Qoder's own device sign-in, COSY signing and tool calls lifted out of its text."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": {
+    "name": "Astra Gate Community",
+    "url": "https://github.com/astragate-community"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/qoder",
+  "engines": {
+    "astra": ">=0.15.0",
+    "api": "^2.0"
+  },
+  "main": "src/main.js",
+  "permissions": [
+    "providers",
+    "ui",
+    "net:https://api3.qoder.sh",
+    "net:https://openapi.qoder.sh",
+    "net:https://gateway.qoder.com.cn",
+    "net:https://openapi.qoder.com.cn"
+  ],
+  "contributes": {
+    "providers": [
+      {
+        "id": "qoder",
+        "name": {
+          "zh": "Qoder",
+          "en": "Qoder"
+        },
+        "icon": "assets/icon.svg",
+        "protocols": [
+          "chat"
+        ],
+        "models": [
+          {
+            "id": "ultimate",
+            "name": "Ultimate",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "fast",
+            "name": "Fast",
+            "protocol": "chat",
+            "context": 1000000,
+            "vision": true
+          },
+          {
+            "id": "performance",
+            "name": "Performance",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "efficient",
+            "name": "Efficient",
+            "protocol": "chat",
+            "context": 200000,
+            "vision": true
+          },
+          {
+            "id": "smodel",
+            "name": "Sonus",
+            "protocol": "chat",
+            "context": 180000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "cmodel",
+            "name": "Cantus",
+            "protocol": "chat",
+            "context": 180000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "qmodel_38max",
+            "name": "Qwen3.8-Max",
+            "protocol": "chat",
+            "context": 180000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "qfmodel",
+            "name": "Qwen3.8-Flash",
+            "protocol": "chat",
+            "context": 180000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "qmodel_latest",
+            "name": "Qwen3.7-Max",
+            "protocol": "chat",
+            "context": 1000000,
+            "vision": true
+          },
+          {
+            "id": "qmodel",
+            "name": "Qwen3.7-Plus",
+            "protocol": "chat",
+            "context": 1000000,
+            "vision": true
+          },
+          {
+            "id": "kmodel_latest",
+            "name": "Kimi-K3",
+            "protocol": "chat",
+            "context": 180000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "kmodel",
+            "name": "Kimi-K2.8-Preview",
+            "protocol": "chat",
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "gmodel",
+            "name": "GLM-5.3",
+            "protocol": "chat",
+            "context": 180000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "gfmodel",
+            "name": "GLM-5.3-Flash",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "dmodel",
+            "name": "DeepSeek-V4-Pro",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "dfmodel",
+            "name": "DeepSeek-Flash",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "mmodel",
+            "name": "MiniMax-M3",
+            "protocol": "chat",
+            "context": 180000,
+            "vision": true
+          }
+        ],
+        "signIn": {
+          "flow": "signIn"
+        },
+        "reply": {
+          "framing": "sse",
+          "output": "chat"
+        }
+      },
+      {
+        "id": "qoder-cn",
+        "name": {
+          "zh": "Qoder CN",
+          "en": "Qoder CN"
+        },
+        "icon": "assets/icon.svg",
+        "protocols": [
+          "chat"
+        ],
+        "models": [
+          {
+            "id": "ultimate",
+            "name": "Ultimate",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "performance",
+            "name": "Performance",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true,
+            "vision": true
+          },
+          {
+            "id": "efficient",
+            "name": "Efficient",
+            "protocol": "chat",
+            "context": 200000,
+            "vision": true
+          },
+          {
+            "id": "lite",
+            "name": "Lite",
+            "protocol": "chat"
+          }
+        ],
+        "signIn": {
+          "flow": "signInCn"
+        },
+        "reply": {
+          "framing": "sse",
+          "output": "chat"
+        }
+      }
+    ],
+    "ui.flows": [
+      {
+        "id": "signIn",
+        "view": "signIn",
+        "title": {
+          "zh": "登录 Qoder",
+          "en": "Sign in to Qoder"
+        }
+      },
+      {
+        "id": "signInCn",
+        "view": "signInCn",
+        "title": {
+          "zh": "登录 Qoder CN",
+          "en": "Sign in to Qoder CN"
+        }
+      }
+    ]
+  },
+  "replaces": [
+    {
+      "v1": "@astragate-community/qoder-auth"
+    }
+  ]
+}

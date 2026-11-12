@@ -1,302 +1,111 @@
-# @astragate-community/trae-auth
+# Trae (Astra v2 plugin)
 
-Install in Astra: `astra plugin add @astragate-community/trae-auth` (or the console's Plugins page). Based on an
-MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md); same behaviour, restructured into modules.
+Trae CN (trae.cn, ByteDance's AI IDE) and Trae international (trae.ai) as two Astra providers, `trae-cn` and
+`trae-global`. Plugin id `astragate-community.trae`. It replaces the v1 package `@astragate-community/trae-auth`
+(the provider ids are unchanged, so Astra can repoint pools and client bindings on upgrade).
 
-Two providers, one package: **Trae CN** (trae.cn, ByteDance's AI IDE, provider
-id `trae-cn`) and **Trae Global** (trae.ai, the international deployment,
-provider id `trae-global`). Each signs in with its own Trae account, the way
-the IDE does, and makes its model requests. The free tier works as well.
+> **Experimental.** Chat goes through Trae's IDE agent (`/api/agent/v3/llm_utils_chat`) and its own SSE events
+> (`output`, `token_usage`, `done`, ...) are turned into an OpenAI chat reply by the provider's reply transform. The
+> protocol was worked out from two open-source relays and the v1 plugin; it is covered by tests with captured-shape
+> fixtures and has **not been run against a real Trae CN or Trae Global account**.
 
-The two are separate services — different domains, a different client's
-catalog, barely overlapping model lists — so they are two providers rather
-than a setting. They share one implementation: the request, stream and
-tool-call machinery is the same code, and each realm is a table (hosts,
-client, versions, usage page, fallback models, error codes) in `src/sites.mjs`.
-A fix to that machinery reaches both.
+## Chat
 
-| Provider id | Signs in to | Endpoints |
-|---|---|---|
-| `trae-cn` | Trae CN (trae.cn) | `api.trae.cn`, `trae-api-cn.mchost.guru` |
-| `trae-global` | Trae international (trae.ai) | `growsg-normal.trae.ai`, `coresg-normal.trae.ai` (SG) / `coreva-normal.trae.ai` (US) |
+`prepare` renews the token if it is near its end, picks the chat function that lists the model (`chat_v3`, then
+`solo_work_lite`, `solo_agent`, `solo_agent_lite`), puts in the model's `__dev` name, reply limit and, for a `-max`
+model, its `__max` name and window, and sends the conversation as the IDE does: text only, the tools both natively and
+in a system prompt that asks for each call as a `<tool_call>` block, earlier calls and their results as text. The
+conversation's `session_id` is derived from its first user message and the account, so one conversation is counted as
+one by Trae. The manifest's `reply: { framing: "sse", output: "chat" }` and `transformResponse` do the rest: reasoning,
+text, native and text-written tool calls (JSON, GLM and DeepSeek DSML forms, repaired when slightly broken), token counts
+and the finish reason, as chunks for a stream or one body for a non-streaming request. An error event or refusal becomes
+a status (401 sign-in lapsed, so the host asks the plugin's renewal; 429 allowance spent; otherwise 502 / Trae's own).
 
-> **Experimental (both).** The CN protocol was worked out from two
-> open-source relays, [wangqi233/trae2api](https://github.com/wangqi233/trae2api)
-> and [autumnsentiment/Trae2api-cn](https://github.com/autumnsentiment/Trae2api-cn),
-> and the international one from the same relays' realm table. Neither has
-> been run against a real account here: Trae CN has not been tried at all, and
-> Trae Global has been tried on one Free account in the SG region only — no
-> Pro and no US account. Paid-account behaviour (which models a plan lists,
-> what its allowance shows) is implemented from the interface's shape, not
-> confirmed on a live one. If something fails, open an issue and include the
-> error magpie shows.
+Differences from v1: v1 retried a model through the other chat functions inside one request when Trae said the function
+does not take it; v2 remembers the refusal and the next request (the host's failover retry) asks another function. A
+mid-stream error ends the connection with an error instead of an error chunk and `[DONE]`. The request's tool names (to
+write a call's name as the request spells it) reach the reply only through a per-account-and-model memory, because the
+reply transform sees the reply, not the request.
 
-## Sign-in
+## Sign in
 
-One way per provider, **Trae CN account (browser)** or **Trae Global account
-(browser)**. The plugin opens that realm's authorization page
-(`www.trae.cn/authorization` or `www.trae.ai/authorization`, the IDE's client
-`ono9krqynydwx5`). Sign in there and allow the sign-in; the page then sends the
-browser back to a callback on `http://127.0.0.1:<port>/authorize` — it accepts
-no other kind of callback. The callback carries the account's Cloud-IDE-JWT,
-refresh token and account. Nothing needs pasting back.
+Provider page, "Add account". The flow has two steps:
 
-An account of one realm does not sign in to the other: trae.cn's accounts are
-not trae.ai's.
+1. Press the button: the realm's authorization page (`www.trae.cn/authorization` or `www.trae.ai/authorization`, the
+   IDE's own client) opens. Sign in and allow it. The v1 plugin also offered Trae's enterprise (SaaS / SSO) sign-in on that page; so does this one.
+2. The page then sends the browser to `http://127.0.0.1:58472/authorize?...`. A plugin cannot listen on a port, so that
+   page fails to load; that is expected. Copy the whole address from the address bar and paste it into the form. It
+   carries the account's Cloud-IDE-JWT and refresh token, so treat it like a password.
 
-At sign-in the plugin creates the account's device and names it to the
-authorization page: `device_id` (19 digits) and `machine_id` (32 hex). Every
-request then sends that same device. The relays saw requests dropped when the
-device was new each time.
+At sign-in the plugin creates the account's device (`device_id`, 19 digits, and `machine_id`, 32 hex), names it to the
+authorization page and sends the same one with every request. The sign-in is kept in the plugin's secrets
+(`auth:<provider>:<account key>`), never on the account row.
 
-### Enterprise (SaaS) accounts
+An account of one realm does not sign in to the other.
 
-Since 0.2.10 the authorization page also offers Trae's enterprise (SaaS / SSO)
-sign-in; before, the plugin asked the page to hide it (`hide_saas_login`), so
-an enterprise subscription could only sign in as a personal account. A host
-the sign-in names for the account is kept when it is an https host on Trae's
-own domains (`trae.cn`, `trae.ai`, `mchost.guru`): a model host other than the
-consumer site's own (`www`, `api`, `grow…`) takes the account's model
-requests, and a token host the callback names (`authHost`) takes its
-renewals. Any other host is ignored and the consumer hosts are used, as for a
-personal account, which is unchanged. The account's tenant and login-type
-fields are kept with the sign-in; nothing sends them.
+## Models
 
-**Not tried with a real enterprise account.** Which hosts and fields an
-enterprise sign-in sends back is not known yet; if yours doesn't work, open an
-issue with what the sign-in page showed.
-
-### The international realm's region
-
-Trae Global has two deployments. The sign-in's `AIRegion` (or a US auth host
-such as `api-us-east.trae.ai`) selects the US one; anything else uses the SG
-one. The US account's model requests go to `coreva-normal.trae.ai` and its
-usage page to `api-us-east.trae.ai`; the SG account uses
-`coresg-normal.trae.ai` and `api-sg-central.trae.ai`. Nothing has to be
-configured: the region rides in the saved sign-in.
-
-## Requests
-
-Chat completions (`@ai-sdk/openai-compatible`) are translated for the IDE
-agent's `POST https://trae-api-cn.mchost.guru/api/agent/v3/llm_utils_chat`:
-
-- **Request:**
-  - The messages go as `{role, content: [{type: "text", text}]}`.
-  - The model goes as `config_name` and `model`, and as `model_name` the
-    `__dev` model the function's list names for it, when it names one.
-  - The function is the one whose model list has the model, the first that
-    names a `__dev` model for it (in the order `chat_v3`, the classic IDE's;
-    `solo_work_lite`, SOLO's Work mode; `solo_agent`, the TRAE agent's;
-    `solo_agent_lite`). If Trae answers 4001, 4023 or 1005, the plugin tries
-    the others once and remembers which one worked.
-  - `session_id` is the conversation's, as the IDE keeps one per conversation:
-    the session magpie (or OpenCode) names the request by, else the chat's
-    first user message, which every later turn repeats, together with the
-    account the request is made as. Trae counts a conversation by it, so a
-    fresh one per request made one user send that takes several steps (a tool
-    result sent back, a retry, another function answering) count as a
-    conversation of its own — several rows in the usage detail, each under no
-    title. One conversation answered by two accounts (magpie failing over, or
-    rotating, inside it) is named twice then, as two conversations, so Trae
-    never reads one account's conversation as another's; that costs the two
-    halves of such a conversation their single row. `request_id` is the
-    request's own, fresh on every one.
-- **Headers:** TRAE SOLO CN 0.1.69's (`x-ide-version`/`x-app-version`
-  0.1.69, version code 20260917; Trae offers a model only to clients new
-  enough for it): `Authorization: Cloud-IDE-JWT …`, `X-Cloudide-Token`,
-  `x-app-id`, the device headers and `x-uid`.
-- **Answer:** Trae always answers in its own SSE events:
-  - `output` gives `response`/`content` and `reasoning_content`/`reasoning`.
-    Text under `message`, `delta` or an event with no name is the answer's
-    too.
-  - `token_usage`, `done` and `error` mark usage, the end and failures.
-    `done`'s `finish_reason` `length`/`max_tokens` is OpenAI's `length`.
-  - Queue events are ignored.
-  - A `{"reasoning_content": …}` object written into the text is reasoning,
-    and reasoning Trae sends again is sent once.
-
-  The plugin turns these into an OpenAI stream or a single body. A reply
-  that fails (an `error` event, or Trae's stream breaking off) ends with the
-  error and `[DONE]`, with no finish.
-- **Tools:**
-  - Trae's chat has no turn for a tool call or its result, so the tools are
-    named twice:
-    - natively in `tools`, with `parameters` as a JSON string;
-    - in a system prompt that asks for each call as a
-      `<tool_call>{"name", "arguments"}</tool_call>` block.
-  - GLM also writes its own template, `<tool_call>name<arg_key>k</arg_key>
-    <arg_value>v</arg_value></tool_call>` (a string kept as written, other
-    types read as JSON), and sometimes a whole call into a native call's
-    name; both are read as the call.
-  - A block is read as models get it wrong too: every quote escaped
-    (`{\"name\":…}`), quotes or backslashes in a string left unescaped, an
-    opener with the name as an attribute (`<tool_call name="bash">` with
-    `<parameter name="k">v</parameter>`), or JSON that is whole when the
-    stream ends without `</tool_call>`. A block that still can't be read,
-    or is cut short, is never sent on as the answer: the reply ends with an
-    error (a 502 without a stream), so the gateway can try again
-    (community plugins issue #38). A `<tool_call>` in backticks or a code fence is text.
-  - Calls from either source become OpenAI `tool_calls`. A name matching a
-    requested tool but for case or punctuation (`Read`) goes on as the
-    request's (`read`); any other goes on as written, so the agent can say
-    the tool doesn't exist.
-  - Earlier calls and their results go back in as text.
-  - Images aren't sent.
-
-The model list is the account's own, from
-`/api/ide/v1/batch_get_detail_param`, every function's list in one ask, as
-TRAE SOLO CN asks it (`/api/ide/v1/get_detail_param`, one function at a
-time, when the batch gives none). The lists are put together: SOLO and the
-TRAE agent list models `chat_v3` doesn't (deepseek-v4.1-flash is the TRAE
-agent's, `solo_agent`). Left out are the IDE's helpers (`usage` other than
-`chat_completion`: summary, fast_apply…), configs switched off and the
-custom-model slots. Context is the list's `context_window_tokens.dev`,
-output the `__dev` model's `max_tokens`. A model with a `__max` model and
-a bigger `context_window_tokens.max` is listed again as its Max,
-`<id>-max` ("… (Max)"), with that window and the `__max` model's
-`max_tokens`; the two can come from different functions' lists (chat_v3
-can name the `__max` model, a SOLO list the windows). It asks the
-`__max` model through the function that names it, with `max_tokens` set
-and `user_message_context.model_info.prompt_max_tokens` the window less
-it, as Max mode does. The lists needn't agree on a model's *name*: chat_v3
-calls deepseek-v4.1-flash "DeepSeek-V4-Flash 正式版", as it once called
-DeepSeek-V4-Flash-Official, where the SOLO lists call it
-"DeepSeek-V4.1-Flash" (yetone/magpie#681). Trae's usage page books a
-request under the name of the list it was served through, so the plugin
-takes the name most of a model's lists give — the one Trae's own client is
-served under — and asks that model, and its Max, through a list carrying
-it. Trae renamed its official entries on 2026-10-09, leaving the name its
-lists mostly agree on the only thing that tells a misnamed entry apart.
-
-Reasoning: the models reason, but Trae's request takes no effort or
-thinking level, so the plugin lists no variants and a level an agent
-picks does nothing. Every model it lists says so in its `capabilities`
-(`reasoning: true`, with `toolcall`, `temperature`, `attachment`, the
-input and output modalities and an empty `variants`), the fallback
-list's own capabilities kept where it has an entry: magpie reads
-`capabilities.reasoning` alone for a model a plugin lists, and a model
-without it is shown as one that doesn't reason (0.2.4).
-
-When no
-list can be read, the plugin uses the realm's own fallback list. Trae CN's
-`chat_v3` is known to serve GLM-5.2, GLM-5, Kimi K2.6, Qwen 3.7 Plus,
-DeepSeek V4 Pro and DeepSeek V4 Flash; Trae Global's serves GPT-5.4,
-Gemini 3 Flash, Kimi K2.5, MiniMax M2 and DeepSeek V3.2. The live list
-replaces either.
+The account's own list, from `/api/ide/v1/batch_get_detail_param` (every chat function's list in one ask) or, when that
+gives none, `get_detail_param` per function. The lists are merged: SOLO and the TRAE agent list models `chat_v3`
+doesn't, a model several functions list takes the entry that names a `__dev` model and the name most lists agree on,
+helpers (`usage` other than `chat_completion`), switched-off configs and custom-model slots are left out, and Trae
+Global's picker-hidden entries too. Context is `context_window_tokens.dev`, output the `__dev` model's `max_tokens`; a
+model with a bigger Max window is listed again as `<id>-max`. Without a readable list the realm's fallback list is used
+(the manifest's models are the same list).
 
 ## Renewal
 
-Trae CN (since 0.2.3) renews the JWT as its clients do, bound to the
-account's device:
-
-- **Where:** `POST api.trae.cn/trae/api/v3/oauth/ExchangeToken`, with the
-  refresh token, the device (`DeviceInfo`: its id, machine id and public
-  key) and a `DeviceProof`.
-- **The device key:** an ECDSA P-256 key pair made for each account at
-  sign-in (or at the first renewal of one signed in before 0.2.3), kept
-  with the sign-in.
-- **The proof:** the key's ECDSA-SHA256 signature (base64) of
-  `POST\n/trae/api/v3/oauth/ExchangeToken\n{ClientID}\n{RefreshToken}\n{Timestamp}\n{Nonce}`.
-- **As whom:** TRAE SOLO CN (`en1oxy7wnw8j9n`, `SOLO_PC`) first, then
-  Trae CN's IDE (`ono9krqynydwx5`, `IDE_PC`).
-- **The refresh token:** kept; this renewal doesn't spend it.
-
-A token the sign-in page gives is renewed this way at once. When Trae
-turns the device-bound renewal away, the plugin renews as before 0.2.3.
-
-Trae Global, and Trae CN as a fallback, renew at the realm's auth host's
-`/cloudide/api/v3/trae/oauth/ExchangeToken` (`api.trae.cn`,
-`growsg-normal.trae.ai`). There Trae issues a new refresh token each time
-and spends the old one, so only one renewal runs at a time.
-
-magpie renews the JWT ten minutes before it ends (`refreshLead`) through
-`auth.refresh`. Each request also checks it, two minutes before the end, for
-OpenCode.
-
-The account is marked for a new sign-in in these cases:
-
-- the refresh token is turned away;
-- a request is answered 401, or with a code that means the sign-in lapsed:
-  1001 for both realms, and 20101 for Trae Global.
-
-Trae signs other clients out of an account when its token is renewed. The
-IDE may therefore ask you to sign in again after magpie renews.
-
-## Errors
-
-| Trae's answer | What the agent gets |
-| --- | --- |
-| 401 / code 1001 (both), 20101 (Global) | 401, and the account is marked for a new sign-in |
-| code 4008 / 1005 (quota, plan; both), 4011 (Global) | 429 |
-| Anything else | Trae's message and code, as a 502 or Trae's own status |
+The JWT is renewed two minutes before its end, and after an upstream 401/403, at the realm's auth host
+(`api.trae.cn`, `growsg-normal.trae.ai`) `/cloudide/api/v3/trae/oauth/ExchangeToken`. Trae issues a new refresh token
+each time and spends the old one, so only one renewal runs at a time per refresh token and the new pair is stored at
+once. A refused refresh token marks the account for a new sign-in; so does a 401 or code 1001 (both realms) / 20101
+(Global) from a model list or usage call.
 
 ## Usage
 
-magpie's usage card shows the account's plan and allowance, from whichever
-page the realm bills on:
+The account card shows the plan and allowance: Trae CN's credits page (`api.trae.cn/trae/api/v2/pay/ide_user_ent_usage`,
+one Credits window) or Trae Global's dollar billing (`user_current_entitlement_list` on `api-sg-central.trae.ai`, or
+`api-us-east.trae.ai` for a US account, one Dollar Usage window). The international realm's SG / US region comes from
+the sign-in (`AIRegion`, or a US host it names).
 
-**Trae CN** — the credits page:
+## Daily check-in (Trae CN only)
 
-- **Source:** `api.trae.cn/trae/api/v2/pay/ide_user_ent_usage`.
-- **What it adds up:** each entitlement pack's `credits_limit` (-1 means
-  unlimited) and what the pack has used.
-- **What it shows:** one Credits window: the credits used of the packs'
-  total, with the share, which magpie shows as used or left like
-  WorkBuddy's.
+Setting "Daily check-in (Trae CN)", off by default. A job runs every six hours and, once a day (Beijing time) for each
+signed-in account, asks `/trae/api/v2/ug/checkin_credits/status` and claims when it is on and today's is not in, with
+the headers Trae CN's IDE sends a growth page and a client's User-Agent. Code 9095 means this device checked in today.
+Trae CN answered a token that is not bound to its device with 9074 (too many users): see the porting notes below.
 
-**Trae Global** — the dollar billing's entitlements:
+## Not carried over from v1
 
-- **Source:** `POST api-sg-central.trae.ai/trae/api/v1/pay/user_current_entitlement_list`
-  (a US account asks `api-us-east.trae.ai`).
-- **What it adds up:** the pack's allowance in dollars
-  (`basic_usage_limit` plus `bonus_usage_limit`) and what was used of each
-  (`basic_usage_amount`, `bonus_usage_amount`).
-- **What it shows:** one Dollar Usage window, the dollars used of the
-  allowance, resetting when the pack ends.
+- **Device-bound renewal.** v1 renewed a CN token bound to the account's device with an ECDSA P-256 `DeviceProof`. The
+  sandbox can sign (`crypto.sign`) but cannot generate a key pair or derive the public half from a private key, and the
+  device key was made locally at sign-in, so only the `/cloudide/` renewal is used (which v1 also fell back to). That
+  token carries no device, so the daily check-in may answer 9074.
+- **Local callback listener.** The pasted address replaces it (above).
+- **Enterprise hosts.** A tenant's own model or token host (a `trae.cn` / `trae.ai` / `mchost.guru` host the sign-in
+  names) cannot be reached, since a v2 plugin may call only the origins its manifest lists; such an account uses the
+  consumer hosts.
+- **Session header and `config` hook** (the session id is derived from the conversation instead).
 
-A 200 carrying an error code is shown as Trae's own message rather than as
-an empty answer.
+## Permissions
 
-## Daily check-in
+`providers`, `storage` (the check-in day), `secrets` (the sign-ins), `ui` (the sign-in flow), `jobs` (the check-in) and
+`net:` for `api.trae.cn`, `trae-api-cn.mchost.guru`, `growsg-normal.trae.ai`, `coresg-normal.trae.ai`,
+`coreva-normal.trae.ai`, `api-sg-central.trae.ai` and `api-us-east.trae.ai`. The authorization pages are opened in the
+browser, not fetched.
 
-Trae CN gives credits for a daily check-in (每日签到); Trae Global has no
-such page, so this is CN only. magpie can press it
-once a day for each account (Settings, or the switch on the usage card).
-It asks Trae CN's own pages through
-this plugin's fetch, which sends them as the account, as Trae CN's IDE
-(3.3.104) sends them: its Cloud-IDE-JWT (renewed first when near its
-end), its device (`x-device-id`, `x-device-brand`, `x-device-type`,
-`x-os-version`, `x-app-version`) and a client's User-Agent (TRAE SOLO
-CN's Electron shell). Since 0.2.1: Bun's own User-Agent and the chat's
-headers got 9074 「当前参与用户太多，请稍后再试」 every time
-(yetone/magpie#808). Since 0.2.3 the JWT is also bound to the device (see
-Renewal): a JWT renewed at `/cloudide/…` carries no device, and the claim
-answered it 9074 even with the client's headers.
+## Develop
 
-- **Status:** `POST api.trae.cn/trae/api/v2/ug/checkin_credits/status`,
-  body `{"req_source":1}` (magpie's `{}` is sent as that): `enable`,
-  `checked_in`, `credits`.
-- **Claim:** `POST api.trae.cn/trae/api/v2/ug/checkin_credits/claim`,
-  the same, only while it is on and today's isn't in.
-- **What comes back:** Trae's answer as it is. A 401 or code 1001 marks
-  the account for a new sign-in. Code 9095 means this device has checked
-  in today; nothing sends another device id to get round it, nor to get
-  round a 9074.
+```sh
+npm install --workspaces=false --no-package-lock   # SDK is a file: dependency
+npm test
+npm run build && npm run validate
+npm run pack   # writes ../../out/astragate-community.trae-2.1.0.tgz
+```
 
-Only `api.trae.cn`'s `/trae/api/` pages are sent this way; any other URL
-that isn't a chat request is still refused (400). Needs 0.1.4 or later.
+Layout: `src/main.js` (providers, sign-in views, check-in job), `sites.js` (the realms' tables), `values.js` /
+`errors.js`, `api.js` (the IDE's headers, renewal, model lists), `session.js` (the stored sign-in, device, renewal),
+`signin.js`, `models.js`, `usage.js`, `checkin.js`, and the chat: `request.js` (the IDE agent's body), `reply.js` + `parts.js`
+(the reply transform), `tools.js`, `text-tools.js`, `call-syntax.js`, `json-repair.js`, `native-calls.js` (tool calls); `locales/{en,zh}.json`; `assets/icon.svg`.
 
-## Layout
-
-`src/index.mjs` only exports the two plugins (`TraeCNAuthPlugin`, `TraeGlobalAuthPlugin`); the rest is split by what
-changes together:
-
-| module | holds |
-| --- | --- |
-| `constants`, `sites` | timings, tool-call tags, model defaults; each realm's table and the hosts a sign-in may name |
-| `values`, `errors`, `device` | loose values (expiry times, JWT exp), Trae's error shapes and refusals, the device and its key |
-| `api`, `session`, `signin` | the IDE's headers, the two token renewals and the model lists; the sign-in as kept and its renewal; the browser sign-in |
-| `request`, `tools` | the llm_utils_chat body and session id; the tools told to the model |
-| `json-repair`, `call-syntax`, `text-tools`, `native-calls` | reading a tool call a model wrote as text, or Trae streamed natively |
-| `sse`, `parts`, `reply` | the SSE events, what they make up, the OpenAI answer |
-| `models`, `usage`, `checkin`, `chat`, `plugin` | the model lists, the allowance card, Trae CN's own pages, the chat through the chat functions, the hook object |
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

@@ -1,106 +1,59 @@
-# Command Code plugin for Astra
+# Command Code Plan (Astra v2 plugin)
 
-Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md); same behaviour, split into modules.
+Command Code's plans (commandcode.ai) as an Astra provider. Plugin id `astragate-community.commandcode`, provider id
+`commandcode-plan`. It replaces the v1 package `@astragate-community/commandcode-auth`.
 
-Signs in to a [Command Code](https://commandcode.ai) plan (Pro, GOAT, Max,
-Ultra, Go, Teams Pro) and makes its requests, in OpenCode and in magpie.
-Provider id: `commandcode-plan`.
+## Use
 
-## Signing in
+Install the plugin, open the provider's page and press "Add account". Create an API key at
+commandcode.ai/settings/keys and paste it into the flow. The key is checked with `whoami`, its plan is read from
+billing, and the account is named after the key's user. A key does not expire.
 
-An account is a Command Code API key. There are three ways to get one:
+## Models and requests
 
-- **Command Code (browser)**: the CLI's own sign-in. Studio asks you to
-  approve a key for this machine, then posts it to a callback on
-  `127.0.0.1`. The plugin checks the key with `/alpha/whoami` and reads the
-  plan.
-- **Command Code CLI's sign-in**: takes the account `commandcode login`
-  signed in to, from `~/.commandcode/auth.json`. The file is only read,
-  never changed.
-- **API key**: paste a key from
-  [commandcode.ai/settings/keys](https://commandcode.ai/settings/keys).
+Two providers. **Command Code Plan** (`commandcode-plan`) serves plans from Provider up on the Provider API
+(`https://api.commandcode.ai/provider/v1`): chat completions, Responses and Anthropic Messages, with the key in
+`Authorization` and `x-api-key`; replies pass straight through. `models()` reads the account's list, puts each model on the
+API it is served on (Claude on Messages, the open ones on chat completions, some on Responses alone), and cuts it by what the
+plan refuses (the CLI's own plan table, 1.79.2), unless the account has credits beyond its plan's. The built-in list stands in
+when the live list fails. The plan is kept in plugin storage because billing's subscription read takes 15 to 20 seconds.
 
-The key is kept where OpenCode keeps sign-ins (`auth.json`; in magpie,
-`plugin-auth.json`) as `{ "type": "api", "key", "metadata": { "email": <user>, "plan" } }`.
-Keys don't expire, so there is nothing to refresh.
+**Command Code Go Plan** (`commandcode-go`) serves the Go plan, whose key has no Provider API: `prepare` writes the chat
+completion in the CLI's own format (`config` + `params`, tool calls and results as AI SDK parts, reasoning effort fitted to the
+model's levels, always streaming) and sends it to `/alpha/generate`; the manifest's `reply: { framing: "ndjson", output: "chat" }`
+has the host cut the answer (a JSON object a line: `text-delta`, `reasoning-delta`, `tool-call`, `finish` ...) into lines and
+`transformResponse` (`src/reply.js`) writes chat completion chunks, or one whole `chat.completion` for a caller that did not ask
+for a stream. As in v1 a reply that fails straight away keeps its status, a stream cut short after it said something ends with a
+note and a finish, and Command Code's refusals are re-mapped (`MODEL_NOT_IN_PLAN` is a 403, credits a 402, window limits a 429).
+Go models are the Provider API's list asked without a key, less what Go is refused, with the CLI's table filling in levels,
+pictures and windows (the table stands in when the list fails). The sign-in flow decides by the key's plan which provider the
+account joins; a Go key the plan was not known for and the Provider API turns away is added to the Go provider by `refresh`.
 
-## Requests
+`usage()` returns the plan, the 5-hour and weekly windows and the credits pool as
+`{ plan, until, renew, windows: [{ name, used, span?, resetsAt?, display? }], balance?, error? }`.
 
-- **Every plan but Go** uses the Provider API at
-  `https://api.commandcode.ai/provider/v1`. Every request carries the key
-  as both `Authorization: Bearer` and `x-api-key`.
-  - Claude models speak Anthropic's Messages API.
-  - The other models speak chat completions.
-- **Go** has no Provider API access. Its key is only accepted where the CLI
-  asks, `POST /alpha/generate`, in the CLI's own format (command-code
-  1.72.2 and its headers). The plugin's `fetch` handles this:
-  - It turns OpenCode's chat completion into that format.
-  - It turns the line-by-line reply back into a chat completion, streamed
-    or not.
-  - Failures keep their statuses: a model the plan lacks is a 403, running
-    out of credits is a 402, and a usage-window limit is a 429.
-  - A reply that stops before its finish line is a 502, unless it was
-    streamed and had already said something. Then it ends cut short, with
-    a note saying so, and `[DONE]` (#91).
+## Not carried over from v1
 
-The plan is read from `/alpha/billing/subscriptions`. It is cached for 10
-minutes; after a failed read, the plugin tries again after 1 minute.
-When the plan isn't known yet and the Provider API refuses the key with
-"Your Go plan doesn't include API access", the key is taken as Go's from
-then on (and saved so with it), and a chat completion is sent again to
-`/alpha/generate`.
+- **Browser sign-in and "use the CLI's sign-in"**: both need a loopback listener or a local file read, which v2 plugins
+  do not have. Paste the key instead.
+- **Reasoning-effort variants** (`low`/`high`/`max` per model): a v2 model record only says whether it reasons. The Go
+  request still honours `reasoning_effort` when the client sends it.
+- **Refusal re-mapping on the Provider API provider**: its replies pass straight through, and a `reply` block would force every
+  reply (non-streaming JSON ones too) through one framing; the gateway sees Command Code's own status and body there.
+- **The agent's working folder** for the Go request: v1 took it from magpie's `x-magpie-work-dir` / `x-magpie-work-git`
+  headers (kept, if the client sends them); without them the folder is `~` (a plugin cannot read the user's home).
+- A Go account is a Go-provider account: upgrading the plan means adding the key again on the Provider API provider.
+- Not live-verified: the tests use fixtures shaped like the CLI's stream, not a captured session.
 
-## Models
+Permissions: `providers`, `storage` (the plan per account), `ui` (the sign-in flow) and `net:` for `api.commandcode.ai`.
 
-The `config` hook declares the default list:
+## Develop
 
-| Model | Context window |
-|---|---|
-| Claude Sonnet 5 | 1M |
-| Claude Opus 5.5 | 1M |
-| GPT-6 Sol | 1.05M |
-| DeepSeek V4 Pro | 1M |
-| DeepSeek V4 Flash | 1M |
-| Kimi K3 | 1M |
-| GLM-5.3 | 1M |
-| MiniMax M3 | 1M |
+```sh
+npm install --workspaces=false --no-package-lock   # the SDK is a file: dependency
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.commandcode-2.1.0.tgz
+```
 
-Once signed in, the `provider.models` hook replaces the default list with
-the account's own:
-
-Command Code's `/models` list is the same for every plan. A plan's list is
-that list less the models the plan may not use, as the CLI's own table
-(command-code 1.79.2) has it:
-
-- **Go** and **GOAT** may not use the premium models (Claude Sonnet 5 and
-  Opus, GPT-6 Sol, GPT-5.6 Terra, …). Go is also blocked from GOAT's own
-  (Claude Sonnet 5.5 and Haiku 5.5, GPT-5.6 Sol, Grok 4.6 and 4.7, …).
-- **Pro** may not use Claude Opus and Fable, GPT-6 Astra, GPT-6.1 Sol and
-  Fugu Ultra; **Provider** may not use GPT-6.1 Sol.
-- **Max**, **Ultra** and **Teams Pro** may use every model.
-
-An account with bought or free credits may use every model, and so may one
-whose plan can't be read: then the whole list is shown. A model the plan
-doesn't have is still refused by Command Code (403 `MODEL_NOT_IN_PLAN`), and
-that refusal reaches the agent.
-
-- **Every plan but Go**: the Provider API's `/models` list. Each model's
-  `supported_endpoints` picks the API it speaks.
-- **Go**: the same `/models` list, asked without the key (it answers
-  without one, and Go's key has no Provider API). That is 56 models as of
-  2026-10-13. When the list can't be had, the CLI's own Go table (57
-  models) stands in.
-
-  The Go models carry their reasoning levels, and a requested level is
-  fitted to the nearest one the model has.
-
-The `/models` list doesn't say which models take images. A model is marked
-as taking them when it is a Claude model, or when the default list or the
-CLI's table says so. For any other model the plugin says nothing either
-way, and magpie answers from models.dev, as its built-in did.
-
-## Not included
-
-- Usage and quota (`/alpha/billing/credits`, the 5-hour and weekly windows).
-- Switching between several accounts. OpenCode keeps one sign-in per
-  provider.
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

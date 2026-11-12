@@ -1,0 +1,41 @@
+{
+  "name": "@astragate-community/devin-auth",
+  "version": "0.1.17",
+  "description": "Devin subscriptions (the devin CLI's account) provider plugin for Astra and magpie",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "magpie",
+    "astra",
+    "devin",
+    "windsurf"
+  ],
+  "license": "MIT",
+  "astra": {
+    "name": "Devin",
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/devin-color.svg",
+    "providers": [
+      "devin"
+    ],
+    "replaces": "devin",
+    "summary": {
+      "en": "Devin's models with your Devin account — a browser sign-in or the devin CLI's.",
+      "zh": "用 Devin 账号使用 Devin 的模型：浏览器登录，或沿用 devin CLI 的登录。"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
+    "directory": "packages/devin"
+  },
+  "magpie": {
+    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/devin-color.svg"
+  }
+}

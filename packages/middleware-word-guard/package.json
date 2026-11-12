@@ -1,44 +1,18 @@
 {
   "name": "@astragate-community/middleware-word-guard",
-  "version": "0.1.4",
-  "description": "New API's sensitive-word filter (敏感词过滤) as magpie gateway middleware: turn away or mask words and patterns in what agents send, and in replies",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Astra v2 plugin: New API's sensitive-word filter (敏感词过滤) as gateway hooks with a settings view",
   "type": "module",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "magpie",
-    "magpie-middleware",
-    "new-api",
-    "sensitive-words",
-    "guardrails",
-    "llm-gateway",
-    "astra"
-  ],
   "license": "MIT",
-  "magpie": {
-    "middleware": "./index.mjs",
-    "options": {
-      "words": [
-        "project-codename"
-      ],
-      "patterns": [],
-      "action": "reject",
-      "check": "last"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "pack": "npm run build --silent && astra-plugin pack dist --out ../../out/astragate-community.word-guard-2.0.0.tgz",
+    "test": "vitest run"
   },
-  "astra": {
-    "name": "Word Guard",
-    "kind": "middleware",
-    "summary": {
-      "en": "New API's sensitive-word filter: turn away or mask words and patterns in what you send, and in replies.",
-      "zh": "New API 的敏感词过滤：拒绝或替换你发出的内容和回复里的词与正则。"
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
-    "directory": "packages/middleware-word-guard"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

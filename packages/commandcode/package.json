@@ -1,40 +1,23 @@
 {
-  "name": "@astragate-community/commandcode-auth",
-  "version": "0.1.15",
-  "description": "Command Code plans (Pro, GOAT, Max, Ultra, Go, Teams) in Astra, OpenCode and magpie",
+  "name": "@astragate-community/commandcode",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Command Code plans on an API key, as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "commandcode"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "Command Code",
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/commandcode.svg",
-    "providers": [
-      "commandcode-plan"
-    ],
-    "replaces": "commandcode-plan",
-    "summary": {
-      "en": "Command Code plans — Pro, GOAT, Max, Ultra, Go and Teams.",
-      "zh": "Command Code 各档套餐：Pro、GOAT、Max、Ultra、Go 和 Teams。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.commandcode-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/commandcode"
   },
-  "magpie": {
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/commandcode.svg"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

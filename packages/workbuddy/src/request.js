@@ -1,0 +1,249 @@
+// WorkBuddy: shaping a chat request — its session and turn ids, flagged words, the system prompt, tool choice.
+// Every function takes the request body as the object the host hands `prepare` and changes that object in place.
+import { crypto } from 'astra';
+
+export const hex = () => crypto.randomUUID().replaceAll('-', '');
+
+// WorkBuddy's own client names each chat to its gateway four ways: the conversation it belongs to, the user send (turn)
+// it answers, the message itself, and the request that carried it. Its backend counts a user send as one request by
+// X-Conversation-Request-ID: a chat carrying a new one every time is counted on its own, so one send that takes several
+// steps — a tool call answered and sent again, a retry, another account answering — shows up in the usage detail as many
+// requests. The ids below are made from what names the conversation and the turn, so every step of one send carries the
+// same turn id and the user's next message carries another, as WorkBuddy's own client does.
+
+// the headers a client may name its conversation by (the first one set wins)
+export const SESSION_HEADERS = ['x-magpie-workbuddy-session', 'x-session-id', 'x-opencode-session', 'x-claude-code-session-id', 'x-session-affinity'];
+
+// idFor is the 32 hex digits WorkBuddy's own ids are made of, from the name of the thing the id is for (a turn, a
+// conversation) and what names it. `salt` is the plugin's own (kept in storage), so an id says nothing of the words it
+// was made from.
+const idFor = (salt, kind, key) => crypto.sha256(`${salt}|${kind}|${key}`).slice(0, 32);
+
+// signatureOf is a message content's signature: its text, and a digest of every part that isn't text (an image, a file),
+// so a turn of images alone is a turn of its own too. A tool result's part is left out: it is not what the user said,
+// and it changes with every step of the send.
+function signatureOf(content) {
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return '';
+  let out = '';
+  for (const part of content) {
+    const type = part?.type ?? '';
+    if (type === '' || type === 'text') out += typeof part?.text === 'string' ? part.text : '';
+    else if (type !== 'tool_result' && type !== 'tool-result') out += `[${type}:${crypto.sha256(JSON.stringify(part)).slice(0, 8)}]`;
+  }
+  return out;
+}
+
+// answeredBefore is whether msgs[i] answers the message before it — a tool's result, or an assistant's calls — rather
+// than carrying the user's own words.
+function answeredBefore(msgs, i) {
+  const prev = msgs[i - 1];
+  if (prev === null || typeof prev !== 'object') return false;
+  if (prev.role === 'tool') return true;
+  if (prev.role !== 'assistant') return false;
+  if (Array.isArray(prev.tool_calls) && prev.tool_calls.length > 0) return true;
+  // Anthropic's shape: the calls are tool_use parts, answered by a user message of tool_result parts
+  return Array.isArray(prev.content) && prev.content.some((p) => p?.type === 'tool_use');
+}
+
+// turnKey names the user send a chat answers: the last user message that is the user's own, by its place and its
+// signature. '' for a chat whose last such message has nothing signable in it, or which has none at all.
+function turnKey(chat) {
+  const msgs = Array.isArray(chat?.messages) ? chat.messages : [];
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    if (msgs[i]?.role !== 'user' || answeredBefore(msgs, i)) continue;
+    const sig = signatureOf(msgs[i].content);
+    return sig ? `u${i}:${sig}` : '';
+  }
+  return '';
+}
+
+// conversationKey names the conversation a chat belongs to: the session the client names, else the chat's first user
+// message, which every later turn of it repeats. '' when neither names one, and no conversation id is sent then.
+function conversationKey(chat, session) {
+  if (session) return `session:${session}`;
+  const msgs = Array.isArray(chat?.messages) ? chat.messages : [];
+  for (const m of msgs) {
+    if (m?.role !== 'user') continue;
+    const sig = signatureOf(m.content);
+    if (sig) return `first:${sig}`;
+  }
+  return '';
+}
+
+/** The session id a client's headers name (lower-case names, as the host hands them), capped at 128 characters. */
+export function sessionOf(headers) {
+  for (const name of SESSION_HEADERS) {
+    const v = String(headers?.[name] ?? '').trim();
+    if (v) return v.slice(0, 128);
+  }
+  return '';
+}
+
+/**
+ * Sets a chat's ids on `out`, the headers its request goes to WorkBuddy with: the message's (each request its own), the
+ * turn's (one user send, whatever it takes), and the conversation's. A header the caller already sent (`had`, lower
+ * case) is kept; the message and request ids are the same one, as WorkBuddy's client has them.
+ */
+export function attend(out, had, chat, session, salt) {
+  const conv = conversationKey(chat, session);
+  const msg = hex();
+  out['X-Conversation-Message-ID'] = msg;
+  out['X-Request-ID'] = msg;
+  if (!had['x-conversation-request-id']) {
+    const turn = turnKey(chat);
+    // a turn is a conversation's own: two conversations whose user message reads the same are still two sends
+    out['X-Conversation-Request-ID'] = turn ? idFor(salt, 'turn', `${conv}|${turn}`) : hex();
+  }
+  if (conv && !had['x-conversation-id']) out['X-Conversation-ID'] = idFor(salt, 'conversation', conv);
+}
+
+// FLAGGED are the words WorkBuddy refuses a chat for, "Illegal API invocation from an unapproved channel", each with
+// words that say the same and pass. WorkBuddy reads every message, not only the system prompt, and pays no mind to case.
+// Claude Code's billing header means nothing to WorkBuddy's models and goes.
+const FLAGGED = [
+  [/x-anthropic-billing-header:[^\n]*\n?/gi, ''],
+  [/You are Claude Code, Anthropic['’]s official CLI for Claude/gi, "You are Claude Code, Anthropic's CLI for Claude"],
+  [/Main branch \(you will usually use this for PRs\)/gi, 'Main branch (usually the base for PRs)'],
+  [/(?<!the )Codex CLI is an open source project led by OpenAI\./gi, 'The Codex CLI is an open source project led by OpenAI.'],
+];
+
+function unflagged(text) {
+  for (const [re, to] of FLAGGED) text = text.replace(re, to);
+  return text;
+}
+
+// unflag puts FLAGGED's words in place in every message of a chat, and leaves out a text that had nothing else (the
+// billing header's system block). It says whether it changed anything.
+function unflag(messages) {
+  let changed = false;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (typeof m?.content === 'string') {
+      const t = unflagged(m.content);
+      if (t === m.content) continue;
+      changed = true;
+      if (t.trim() || m.role !== 'system') m.content = t;
+      else messages.splice(i, 1);
+    } else if (Array.isArray(m?.content)) {
+      const parts = [];
+      let here = false;
+      for (const p of m.content) {
+        const t = typeof p?.text === 'string' ? unflagged(p.text) : null;
+        if (t === null || t === p.text) {
+          parts.push(p);
+          continue;
+        }
+        here = true;
+        if (t.trim()) parts.push({ ...p, text: t });
+      }
+      if (!here) continue;
+      changed = true;
+      if (parts.length || m.role !== 'system') m.content = parts;
+      else messages.splice(i, 1);
+    }
+  }
+  return changed;
+}
+
+// OWN_SYSTEM is the prompt WorkBuddy's own app opens a chat with.
+const OWN_SYSTEM = 'You are a helpful assistant.';
+
+/**
+ * Gives a chat that doesn't open with a system message WorkBuddy's default one, as its app does, takes FLAGGED's words
+ * out of it, and applies the request spellings WorkBuddy's chat endpoint accepts: it takes max_tokens and system where
+ * the OpenAI-compatible client uses max_completion_tokens and may call a reasoning prompt developer.
+ */
+export function withSystem(b) {
+  if (!Array.isArray(b?.messages) || !b.messages.length) return b;
+  unflag(b.messages);
+  if (b.max_completion_tokens !== undefined) {
+    if (b.max_tokens === undefined) b.max_tokens = b.max_completion_tokens;
+    delete b.max_completion_tokens;
+  }
+  for (const m of b.messages) if (m?.role === 'developer') m.role = 'system';
+  if (b.messages[0]?.role !== 'system') b.messages.unshift({ role: 'system', content: OWN_SYSTEM });
+  return b;
+}
+
+// CLAUDE_CODE names Claude Code's system prompt, by the words its opening line has both before and after FLAGGED's
+// rewrite of it: whatever else that prompt says, it starts with them.
+const CLAUDE_CODE = /You are Claude Code/;
+
+// a tool's result part, in either spelling: Anthropic's shape keeps the results opening the user message that answers a
+// tool_use, so nothing is put before them
+const TOOL_RESULT = /^tool[_-]result$/;
+
+// systemParts are a system prompt's own parts — its string as one text block, its blocks as they are, a cache
+// breakpoint on them kept — none for a shape with no text in it.
+function systemParts(system) {
+  if (typeof system === 'string') return system ? [{ type: 'text', text: system }] : [];
+  if (!Array.isArray(system)) return [];
+  return system.filter((p) => typeof p?.text === 'string' && p.text !== '');
+}
+
+// contentParts is a message's content as the parts it is made of: a string as one text block, a list as it is, null for
+// a shape this doesn't know.
+function contentParts(content) {
+  if (typeof content === 'string') return content ? [{ type: 'text', text: content }] : [];
+  return Array.isArray(content) ? content : null;
+}
+
+/**
+ * Moves a Claude Code system prompt out of an Anthropic Messages body's system field and lodges it in the messages,
+ * opening the first user message — the field is where WorkBuddy's Anthropic route reads it and refuses the chat ("Illegal
+ * API invocation from an unapproved channel"). WorkBuddy's own prompt (OWN_SYSTEM) is left in system. FLAGGED's words
+ * are rewritten in the messages, the moved prompt among them. Any other body is given back as it was.
+ */
+export function withOwnSystem(b) {
+  if (!Array.isArray(b?.messages) || !b.messages.length) return b;
+  const parts = systemParts(b.system);
+  if (!parts.length || !CLAUDE_CODE.test(parts.map((p) => p.text).join(''))) return b;
+  const first = b.messages[0];
+  const had = first?.role === 'user' ? contentParts(first.content) : null;
+  if (had === null) b.messages.unshift({ role: 'user', content: parts });
+  else {
+    let at = 0;
+    while (at < had.length && TOOL_RESULT.test(String(had[at]?.type ?? ''))) at++;
+    first.content = [...had.slice(0, at), ...parts, ...had.slice(at)];
+  }
+  b.system = OWN_SYSTEM;
+  unflag(b.messages);
+  return b;
+}
+
+/**
+ * Converts the object form of tool_choice emitted by OpenAI clients to WorkBuddy's string form. It runs after
+ * fitted(), so a named choice follows a tool name that was made safe for WorkBuddy.
+ */
+export function normalizeToolChoice(b) {
+  if (!b || typeof b !== 'object' || Array.isArray(b) || !('tool_choice' in b)) return b;
+  const choice = b.tool_choice;
+  if (typeof choice === 'string') {
+    if (choice.trim().toLowerCase() === 'none') {
+      delete b.tool_choice;
+      delete b.tools;
+      delete b.functions;
+    }
+    return b;
+  }
+  if (!choice || typeof choice !== 'object' || Array.isArray(choice)) {
+    delete b.tool_choice;
+    return b;
+  }
+  const type = typeof choice.type === 'string' ? choice.type.trim().toLowerCase() : '';
+  if (type === 'none') {
+    delete b.tool_choice;
+    delete b.tools;
+    delete b.functions;
+  } else if (type === 'auto' || type === 'required') {
+    b.tool_choice = type;
+  } else if (type === 'function') {
+    const fn = choice.function && typeof choice.function === 'object' && !Array.isArray(choice.function) ? choice.function : undefined;
+    const name = typeof fn?.name === 'string' ? fn.name.trim() : '';
+    b.tool_choice = name || 'auto';
+  } else {
+    delete b.tool_choice;
+  }
+  return b;
+}

@@ -1,39 +1,23 @@
 {
-  "name": "@astragate-community/workbuddy-auth",
-  "version": "0.2.6",
-  "description": "WorkBuddy (China, copilot.tencent.com) and WorkBuddy AI (international, www.workbuddy.ai) provider plugins for Astra and magpie, with the daily check-in (签到)",
+  "name": "@astragate-community/workbuddy",
+  "version": "2.0.0",
+  "private": true,
+  "description": "WorkBuddy (China) and WorkBuddy AI (international) plans, with the daily check-in, as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "workbuddy",
-    "codebuddy"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "WorkBuddy",
-    "icon": "workbuddy-color",
-    "providers": [
-      "workbuddy",
-      "workbuddy-ai"
-    ],
-    "replaces": "workbuddy",
-    "summary": {
-      "en": "WorkBuddy's China build (CodeBuddy plan) and its international build, with the daily check-in.",
-      "zh": "WorkBuddy 国内版（CodeBuddy 套餐）与国际版，支持每日签到。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.workbuddy-2.0.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/workbuddy"
+  },
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "signIn.title": "Sign in to ZCode",
+  "signIn.body": "Sign in the way the ZCode app does: Z.ai or BigModel opens in your browser and this finishes by itself. A GLM Coding Plan key, a seat on a team's plan or ZCode's free Start Plan is taken from the account.",
+  "signIn.zai": "Sign in with Z.ai",
+  "signIn.bigmodel": "Sign in with BigModel (智谱)",
+  "signIn.key": "Use a GLM Coding Plan API key",
+  "signIn.waiting": "Waiting for {site}",
+  "signIn.waiting.body": "Sign in in the browser; this finishes on its own. If the page did not open, use the link below.",
+  "signIn.open": "Open the sign-in page",
+  "signIn.polling": "Waiting for the browser sign-in",
+  "signIn.key.title": "GLM Coding Plan API key",
+  "signIn.key.site": "Where is the key from?",
+  "signIn.key.label": "API key",
+  "signIn.key.hint": "The key looks like <id>.<secret>.",
+  "signIn.key.submit": "Add the key",
+  "signIn.key.empty": "Enter the key",
+  "signIn.back": "Back",
+  "signIn.done": "ZCode account added"
+}

@@ -1,0 +1,18 @@
+{
+  "signIn.title": "登录 Devin",
+  "signIn.limit": "本插件可以登录并显示账号额度，但无法转发聊天：v2 插件无法使用 Devin 的聊天协议。聊天请继续使用 v1 的 Devin 插件。",
+  "signIn.browser.title": "浏览器登录",
+  "signIn.browser.body": "在浏览器中登录 app.devin.ai。最后会跳到一个无法打开的 127.0.0.1 页面；从地址栏复制该页面的完整地址，粘贴到下面。",
+  "signIn.browser.open": "再次打开登录页",
+  "signIn.browser.label": "回调地址（或只填其中的 code）",
+  "signIn.browser.hint": "以 http://127.0.0.1:53682/callback?code= 开头",
+  "signIn.browser.empty": "请粘贴回调地址",
+  "signIn.browser.state": "这个地址不是本次登录的，请重新开始",
+  "signIn.token.title": "会话令牌",
+  "signIn.token.body": "粘贴 devin CLI 的会话令牌：credentials.toml 中的 windsurf_api_key（Linux 和 macOS 在 ~/.local/share/devin/，Windows 在 %APPDATA%\\devin\\）。",
+  "signIn.token.label": "会话令牌",
+  "signIn.token.empty": "请粘贴令牌",
+  "signIn.finish": "登录",
+  "signIn.back": "返回",
+  "signIn.done": "已登录为 {name}"
+}

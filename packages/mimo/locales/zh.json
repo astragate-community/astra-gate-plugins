@@ -1,0 +1,22 @@
+{
+  "signIn.title": "添加小米 MiMo 账号",
+  "signIn.body": "从 MiMo 开放平台（platform.xiaomimimo.com）的 Token Plan 页面复制套餐的 API 密钥（以 tp- 开头），并选择页面上显示的接入点所在区域。密钥由 Astra 作为账号的机密保存。",
+  "signIn.region": "区域",
+  "signIn.region.cn": "中国（token-plan-cn）",
+  "signIn.region.sgp": "新加坡（token-plan-sgp）",
+  "signIn.region.ru": "俄罗斯（token-plan-ru）",
+  "signIn.region.in": "印度（token-plan-in）",
+  "signIn.key": "Token Plan API 密钥",
+  "signIn.keyHint": "以 tp- 开头",
+  "signIn.save": "添加账号",
+  "signIn.invalid": "请输入 Token Plan 密钥（以 tp- 开头）并选择列出的区域之一",
+  "signIn.done": "已添加 MiMo 账号",
+  "signIn.xiaomi": "小米账号",
+  "signIn.xiaomi.body": "用小米账号登录，与 MiMo 应用的方式相同：会打开 account.xiaomi.com 的登录页（也可以用小米 App 扫描页面上的二维码），登录完成后这里自动继续。Astra 把该账号的登录令牌作为账号机密保存。",
+  "signIn.xiaomi.start": "用小米账号登录",
+  "signIn.xiaomi.confirm": "请在已打开的页面登录小米账号（或用小米 App 扫描页面上的二维码）。",
+  "signIn.xiaomi.open": "打开小米登录页",
+  "signIn.xiaomi.waiting": "正在等待小米账号登录…",
+  "signIn.xiaomi.continue": "我已登录，继续等待",
+  "signIn.keyTitle": "Token Plan API 密钥"
+}

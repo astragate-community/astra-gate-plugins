@@ -1,0 +1,32 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.grok",
+  "version": "2.1.0",
+  "name": { "zh": "Grok（SuperGrok）", "en": "Grok (SuperGrok)" },
+  "description": {
+    "zh": "使用 SuperGrok / X Premium+ 订阅，经 Grok Build 的后端与 xAI 登录调用 Grok 模型。",
+    "en": "Grok models with a SuperGrok or X Premium+ subscription, through the Grok Build backend and its xAI sign-in."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/grok",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": ["providers", "ui", "net:https://cli-chat-proxy.grok.com", "net:https://auth.x.ai"],
+  "contributes": {
+    "providers": [
+      {
+        "id": "grok",
+        "name": { "zh": "Grok（SuperGrok）", "en": "Grok (SuperGrok)" },
+        "icon": "assets/icon.svg",
+        "protocols": ["responses"],
+        "reply": { "framing": "ndjson", "output": "responses" },
+        "models": [{ "id": "grok-4.7", "name": "Grok 4.7", "protocol": "responses", "vision": true, "reasoning": true }],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [{ "id": "signIn", "view": "signIn", "title": { "zh": "登录 Grok", "en": "Sign in to Grok" } }]
+  },
+  "replaces": [{ "v1": "@astragate-community/grok-auth" }]
+}

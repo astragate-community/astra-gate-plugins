@@ -1,0 +1,14 @@
+{
+  "chat.noAccount": "{name} 没有可用于对话的已登录账号。",
+  "chat.only": "{name} 只支持聊天补全。",
+  "signIn.title": "登录 {name}",
+  "signIn.step1": "1. 打开 {host} 的授权页面，登录并允许此次登录。",
+  "signIn.open": "打开 {name} 登录页",
+  "signIn.step2": "2. 页面随后会把浏览器带到 {callback}。那里没有任何服务在监听，所以浏览器会报错，这是正常的：请复制浏览器地址栏里的完整地址。",
+  "signIn.paste.label": "浏览器最后停留的地址",
+  "signIn.paste.hint": "它以上面的地址开头，并带着登录凭据，请像密码一样对待。",
+  "signIn.submit": "完成登录",
+  "signIn.nothing": "这个地址里没有登录信息。请粘贴完整地址，包括 ? 之后的全部内容。",
+  "signIn.note": "此次登录使用设备 {id}；Trae 会把所有请求都看作来自这台设备。",
+  "signIn.done": "{name} 已登录"
+}

@@ -1,0 +1,31 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.model-map",
+  "version": "2.0.0",
+  "name": { "en": "Model Map", "zh": "模型重定向" },
+  "description": {
+    "en": "New API's model redirection: send a model under another name, by name or pattern; replies keep the name asked for.",
+    "zh": "New API 的模型重定向：按名称或正则把模型换成另一个发出，回复里仍是原来的名字。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/middleware-model-map",
+  "engines": { "api": "^2.0" },
+  "main": "src/main.js",
+  "gateway": "src/gateway.js",
+  "permissions": ["storage", "ui", "gateway.request:rewrite", "gateway.response:rewrite"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "ui.settings": "settings",
+    "gateway.hooks": [
+      {
+        "id": "map",
+        "on": ["request", "event", "response"],
+        "view": "raw",
+        "reads": ["rules", "keepUpstreamName"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/middleware-model-map" }]
+}

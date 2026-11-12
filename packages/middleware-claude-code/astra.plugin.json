@@ -1,0 +1,31 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.claude-code",
+  "version": "2.0.0",
+  "name": { "en": "Claude Code Identity", "zh": "Claude Code 身份" },
+  "description": {
+    "en": "For channels that serve only the official Claude Code CLI: send that channel's requests with Claude Code's headers and system prompt.",
+    "zh": "适用于只接受官方 Claude Code CLI 的渠道：发往该渠道的请求带上 Claude Code 的请求头和系统提示词。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/middleware-claude-code",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "gateway": "src/gateway.js",
+  "permissions": ["storage", "ui", "gateway.request:rewrite", "gateway.upstream:headers"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "ui.settings": "settings",
+    "gateway.hooks": [
+      {
+        "id": "identity",
+        "on": ["upstream"],
+        "view": "raw",
+        "reads": ["settings"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/middleware-claude-code" }]
+}

@@ -1,87 +1,45 @@
-Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md), refactored into modules for the astra-gate-plugins monorepo; behaviour is unchanged.
+# Xiaomi MiMo (Astra v2 plugin)
 
----
+Xiaomi MiMo as an Astra provider: a Xiaomi account (the app's `/route`, with its Token Plan as the fallback) or a **Token Plan** key. Plugin id `astragate-community.mimo`, provider id `mimo-app`. It replaces
+the v1 package `@astragate-community/mimo-auth`.
 
-# @astragate-community/mimo-auth
+## Two kinds of account
 
-Signs in to **Xiaomi MiMo** with a Xiaomi account, the way the MiMo desktop
-app does, and makes its model requests. Provider id: `mimo-app`.
+Press "Add account" on the provider's page:
 
-## Sign-in
-
-One way, **Xiaomi account**. The plugin opens Xiaomi's sign-in page
-(account.xiaomi.com's long-poll ticket). Sign in there, or scan its QR code
-with the Xiaomi phone app. The plugin waits on the ticket until Xiaomi says
-the account is in, so there's nothing to paste back.
-
-Xiaomi's passToken then signs the account on at the MiMo server. The server
-sends the browser through account.xiaomi.com and back through its `/sts`,
-which sets the session cookies (`serviceToken`, `userId`, `cUserId`). An
-account from Russia or India is moved to that region's server
-(`mimo-server-ru` / `mimo-server-in`). Everyone else stays on
-`mimo-server-sgp`.
+- **Xiaomi account** (as v1). The page opens account.xiaomi.com's sign-in (or scan its QR code with the Xiaomi app); the
+  plugin asks the page's long poll in slices of about 35 seconds (a view action has a wall-clock limit; "I signed in, keep
+  waiting" asks again) and, once Xiaomi says the account is in, signs it on at the MiMo server as the app's window does:
+  the server's `/user/xiaomi/me` sends the browser to `account.xiaomi.com/pass/serviceLogin`, which (holding the account's
+  `passToken`) sends it back through the server's `/sts`, where the session cookies are set. Every hop is a `http.fetch`
+  with `redirect: 'manual'`, the plugin's own cookie jar and the `cookie` header; an `http://` followup on the server's own
+  host is asked over `https://`. An account of another region is moved to that region's server. The account's secret holds
+  the Xiaomi account (`passToken`, ids) and the MiMo session's cookies; the session is signed on again after a day (the
+  app's rule), on a request when it is due, and on a 401. Xiaomi no longer taking the `passToken` marks the account expired.
+- **Token Plan key** (`tp-…`). Paste the key from the Token Plan page of the open platform and pick its region (below).
 
 ## Requests
 
-Chat completions go to `https://mimo-server-<region>.xiaomimimo.com/api/route/chat/completions`
-(`@ai-sdk/openai-compatible`). Each request carries:
+A Xiaomi account sends Chat Completions to the app's `<server>/route` with the session's cookies, `x-mimo-source`,
+`x-client-version` and the app's user agent; `mimo-auto` is asked as `mimo-pro`. When the app answers `membership_required`
+(403) the host asks the plugin's `refresh`, which reads the account's Token Plan from the open platform (the same Xiaomi
+account signs on there too: `/api/v1/tokenPlan/detail`, `apiKey`, `apiKey/raw`) and, if there is one, sends this account's
+requests to the plan from then on (for an hour), as v1 did: at its `token-plan-<region>` endpoint with its `tp-` key and the
+plan's model names. The host then sends the refused request again. A key the plan turns away (401) is read again.
+`prepare` has five seconds in all, so it signs on again or reads the platform only within 3.5 seconds; the slower reads
+happen in `refresh` and the usage card, which have thirty.
 
-- the session cookies, with no `Authorization` header
-- `X-Mimo-Source: mimocode-cli-free`
-- `X-Client-Version: 26.929.292248`
-- the app's User-Agent
+A Token Plan key account sends Chat Completions to `https://token-plan-<region>.xiaomimimo.com/v1/chat/completions` with
+`Authorization: Bearer <key>`. `mimo-auto` is asked as `mimo-pro`, `mimo-pro` as `mimo-v2.6-pro` and `mimo-flash` as
+`mimo-v2.6-flash`; any other model name passes as it is. Regions: `cn` is the endpoint v1's documentation showed; `sgp`,
+`ru` and `in` follow the MiMo servers' region names and are untested here. A key the plan turns away marks the account expired.
 
-`mimo-auto`, the app's default model, is requested as `mimo-pro`.
+## The usage card
 
-The session is renewed with the passToken a day after it was issued.
-magpie (0.1.684 and later) does it ahead of time through `auth.refresh`, ten
-minutes before that day is out (`refreshLead`), once for the account and
-before its requests, models and usage ask for it; a passToken Xiaomi no
-longer takes marks the account for a new sign-in. The check before each
-request stays for OpenCode, which doesn't call `auth.refresh`, and one
-sign-on at a time serves both. A model
-request the server turns away (a 401) is answered as the server answered it,
-as magpie's built-in MiMo account did; reading usage renews the session once
-when the server turns it away. If the passToken no longer works, sign in
-again.
-
-### An account with a Token Plan and no app membership
-
-The app's server answers such an account's requests, every model, with
-403 `membership_required` ("未开通会员或会员已到期，请订阅后使用"). The
-plugin then asks the account's Token Plan instead. The passToken signs on
-at the open platform (platform.xiaomimimo.com, sid `api-platform`), which
-gives the plan's `tp-` key (`/tokenPlan/apiKey/raw`) and its endpoint
-(`openaiBaseUrl` of `/tokenPlan/apiKey`, e.g.
-`https://token-plan-cn.xiaomimimo.com/v1`). The request goes there with
-`Authorization: Bearer <tp- key>` and no cookies, with `mimo-pro` asked as
-`mimo-v2.6-pro` and `mimo-flash` as `mimo-v2.6-flash`. For an hour after,
-the account's requests go straight to the plan; then the app is asked
-first again, in case a membership was bought. A key reset at the platform
-(the plan's 401) is read again on the next request. An account with no
-Token Plan, or a plan with no key yet (the platform's Token Plan page
-makes one), gets the app's 403 as it is.
-
-## Usage
-
-magpie's Usage card shows the MiMo app's plan and its week's allowance.
-A Token Plan bought at the open platform (platform.xiaomimimo.com) is a
-plan of its own, spent by its `tp-` API key at
-`token-plan-<region>.xiaomimimo.com`. The same passToken signs on at the
-platform (sid `api-platform`), so the card shows the Token Plan too. With
-an app plan, its credits are an aside beside the week's allowance: this
-account's requests go to the app. With no app plan, the Token Plan is the
-card's plan and its credits are the account's allowance, since its
-requests go to the plan (above).
-
-## Where the sign-in is kept
-
-In OpenCode's `auth.json`, or magpie's `plugin-auth.json`, as an OAuth sign-in:
-
-- `refresh`: the Xiaomi account as JSON (`userId`, `cUserId`, `passToken`, `deviceId`, `region`, `base`)
-- `access`: the session cookies as JSON
-- `expires`: when the session is renewed
-- `accountId`: the Xiaomi user id
+For a Xiaomi account: the app's plan in force and its end (`/user/xiaomi/subscription/self`), the week's allowance
+(`/user/usage`), and the platform's Token Plan beside it (the plan itself, with no app plan; its credits as an aside with
+one). No plan at all is MiMo's free offer. (The host does not call a provider's `usage` yet; the card is built and tested,
+and shows once it does.)
 
 ## Models
 
@@ -89,3 +47,26 @@ In OpenCode's `auth.json`, or magpie's `plugin-auth.json`, as an OAuth sign-in:
 |---|---|---|---|---|
 | `mimo-pro` | MiMo Pro | 1,000,000 | 128,000 | text, image |
 | `mimo-flash` | MiMo Flash | 1,000,000 | 128,000 | text, image |
+
+## Not carried over from v1
+
+- Reading the `tp-` key of a Token Plan *key* account from the platform: you paste it. (A Xiaomi account reads it by itself.)
+- Reply marking (`X-Magpie-Sign-In`): Astra decides from `refresh`'s answer instead.
+- A server error while signing on is a hiccup here (the session in hand goes on), where v1 read any non-JSON answer as a
+  lapsed passToken.
+- Untested against the live service: the sign-on was written from v1's source and checked against a fake of Xiaomi's
+  redirects, not run against account.xiaomi.com.
+
+Permissions: `providers`, `ui` (the add-account flow) and `net:` for the four Token Plan hosts, `account.xiaomi.com`, the three
+`mimo-server-<region>` hosts and `platform.xiaomimimo.com`. Origins are exact: a redirect to any other host fails.
+
+## Develop
+
+```sh
+npm install --workspaces=false --no-package-lock   # in this directory
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.mimo-2.1.0.tgz
+```
+
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

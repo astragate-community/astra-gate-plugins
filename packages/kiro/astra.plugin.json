@@ -1,0 +1,93 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.kiro",
+  "version": "2.1.0",
+  "name": {
+    "zh": "Kiro",
+    "en": "Kiro"
+  },
+  "description": {
+    "zh": "Kiro 订阅（Free、Pro、Pro+、Power）：Kiro 登录或 API key。",
+    "en": "Kiro Free, Pro, Pro+ and Power, through Kiro's sign-in or an API key."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": {
+    "name": "Astra Gate Community",
+    "url": "https://github.com/astragate-community"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/kiro",
+  "engines": {
+    "astra": ">=0.15.0",
+    "api": "^2.0"
+  },
+  "main": "src/main.js",
+  "permissions": [
+    "providers",
+    "ui",
+    "net:https://runtime.us-east-1.kiro.dev",
+    "net:https://runtime.eu-central-1.kiro.dev",
+    "net:https://management.us-east-1.kiro.dev",
+    "net:https://management.eu-central-1.kiro.dev",
+    "net:https://prod.us-east-1.auth.desktop.kiro.dev",
+    "net:https://prod.eu-central-1.auth.desktop.kiro.dev",
+    "net:https://oidc.us-east-1.amazonaws.com",
+    "net:https://oidc.us-east-2.amazonaws.com",
+    "net:https://oidc.us-west-2.amazonaws.com",
+    "net:https://oidc.eu-central-1.amazonaws.com",
+    "net:https://oidc.eu-west-1.amazonaws.com",
+    "net:https://oidc.eu-west-2.amazonaws.com",
+    "net:https://oidc.eu-north-1.amazonaws.com",
+    "net:https://oidc.ap-southeast-1.amazonaws.com",
+    "net:https://oidc.ap-southeast-2.amazonaws.com",
+    "net:https://oidc.ap-northeast-1.amazonaws.com",
+    "net:https://oidc.ap-south-1.amazonaws.com",
+    "net:https://oidc.ca-central-1.amazonaws.com",
+    "net:https://oidc.sa-east-1.amazonaws.com"
+  ],
+  "contributes": {
+    "providers": [
+      {
+        "id": "kiro",
+        "name": {
+          "zh": "Kiro",
+          "en": "Kiro"
+        },
+        "icon": "assets/icon.svg",
+        "protocols": [
+          "anthropic"
+        ],
+        "models": [
+          {
+            "id": "auto",
+            "name": "Auto",
+            "protocol": "anthropic",
+            "reasoning": true
+          }
+        ],
+        "signIn": {
+          "flow": "signIn"
+        },
+        "reply": {
+          "framing": "aws-eventstream",
+          "output": "anthropic"
+        }
+      }
+    ],
+    "ui.flows": [
+      {
+        "id": "signIn",
+        "view": "signIn",
+        "title": {
+          "zh": "登录 Kiro",
+          "en": "Sign in to Kiro"
+        }
+      }
+    ]
+  },
+  "replaces": [
+    {
+      "v1": "@astragate-community/kiro-auth"
+    }
+  ]
+}

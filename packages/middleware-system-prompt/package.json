@@ -1,40 +1,18 @@
 {
   "name": "@astragate-community/middleware-system-prompt",
-  "version": "0.1.3",
-  "description": "New API's system_prompt (系统提示词) as magpie gateway middleware: give agents' requests a system prompt of yours, in each API's own place for it",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Astra v2 plugin: New API's system_prompt (系统提示词) as a gateway hook with a settings view",
   "type": "module",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "magpie",
-    "magpie-middleware",
-    "new-api",
-    "system-prompt",
-    "llm-gateway",
-    "astra"
-  ],
   "license": "MIT",
-  "magpie": {
-    "middleware": "./index.mjs",
-    "options": {
-      "system_prompt": "Reply in the language the user writes in.",
-      "override": true,
-      "position": "append"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "pack": "npm run build --silent && astra-plugin pack dist --out ../../out/astragate-community.system-prompt-2.0.0.tgz",
+    "test": "vitest run"
   },
-  "astra": {
-    "name": "System Prompt",
-    "kind": "middleware",
-    "summary": {
-      "en": "Add your own system prompt to every request, or only some agents' or models', in each API's own place.",
-      "zh": "给每个请求（或指定 agent、模型）加上自己的系统提示词，放在各 API 自己的位置。"
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
-    "directory": "packages/middleware-system-prompt"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

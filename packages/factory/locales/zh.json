@@ -1,0 +1,20 @@
+{
+  "signIn.title": "登录 Factory",
+  "signIn.body": "使用你的 Factory（Droid）订阅：在浏览器里确认设备码，或粘贴 API Key。",
+  "signIn.device": "用 Factory 登录（设备码）",
+  "signIn.key": "使用 Factory API Key（fk-…）",
+  "signIn.confirm": "请在 Factory 的页面确认这个码，这个窗口会自动继续。",
+  "signIn.open": "打开 Factory 页面",
+  "signIn.copy": "复制设备码",
+  "signIn.waiting": "等待你确认设备码…",
+  "signIn.cancel": "取消",
+  "signIn.back": "返回",
+  "signIn.cancelled": "已取消登录",
+  "signIn.expired": "设备码已过期，请重新开始",
+  "signIn.denied": "登录被拒绝",
+  "signIn.key.label": "Factory API Key",
+  "signIn.key.hint": "作为 bearer 令牌连同 droid 的请求头发送，不会续期。",
+  "signIn.key.save": "保存密钥",
+  "signIn.key.empty": "请输入密钥",
+  "signIn.done": "已添加 Factory 账号"
+}

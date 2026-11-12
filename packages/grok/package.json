@@ -1,42 +1,23 @@
 {
-  "name": "@astragate-community/grok-auth",
-  "version": "0.1.17",
-  "description": "OpenCode provider plugin: Grok (SuperGrok / X Premium+) through the Grok Build CLI's sign-in",
+  "name": "@astragate-community/grok",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Grok (SuperGrok / X Premium+) accounts as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "grok",
-    "xai",
-    "supergrok"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "Grok",
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/grok.svg",
-    "providers": [
-      "grok"
-    ],
-    "replaces": "grok",
-    "summary": {
-      "en": "SuperGrok and X Premium+, through the Grok Build CLI's sign-in.",
-      "zh": "通过 Grok Build CLI 的登录使用 SuperGrok 和 X Premium+。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.grok-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/grok"
   },
-  "magpie": {
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/grok.svg"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

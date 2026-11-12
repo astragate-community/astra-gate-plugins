@@ -1,0 +1,37 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.zed",
+  "version": "2.1.0",
+  "name": { "zh": "Zed", "en": "Zed" },
+  "description": {
+    "zh": "Zed 订阅（Pro、试用、学生、企业）：账号、模型列表、套餐，以及经 Zed 云的请求转发（NDJSON 回复转回各厂商原生流）。",
+    "en": "Zed subscriptions (Pro, trial, student, business): account, model list, plan, and requests through Zed's cloud (its NDJSON reply turned back into each vendor's own stream)."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/zed",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": ["providers", "ui", "net:https://cloud.zed.dev"],
+  "contributes": {
+    "providers": [
+      {
+        "id": "zed",
+        "name": { "zh": "Zed", "en": "Zed" },
+        "icon": "assets/icon.svg",
+        "protocols": ["anthropic", "responses", "chat", "gemini"],
+        "reply": { "framing": "ndjson", "output": "anthropic" },
+        "models": [
+          { "id": "claude-sonnet-5", "name": "Claude Sonnet 5", "protocol": "anthropic", "context": 1000000, "output": 64000, "vision": true, "reasoning": true },
+          { "id": "gpt-5.5", "name": "GPT-5.5", "protocol": "responses", "context": 400000, "output": 128000, "vision": true, "reasoning": true },
+          { "id": "gemini-3.5-flash", "name": "Gemini 3.5 Flash", "protocol": "gemini", "context": 1048576, "output": 65536, "vision": true, "reasoning": true },
+          { "id": "grok-4.7", "name": "Grok 4.7", "protocol": "chat", "context": 500000, "output": 64000, "vision": true, "reasoning": true }
+        ],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [{ "id": "signIn", "view": "signIn", "title": { "zh": "添加 Zed 账号", "en": "Add a Zed account" } }]
+  },
+  "replaces": [{ "v1": "@astragate-community/zed-auth" }]
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Channels to present as Claude Code",
+  "description": "Requests going to the channels you name are sent with Claude Code's headers, billing and identity system blocks and a CLI-shaped user id. A request that already carries them (Claude Code itself) keeps its own. The channel's API key is never touched.",
+  "risk.title": "Your channel decides",
+  "risk.message": "Whether a channel accepts this is the channel's decision, and presenting one client as another may break its terms. You take that risk for your own key.",
+  "providers.label": "Providers",
+  "providers.hint": "Provider ids or names, as the Providers page shows them. With none listed the plugin does nothing.",
+  "protocol.label": "API it applies to",
+  "protocol.hint": "A provider with several endpoints is matched only when the request goes out over this one.",
+  "protocol.anthropic": "Anthropic Messages",
+  "protocol.chat": "OpenAI Chat",
+  "protocol.any": "Any API",
+  "version.label": "CLI version",
+  "version.hint": "x.y.z; empty uses {version}.",
+  "betas.label": "anthropic-beta",
+  "betas.hint": "Replaces the default set of Claude Code's beta flags (a comma-separated list). Empty keeps the default."
+}

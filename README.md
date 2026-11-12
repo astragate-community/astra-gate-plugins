@@ -1,48 +1,35 @@
 # astra-gate-plugins
 
-Provider and middleware plugins for [Astra](https://github.com/astra-gate) (magpie-compatible: they also run in magpie
-and OpenCode). Each plugin is a package under `packages/` that builds to one `dist/index.mjs`; a small shared
-`kit/` holds the helpers more than one plugin needs and is bundled in at build time.
+Source of the [Astra](https://github.com/astra-gate) **v2 plugins** (providers, gateway middleware, a client). This
+repository only holds source: each plugin is packed into a tarball and uploaded to the plugin market service
+(`astra-gate-web`), which owns all market metadata (listings, versions, hashes, search). There is no `registry.json`
+and no GitHub Release step here.
 
 ```
-kit/                 @astragate-community/plugin-kit — shared helpers (private, never published)
-packages/<name>/     one plugin: src/ (modules), test/, package.json, README.md
-scripts/             build.mjs (esbuild → dist/), check.mjs (shape vs shape.json), shape.mjs, split.mjs
+packages/<name>/   one plugin: astra.plugin.json, src/ (bundled by astra-plugin build), locales/, assets/, test/, README.md
+scripts/           build.mjs (test + build + validate + pack every v2 package → out/), upload.mjs (out/ → market)
+kit/               legacy shared helpers of the v1 plugins (not used by v2 packages; the sandbox imports no packages)
 ```
 
-```
-npm install
-npm run build        # packages/*/dist/index.mjs
-npm test             # kit + every package
-npx eslint packages kit scripts
-npm run check        # each plugin's exported shape against its committed shape.json (--update to accept a change)
-```
+Each package depends on `@astragate/plugin-sdk` (a `file:` path to the Astra checkout until it is on npm).
 
-Install from Astra's plugin market (`astra plugin add @astragate-community/<name>`, or the console's Plugins page), or
-add the path of a built `dist/` directory to try a change locally.
+```
+cd packages/<name> && npm install --workspaces=false --no-package-lock
+npm test           # vitest on the SDK harness
+npm run build      # astra-plugin build + validate
+npm run pack       # → out/<id>-<version>.tgz (prints sha256 / sha512)
+node scripts/build.mjs [name…]    # all v2 packages (or the named ones)
+```
 
 ## Releasing
 
-Astra's market reads `registry.json` from this repository's `main` branch and downloads each plugin's tarball from the
-GitHub Release it lists, checking the sha256 — no npm account is involved.
+1. Bump `version` in the package's `astra.plugin.json` and `package.json` (a published version is immutable on the market).
+2. `node scripts/build.mjs`
+3. `PLUGIN_UPLOAD_TOKEN=… node scripts/upload.mjs [--dry-run]` — posts `out/*.tgz` to `$PLUGIN_MARKET_URL`
+   (default `https://astra-gate.si`); an existing version answers 409 and is reported, not an error.
 
-1. Bump `version` in the package's `package.json` (a released tarball is never replaced: a changed tarball is a new version).
-   A package whose `astra` block lists `injectEnv` (antigravity's OAuth client) bakes those
-   variables into its bundle at build time: source them (the `.env` beside the repository holds
-   them) before `npm run registry`.
-2. `npm run registry` — builds, packs every package (deterministic, so an unchanged package keeps its hash) and rewrites
-   `registry.json` with the Release URLs and hashes. Commit it and push.
-3. `GH_TOKEN=… npm run release` — creates the `<dir>-v<version>` Release, with the tarball, for each version that has none.
-4. Copy `registry.json` over Astra's two built-in copies (`src/Astra.Plugins/Market/market.json` and
-   `docs/lib/plugin-market/upstream-fallback.json` in the Astra repository).
-
-The `astra` block of a package's `package.json` (name, icon, summary, `replaces`) is registry metadata and is left out of
-the published tarball; `magpie.icon` is what an installed plugin shows for its providers.
-
-## License
-
-See `THIRD_PARTY_NOTICES.md`: the published plugins are MIT (upstream's code, upstream's copyright line kept); `kit/` and
-`scripts/` are Apache-2.0 like the repository.
+Plugin ids are `astragate-community.<name>`; each declares `replaces` for its v1 npm package so Astra offers the upgrade.
+`qoder` is still v1 (its reply format needs a provider-level reply transform that v2 does not have yet), so the build skips it.
 
 ## Plugins
 
@@ -63,41 +50,14 @@ See `THIRD_PARTY_NOTICES.md`: the published plugins are MIT (upstream's code, up
 | `middleware-word-guard` | middleware |
 | `mimo` | provider |
 | `minimax` | provider |
-| `qoder` | provider |
+| `qoder` | provider (still v1) |
 | `trae` | provider |
 | `workbuddy` | provider |
 | `zcode` | provider |
 | `zed` | provider |
 | `zen-free` | provider |
 
-WorkBuddy covers both builds (China and international) and adds the daily check-in.
 
-## Plugin layout
+## License
 
-A provider plugin is split by what changes together, not by size. `index.mjs` only exports the plugins; the rest
-are modules with one reason to exist (names vary with the vendor):
-
-| module | holds |
-| --- | --- |
-| `constants` / `sites` | versions, timings, endpoints, the built-in model list |
-| `api` | calling the vendor, signing a request |
-| `session` | an account's tokens: merging, refreshing, keeping fresh |
-| `signin` | browser / CLI / desktop sign-in flows |
-| `request`, `tools` | shaping the chat request for the vendor |
-| `response`, `refusals` | turning the vendor's reply or refusal back |
-| `usage`, `checkin`, `models` | the allowance card, the daily check-in, the model list |
-| `plugin` | the hook object OpenCode / magpie load |
-
-No module-level `let` (state that several modules mutate); shared `Map`s/`Set`s are `const` and live in the module
-that owns them. A helper two plugins both need goes in `kit/` (with a test), not copied.
-
-## Working on a plugin
-
-Behaviour stays unless a change is meant; without live vendor accounts the guard is the exported **shape**.
-
-1. `npx eslint packages/<name>` clean (no undefined, no unused names), `npm run build`, `npm run check` ok.
-2. Tests in `packages/<name>/test/*.test.mjs` (node:test, a faked `fetch`) for the logic you can exercise offline:
-   request shaping, reply decoding, token merge/refresh decisions, usage maths.
-3. A helper two plugins both need goes in `kit/` (with a test), not copied.
-4. `node scripts/split.mjs <single-file plugin> <plan.json> packages/<name>/src` splits a one-file plugin by declaration
-   (read its header for the plan format) when bringing a new one in.
+See `THIRD_PARTY_NOTICES.md`: the published plugins are MIT (upstream's code, upstream's copyright line kept); `kit/` and `scripts/` are Apache-2.0 like the repository.

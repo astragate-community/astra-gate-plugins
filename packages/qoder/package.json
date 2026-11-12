@@ -1,42 +1,23 @@
 {
-  "name": "@astragate-community/qoder-auth",
-  "version": "0.2.17",
-  "description": "Qoder subscriptions in Astra, OpenCode and magpie: Qoder (qoder.com) and Qoder CN (qoder.cn)",
+  "name": "@astragate-community/qoder",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Qoder and Qoder CN subscriptions as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md",
-    "LICENSE-CLIProxyAPI"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "qoder",
-    "qoder-cn"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "Qoder",
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qoder-color.svg",
-    "providers": [
-      "qoder"
-    ],
-    "replaces": "qoder",
-    "summary": {
-      "en": "Your Qoder subscription, with Qoder's own device sign-in.",
-      "zh": "用 Qoder 自己的设备登录使用 Qoder 订阅。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.qoder-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/qoder"
   },
-  "magpie": {
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/qoder-color.svg"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

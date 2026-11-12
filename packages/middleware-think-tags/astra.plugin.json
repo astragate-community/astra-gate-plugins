@@ -1,0 +1,31 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.think-tags",
+  "version": "2.0.0",
+  "name": { "en": "Think Tags", "zh": "思考标签" },
+  "description": {
+    "en": "Take a model's <think>…</think> out of its reply's text, or put a Chat reply's reasoning into it.",
+    "zh": "去掉回复正文开头的 <think>…</think>，或把 Chat 回复的思考内容放进正文。"
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "astragate-community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/middleware-think-tags",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "gateway": "src/gateway.js",
+  "permissions": ["storage", "ui", "gateway.response:rewrite"],
+  "activation": ["onStartup"],
+  "contributes": {
+    "ui.settings": "settings",
+    "gateway.hooks": [
+      {
+        "id": "think",
+        "on": ["event", "response"],
+        "view": "raw",
+        "reads": ["settings"]
+      }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/middleware-think-tags" }]
+}

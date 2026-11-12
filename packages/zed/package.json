@@ -1,40 +1,23 @@
 {
-  "name": "@astragate-community/zed-auth",
-  "version": "0.1.9",
-  "description": "Sign in to a Zed subscription (Zed Pro, trial, student, business) from Astra, OpenCode or magpie",
+  "name": "@astragate-community/zed",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Zed subscriptions (accounts, models, plan), with requests through its NDJSON cloud reply, as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "zed"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "Zed",
-    "icon": "https://cdn.simpleicons.org/zedindustries/084CCF",
-    "providers": [
-      "zed"
-    ],
-    "replaces": "zed",
-    "summary": {
-      "en": "Claude, GPT, Gemini and Grok hosted by Zed, on your Zed plan.",
-      "zh": "用 Zed 订阅使用 Zed 托管的 Claude、GPT、Gemini 和 Grok。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.zed-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/zed"
   },
-  "magpie": {
-    "icon": "https://cdn.simpleicons.org/zedindustries/084CCF"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

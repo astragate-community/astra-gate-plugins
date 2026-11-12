@@ -1,0 +1,22 @@
+{
+  "signIn.title": "Add a Xiaomi MiMo account",
+  "signIn.body": "Copy the plan's API key (it starts with tp-) from the Token Plan page of the MiMo open platform (platform.xiaomimimo.com), and pick the region of the endpoint the page shows. The key is kept by Astra as the account's secret.",
+  "signIn.region": "Region",
+  "signIn.region.cn": "China (token-plan-cn)",
+  "signIn.region.sgp": "Singapore (token-plan-sgp)",
+  "signIn.region.ru": "Russia (token-plan-ru)",
+  "signIn.region.in": "India (token-plan-in)",
+  "signIn.key": "Token Plan API key",
+  "signIn.keyHint": "Starts with tp-",
+  "signIn.save": "Add account",
+  "signIn.invalid": "Enter a Token Plan key (it starts with tp-) and pick one of the listed regions",
+  "signIn.done": "MiMo account added",
+  "signIn.xiaomi": "Xiaomi account",
+  "signIn.xiaomi.body": "Sign in with your Xiaomi account, as the MiMo app does: the page opens at account.xiaomi.com (or scan its QR code with the Xiaomi app) and the sign-in finishes here by itself. Astra keeps the account's sign-in token as the account's secret.",
+  "signIn.xiaomi.start": "Sign in with Xiaomi",
+  "signIn.xiaomi.confirm": "Sign in to your Xiaomi account on the page that opened (or scan its QR code with the Xiaomi app).",
+  "signIn.xiaomi.open": "Open the Xiaomi sign-in page",
+  "signIn.xiaomi.waiting": "Waiting for the Xiaomi sign-in…",
+  "signIn.xiaomi.continue": "I signed in, keep waiting",
+  "signIn.keyTitle": "Token Plan API key"
+}

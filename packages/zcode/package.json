@@ -1,44 +1,23 @@
 {
-  "name": "@astragate-community/zcode-auth",
-  "version": "0.1.21",
-  "description": "OpenCode provider plugin: signs in to Z.ai's or BigModel's (智谱) GLM Coding Plan as ZCode does, including team seats and ZCode's Start Plan",
+  "name": "@astragate-community/zcode",
+  "version": "2.1.0",
+  "private": true,
+  "description": "ZCode (Z.ai / BigModel GLM Coding Plan) as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "zcode",
-    "z.ai",
-    "bigmodel",
-    "glm",
-    "coding-plan"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "ZCode",
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/zai.svg",
-    "providers": [
-      "zcode"
-    ],
-    "replaces": "zcode",
-    "summary": {
-      "en": "Z.ai and BigModel GLM Coding Plan, with team seats.",
-      "zh": "Z.ai 与智谱 GLM Coding Plan，支持团队席位。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.zcode-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/zcode"
   },
-  "magpie": {
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/zai.svg"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

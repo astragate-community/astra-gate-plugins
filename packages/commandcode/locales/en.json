@@ -1,0 +1,11 @@
+{
+  "signIn.title": "Add a Command Code key",
+  "signIn.body": "Create an API key at commandcode.ai/settings/keys and paste it here. A Provider-or-higher key is added to Command Code Plan, a Go plan key to Command Code Go Plan.",
+  "signIn.key.label": "API key",
+  "signIn.key.hint": "Kept encrypted by Astra; never shown again.",
+  "signIn.key.empty": "Enter the API key",
+  "signIn.key.refused": "Command Code didn't take this key",
+  "signIn.save": "Add account",
+  "signIn.done": "Added {who}",
+  "signIn.doneGo": "Added {who} (Go plan)"
+}

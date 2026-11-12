@@ -1,0 +1,19 @@
+{
+  "signIn.title": "登录 ZCode",
+  "signIn.body": "按 ZCode 应用的方式登录：浏览器会打开 Z.ai 或智谱 BigModel，登录后这里自动完成。账号自己的 GLM Coding Plan 密钥、团队套餐席位或 ZCode 免费的 Start Plan 会被自动选用。",
+  "signIn.zai": "使用 Z.ai 登录",
+  "signIn.bigmodel": "使用智谱 BigModel 登录",
+  "signIn.key": "使用 GLM Coding Plan API 密钥",
+  "signIn.waiting": "等待 {site}",
+  "signIn.waiting.body": "请在浏览器中完成登录，这里会自动继续。如果页面没有打开，请使用下面的链接。",
+  "signIn.open": "打开登录页面",
+  "signIn.polling": "正在等待浏览器登录",
+  "signIn.key.title": "GLM Coding Plan API 密钥",
+  "signIn.key.site": "密钥来自哪里？",
+  "signIn.key.label": "API 密钥",
+  "signIn.key.hint": "密钥形如 <id>.<secret>。",
+  "signIn.key.submit": "添加密钥",
+  "signIn.key.empty": "请输入密钥",
+  "signIn.back": "返回",
+  "signIn.done": "已添加 ZCode 账号"
+}

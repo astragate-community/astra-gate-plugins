@@ -1,0 +1,17 @@
+{
+  "signIn.title": "登录 Cursor",
+  "signIn.body": "使用 cursor-agent 的浏览器登录，或 Cursor API 密钥（cursor.com/dashboard → Integrations）。",
+  "signIn.browser": "使用浏览器登录",
+  "signIn.key": "使用 Cursor API 密钥",
+  "signIn.waiting": "等待 Cursor",
+  "signIn.waiting.body": "请在浏览器中登录 Cursor，这里会自动继续。如果页面没有打开，请使用下面的链接。",
+  "signIn.open": "打开登录页面",
+  "signIn.polling": "正在等待浏览器登录",
+  "signIn.key.title": "Cursor API 密钥",
+  "signIn.key.label": "API 密钥",
+  "signIn.key.hint": "来自 cursor.com/dashboard → Integrations。",
+  "signIn.key.submit": "添加密钥",
+  "signIn.key.empty": "请输入密钥",
+  "signIn.back": "返回",
+  "signIn.done": "已添加 Cursor 账号"
+}

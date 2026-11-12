@@ -1,0 +1,11 @@
+{
+  "signIn.title": "添加 Command Code 密钥",
+  "signIn.body": "在 commandcode.ai/settings/keys 创建 API Key 并粘贴到这里。Provider 及以上的 Key 加入“Command Code 套餐”，Go 套餐的 Key 加入“Command Code Go 套餐”。",
+  "signIn.key.label": "API Key",
+  "signIn.key.hint": "由 Astra 加密保存，之后不再显示。",
+  "signIn.key.empty": "请输入 API Key",
+  "signIn.key.refused": "Command Code 不接受这个密钥",
+  "signIn.save": "添加账号",
+  "signIn.done": "已添加 {who}",
+  "signIn.doneGo": "已添加 {who}（Go 套餐）"
+}

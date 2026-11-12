@@ -1,38 +1,23 @@
 {
-  "name": "@astragate-community/factory-auth",
-  "version": "0.1.28",
-  "description": "Sign in to a Factory (Droid) subscription from Astra, OpenCode or magpie",
+  "name": "@astragate-community/factory",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Factory (Droid) subscriptions through the device sign-in or an API key, as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "factory",
-    "droid"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "Factory",
-    "icon": "factory",
-    "providers": [
-      "factory"
-    ],
-    "replaces": "factory",
-    "summary": {
-      "en": "Factory's Droid subscription: 30 models from Anthropic, OpenAI, xAI and open labs.",
-      "zh": "Factory Droid 订阅：Anthropic、OpenAI、xAI 及开源模型共 30 个。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.factory-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/factory"
+  },
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

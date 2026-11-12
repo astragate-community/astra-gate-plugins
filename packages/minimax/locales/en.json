@@ -1,0 +1,10 @@
+{
+  "signIn.title": "Sign in to {site}",
+  "signIn.body": "Uses MiniMax Code's own device sign-in. MiniMax Code's own sign-in on this machine is never read or changed. The credits are MiniMax's, given for MiniMax Code: using them from other agents is at your own risk.",
+  "signIn.start": "Start sign-in",
+  "signIn.confirm": "Confirm this code on the page that opened:",
+  "signIn.open": "Open the sign-in page again",
+  "signIn.waiting": "Waiting for you to confirm in the browser…",
+  "signIn.continue": "I confirmed it, keep waiting",
+  "signIn.done": "MiniMax Code account added"
+}

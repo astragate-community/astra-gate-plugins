@@ -1,0 +1,23 @@
+{
+  "signIn.title": "登录 Kiro",
+  "signIn.body": "用 Kiro 的登录页（Google、GitHub、AWS Builder ID 或 IAM Identity Center）登录，或保存一个 Kiro API key。",
+  "signIn.browser": "用 Kiro 登录",
+  "signIn.or": "或",
+  "signIn.key.label": "Kiro API key",
+  "signIn.key.hint": "以 ksk_ 开头",
+  "signIn.key.save": "保存 API key",
+  "signIn.key.empty": "请粘贴 Kiro API key。",
+  "signIn.open": "重新打开登录页",
+  "signIn.paste.kiro": "在 Kiro 的页面登录。结束时的页面（localhost:3128）会打不开：请从浏览器地址栏复制它的完整地址，粘贴到下面。",
+  "signIn.paste.aws": "Kiro 把你转到了 AWS，请在那里也登录；它同样会结束在一个打不开的地址：复制那个完整地址，粘贴到下面。",
+  "signIn.paste.label": "登录结束时的地址",
+  "signIn.finish": "完成登录",
+  "signIn.done": "已登录 Kiro",
+  "signIn.error.empty": "请粘贴登录结束时的地址。",
+  "signIn.error.refused": "登录被拒绝：{detail}",
+  "signIn.error.otherSignIn": "这个地址来自另一次登录，请重新开始。",
+  "signIn.error.noCode": "这个地址里没有 code。",
+  "signIn.error.noIssuer": "Kiro 的页面没有说明要去 AWS 的哪里登录。",
+  "signIn.error.external": "这里不能登录公司自己的身份提供方，请改用 Kiro API key 或其他方式。",
+  "signIn.error.unknown": "Kiro 的页面返回了这个插件不认识的登录方式（{detail}）。"
+}

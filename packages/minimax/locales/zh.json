@@ -1,0 +1,10 @@
+{
+  "signIn.title": "登录 {site}",
+  "signIn.body": "使用 MiniMax Code 自己的设备登录。本机 MiniMax Code 的登录不会被读取或改动。积分属于 MiniMax，是给 MiniMax Code 用的：在其他 Agent 里使用，风险自负。",
+  "signIn.start": "开始登录",
+  "signIn.confirm": "在打开的页面上确认这个代码：",
+  "signIn.open": "重新打开登录页面",
+  "signIn.waiting": "等待你在浏览器中确认…",
+  "signIn.continue": "我已确认，继续等待",
+  "signIn.done": "已添加 MiniMax Code 账号"
+}

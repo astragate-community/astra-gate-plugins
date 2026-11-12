@@ -1,0 +1,8 @@
+{
+  "title": "Thinking in the reply's text",
+  "description": "Some models and relays put a model's thinking in the text of its reply. Choose whether to take it out, or to put a Chat reply's reasoning in.",
+  "mode.strip": "Take <think> out of the text",
+  "mode.strip.hint": "A block of <think>…</think> that opens the reply's text is removed, so an agent doesn't keep it in its history and send it back every turn. Only a block at the start is taken; a <think> the model writes later, in code for example, stays. A tag split across streamed chunks is still found. Anthropic, Chat and Responses replies, streamed or whole.",
+  "mode.to_content": "Put reasoning into the text",
+  "mode.to_content.hint": "A Chat reply's reasoning_content (or reasoning) is put into its text as <think>…</think>, for a client that shows only the text (New API's thinking_to_content). Chat replies only: an Anthropic thinking block carries a signature, and turned into text it would fail the next turn. It changes what the agent keeps and sends back, so it suits a chat client better than a coding agent."
+}

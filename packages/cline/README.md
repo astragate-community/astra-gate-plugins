@@ -1,112 +1,61 @@
-# @astragate-community/cline-auth
+# Cline (Astra v2 plugin)
 
-Cline (cline.bot) on your own Cline account: the models Cline's gateway
-serves — usage-billed models, ClinePass's and Cline's free models alike.
-Provider id: `cline`.
+Cline's model gateway as an Astra provider. Plugin id `astragate-community.cline`, provider id `cline`. It replaces the
+v1 package `@astragate-community/cline-auth`.
 
-Install: `astra plugin add @astragate-community/cline-auth`. Based on an MIT-licensed community plugin (see
-THIRD_PARTY_NOTICES.md); same behaviour, restructured into modules.
+## Use
 
-## Signing in
+Install the plugin, open the provider's page and press "Add account". The sign-in flow offers two ways:
 
-- **Cline device sign-in** — the flow Cline's own client runs: the plugin asks
-  WorkOS for a device code and opens the approval page, polls until you
-  approve, then trades the WorkOS tokens at Cline's `/api/v1/auth/register`
-  for the account's own token pair.
-- **Cline API key** — create one at [app.cline.bot → Settings → API Keys](https://app.cline.bot/dashboard/account)
-  and paste it. Sent as a plain Bearer key.
+- **Browser**: Cline's own WorkOS device-code sign-in. The flow shows the code and a link; once you approve it, the
+  tokens are traded at Cline's register endpoint for the account's own pair.
+- **API key** from app.cline.bot (Settings, API Keys).
 
-The sign-in is kept where OpenCode keeps auth (`auth.json` under the data
-directory); magpie keeps plugin sign-ins in its own store
-(`~/.config/magpie/plugin-auth.json`).
+The pair (or the key) is the account's secret, kept encrypted by Astra. A token within five minutes of its end is
+renewed in `prepare` before the request goes out; Cline rotates the refresh token, so the new pair is saved back to the
+account at once. A refused refresh marks the sign-in as lapsed (the 401/403 path asks the plugin's `refresh`).
 
-Refreshing:
-- Access tokens are renewed through `/api/v1/auth/refresh`. Cline rotates
-  the refresh token and refuses one already spent, so the rotated pair is
-  kept in memory beside the store the moment it arrives: a save that fails
-  can't leave the next request spending the token that was already spent.
-- magpie renews the token ten minutes before it ends, through the plugin's
-  `auth.refresh`, once for the account and before its requests, models and
-  usage need it; magpie saves the new pair. OpenCode doesn't call that hook:
-  there the token is refreshed five minutes before it ends, before a
-  request, and the new pair is saved.
-- Refreshes are serialized, magpie's renewal included, so two at once can't
-  spend one token and lose the other; one that finds the token already
-  renewed uses that pair.
-- A refresh that fails for a while keeps the token that is still good, as
-  Cline's own client does (magpie tries its renewal again shortly); only a
-  refresh Cline refuses, or a token that has actually expired, is treated as
-  the sign-in gone.
+## Models and requests
 
-## Requests
+`models()` merges Cline's recommended-models feed (recommended, free and ClinePass groups) with its cloud catalog for
+context windows, and keeps the last good list in plugin storage (the bundled snapshot is the fallback).
+`prepare` sends chat completions to `https://api.cline.bot/api/v1` with Cline's CLI identity headers and a task id
+derived from the conversation's session header when the client sends one.
 
-Chat completions go to `https://api.cline.bot/api/v1/chat/completions` in
-OpenAI's format (streaming included), with `Authorization: Bearer
-workos:<access token>` for a signed-in account or the raw API key, and the
-full client-identity header set Cline's own clients send (`HTTP-Referer`,
-`X-Title`, `User-Agent: Cline/<version>`, `X-CLIENT-TYPE: cline-cli`,
-`X-CLIENT-VERSION`, `X-PLATFORM`, `X-PLATFORM-VERSION`, `X-CORE-VERSION`,
-`X-IS-MULTIROOT`) — pinned to Cline's current CLI release, which is also
-what the free models' gate reads; when Cline ships a new release, move the
-pinned numbers in `src/constants.mjs` along. All models use one `X-Task-ID` per
-named chat session, derived as a UUID from the session. With no named session
-(including magpie's synthetic id from the first user message), no task id
-is sent. The session crosses the plugin's hooks in a private header that is
-removed before the request goes to Cline. Auth and account requests carry
-the same identity. A finished non-streaming answer rides in a
-`{"data": …}` envelope the official clients take apart; the plugin takes it
-apart too. The model list is read from
-`/api/v1/ai/cline/recommended-models` and `/api/v1/ai/cline/models` (neither
-needs a sign-in); usage reads `/api/v1/users/me` and the account's `/balance`
-(its balance is counted in millionths of a dollar), and ClinePass's 5-hour,
-weekly and monthly limits from `/api/v1/users/me/plan/usage-limits`
-(`{limits: [{type, percentUsed, resetsAt}]}`, what app.cline.bot's
-subscription page shows). An account without ClinePass (a 404 there) has
-none; limits that fail to read for any other reason say so on the card beside
-the balance, and limits read are kept when the balance can't be.
+Setting **pinUpstream** (off by default): DeepSeek models (not `cline-free/`) get `providerOptions.gateway.only =
+["deepseek"]` so Cline's gateway does not route them to a weaker upstream.
 
-### DeepSeek models only through DeepSeek's own API
+`usage()` returns the credit balance and, on ClinePass, the 5-hour, weekly and monthly limits as
+`{ plan, balance, windows: [{ name, used, span, resetsAt }], user }` (`expired: true` when the sign-in is gone).
 
-Cline's gateway picks among the providers that serve a model. With the
-`pinUpstream` option on, a request for a DeepSeek model (`cline-pass/deepseek-…`,
-not the `cline-free/` ones) carries `"providerOptions": {"gateway": {"only":
-["deepseek"]}}`, so it is answered by DeepSeek's own API only — the same as
-magpie's built-in ClinePass tick. Other models, and a request with
-`providerOptions` of its own, go as sent. It is off by default. Turn it on:
+## Replies
 
-- in magpie: the provider's editor › Upstream › tick "DeepSeek models only
-  through DeepSeek's own upstream";
-- in OpenCode: `"provider": {"cline": {"options": {"pinUpstream": true}}}` in
-  `opencode.json`, or the plugin's own options:
-  `"plugin": [["@astragate-community/cline-auth", {"pinUpstream": true}]]`.
+The manifest's `reply: { framing: "sse", output: "chat" }` runs every reply through `transformResponse` (`src/reply.js`):
 
-## Models
+- A streaming reply passes chunk by chunk; a `{"data": {...}}` envelope around a chunk is taken off. The host closes the stream.
+- A caller that did not ask for a stream (`stream: false`): the host frames one reply type per provider, so `prepare` asks
+  Cline for a stream (with `stream_options.include_usage`) and `end` folds the chunks into the one `chat.completion`
+  (content, reasoning, whole tool calls, usage), which also takes the `{"data": ...}` envelope off as v1 did. A reply that
+  arrives as plain JSON despite the stream request is not read (Cline's OpenAI-compatible gateway answers a stream request with SSE).
+- Refusals are re-mapped in `start`, as v1 did: a ClinePass entitlement error is a 403, an empty account a 429 "out of credits"
+  (so a pool moves on), a lapsed sign-in a 401 (which asks `refresh`), spend and rate limits a 429.
 
-The list is Cline's own, merged from the two feeds its clients read: the
-recommended-models feed (its recommended picks, its free models and
-ClinePass's) and the whole cloud catalog (`/ai/cline/models`, where the
-usage-billed models the recommended feed doesn't name live). Refreshed from
-the live feeds whenever they answer; until then a bundled snapshot of the
-recommended list, Cline's own default (`anthropic/claude-sonnet-5`) among it.
-Cline's `clineCloud` group is left out, as Cline's own clients leave it out
-unless they opt in.
+## Not carried over from v1
 
-Each model's context window is the cloud catalog's (`context_length`). Its
-reply limit is left unsaid: the catalog's `max_completion_tokens` can be most
-of the window, and an agent keeps that much free for the reply. The `cline-free/…`
-and `cline-pass/…` models aren't in that catalog, so they say none, and magpie
-takes the window models.dev gives the model after the prefix
-(`cline-free/mimo-v2.6-flash` is `mimo-v2.6-flash`).
+- The sign-in marks on replies (`X-Magpie-Sign-In`): a refused 401 asks the plugin's `refresh` instead.
+- The renewal ahead of time (`auth.refresh`, ten minutes before the end): renewal happens at the next request instead.
+- Not live-verified: the tests use fixtures shaped like Cline's gateway replies, not a captured session.
 
-- The **free** group (`cline-free/…`, `stealth/…`) costs nothing — the names
-  say "(free)". They are gated on the client surface a request claims; the
-  plugin claims what it is, and the gate takes it. If Cline ever narrows that
-  gate to its own apps, those models go away.
-- The **ClinePass** group (`cline-pass/…`) needs a ClinePass subscription —
-  the names say so, and asking without one answers 403.
-- The rest are usage-billed against the account's Credits balance.
+Permissions: `providers`, `storage` (the last model list), `ui` (the sign-in flow) and `net:` for `api.cline.bot` and
+`api.workos.com`.
 
-## Not included
+## Develop
 
-- Cline's MCP and web-search endpoints — a chat provider only.
-- Team/organization account switching.
+```sh
+npm install --workspaces=false --no-package-lock   # the SDK is a file: dependency
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.cline-2.1.0.tgz
+```
+
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

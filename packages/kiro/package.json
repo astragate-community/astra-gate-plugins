@@ -1,40 +1,23 @@
 {
-  "name": "@astragate-community/kiro-auth",
-  "version": "0.1.12",
-  "description": "Kiro subscriptions (Free, Pro, Pro+, Power) in OpenCode, magpie and Astra",
+  "name": "@astragate-community/kiro",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Kiro subscriptions as an Astra v2 provider plugin",
   "type": "module",
-  "main": "./index.mjs",
-  "exports": "./index.mjs",
-  "files": [
-    "index.mjs",
-    "README.md"
-  ],
-  "keywords": [
-    "opencode",
-    "opencode-plugin",
-    "magpie",
-    "astra",
-    "kiro"
-  ],
-  "license": "MIT",
-  "astra": {
-    "name": "Kiro",
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kiro-color.svg",
-    "providers": [
-      "kiro"
-    ],
-    "replaces": "kiro",
-    "summary": {
-      "en": "Kiro Free, Pro, Pro+ and Power — Kiro's sign-in, kiro-cli's, or an API key.",
-      "zh": "Kiro Free、Pro、Pro+ 与 Power：Kiro 登录、沿用 kiro-cli 的登录，或 API key。"
-    }
+  "scripts": {
+    "build": "astra-plugin build",
+    "validate": "astra-plugin validate",
+    "test": "vitest run",
+    "pack": "astra-plugin build && astra-plugin pack dist --out ../../out/astragate-community.kiro-2.1.0.tgz"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/astragate-community/astra-gate-plugins.git",
     "directory": "packages/kiro"
   },
-  "magpie": {
-    "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.95.1/icons/kiro-color.svg"
+  "devDependencies": {
+    "@astragate/plugin-sdk": "file:../../../../LocalGate/packages/plugin-sdk",
+    "vitest": "^3.0.0"
   }
 }

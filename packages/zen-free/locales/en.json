@@ -1,0 +1,8 @@
+{
+  "signIn.title": "OpenCode Zen free access",
+  "signIn.body": "Zen's free models use the shared public credential. No personal API key is needed; availability and rate limits are set by Zen.",
+  "signIn.enable": "Enable free access",
+  "signIn.done": "Free access enabled",
+  "signIn.plan": "OpenCode Zen Free",
+  "signIn.account": "Public credential"
+}

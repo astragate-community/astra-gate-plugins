@@ -1,0 +1,17 @@
+{
+  "title": "要伪装成 Claude Code 的渠道",
+  "description": "发往你指定渠道的请求会带上 Claude Code 的请求头、计费与身份系统提示块，以及 CLI 样式的 user id。已经带有这些的请求（Claude Code 本身）保持原样。渠道的 API Key 不会被改动。",
+  "risk.title": "是否接受由渠道决定",
+  "risk.message": "渠道是否接受这样的请求由渠道自己决定，把一个客户端当作另一个可能违反它的条款。你为自己的 Key 承担这个风险。",
+  "providers.label": "服务商",
+  "providers.hint": "服务商的 ID 或名称，与服务商页面显示的一致。一个都不填时插件什么也不做。",
+  "protocol.label": "适用的 API",
+  "protocol.hint": "一个服务商有多个端点时，只有请求走这个 API 才会匹配。",
+  "protocol.anthropic": "Anthropic Messages",
+  "protocol.chat": "OpenAI Chat",
+  "protocol.any": "任意 API",
+  "version.label": "CLI 版本",
+  "version.hint": "x.y.z；留空使用 {version}。",
+  "betas.label": "anthropic-beta",
+  "betas.hint": "替换 Claude Code 默认的 beta 标记集合（逗号分隔）。留空则用默认值。"
+}

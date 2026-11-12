@@ -1,0 +1,48 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.mimo",
+  "version": "2.1.0",
+  "name": { "zh": "小米 MiMo", "en": "Xiaomi MiMo" },
+  "description": {
+    "zh": "用小米 MiMo 开放平台的 Token Plan 密钥（tp-）使用 MiMo Pro 与 MiMo Flash。",
+    "en": "Xiaomi MiMo's Token Plan (a tp- API key from the open platform): MiMo Pro and MiMo Flash."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/mimo",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": [
+    "providers",
+    "ui",
+    "net:https://token-plan-cn.xiaomimimo.com",
+    "net:https://token-plan-sgp.xiaomimimo.com",
+    "net:https://token-plan-ru.xiaomimimo.com",
+    "net:https://token-plan-in.xiaomimimo.com",
+    "net:https://account.xiaomi.com",
+    "net:https://mimo-server-sgp.xiaomimimo.com",
+    "net:https://mimo-server-ru.xiaomimimo.com",
+    "net:https://mimo-server-in.xiaomimimo.com",
+    "net:https://platform.xiaomimimo.com"
+  ],
+  "contributes": {
+    "providers": [
+      {
+        "id": "mimo-app",
+        "name": { "zh": "小米 MiMo", "en": "Xiaomi MiMo" },
+        "icon": "assets/icon.svg",
+        "protocols": ["chat"],
+        "models": [
+          { "id": "mimo-pro", "name": "MiMo Pro", "protocol": "chat", "context": 1000000, "output": 128000, "vision": true },
+          { "id": "mimo-flash", "name": "MiMo Flash", "protocol": "chat", "context": 1000000, "output": 128000, "vision": true }
+        ],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [
+      { "id": "signIn", "view": "signIn", "title": { "zh": "添加 MiMo 账号", "en": "Add a MiMo account" } }
+    ]
+  },
+  "replaces": [{ "v1": "@astragate-community/mimo-auth" }]
+}

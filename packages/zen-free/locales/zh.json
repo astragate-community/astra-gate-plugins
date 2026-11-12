@@ -1,0 +1,8 @@
+{
+  "signIn.title": "OpenCode Zen 免费访问",
+  "signIn.body": "Zen 的免费模型使用公共的 public 凭证，无需个人 API 密钥；可用性与限流由 Zen 决定。",
+  "signIn.enable": "启用免费访问",
+  "signIn.done": "已启用免费访问",
+  "signIn.plan": "OpenCode Zen 免费",
+  "signIn.account": "公共凭证"
+}

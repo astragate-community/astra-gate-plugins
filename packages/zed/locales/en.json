@@ -1,0 +1,12 @@
+{
+  "signIn.title": "Add a Zed account",
+  "signIn.body": "Zed's own browser sign-in needs a local callback a plugin cannot open. Paste the user id and access token Zed's editor keeps in your system keychain for zed.dev.",
+  "signIn.user.label": "User id",
+  "signIn.user.empty": "Enter the user id",
+  "signIn.token.label": "Access token",
+  "signIn.token.hint": "Kept encrypted by Astra; never shown again. Zed has no refresh token: it lasts until Zed refuses it.",
+  "signIn.token.empty": "Enter the access token",
+  "signIn.refused": "Zed refused this user id and token",
+  "signIn.save": "Add account",
+  "signIn.done": "Added {who}"
+}

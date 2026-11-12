@@ -1,118 +1,80 @@
-# MiniMax Code plugin for Astra (`@astragate-community/minimax-auth`)
+# MiniMax Code (Astra v2 plugin)
 
-Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md). Same behaviour, restructured into modules.
-
-Install: `astra plugin add @astragate-community/minimax-auth`.
-
-Signs in to MiniMax Code (mcode) accounts so their credits and M Plan can be
-used. That covers the free credits and the daily check-in's credits. There is
-one provider for each of MiniMax's two sites:
+MiniMax Code (mcode) accounts as Astra providers: the credits a MiniMax Code account gets and its M Plan, on MiniMax Code's
+own models. Plugin id `astragate-community.minimax`. It replaces the v1 package `@astragate-community/minimax-auth` and
+keeps its provider ids, so token pools and client bindings can be repointed on upgrade.
 
 | Provider id | Site | API |
 |---|---|---|
 | `minimax-code` | MiniMax Code, China (minimax.cn / minimaxi.com) | `https://agent.minimax.cn/mavis/api/v1/llm/v1` |
 | `minimax-code-global` | MiniMax Code, international (minimax.io) | `https://agent.minimax.io/mavis/api/v1/llm/v1` |
 
-The package exports `MiniMaxCodeAuthPlugin` (`minimax-code`) and
-`MiniMaxCodeGlobalAuthPlugin` (`minimax-code-global`).
-
 ## Risk
 
-Read this before you use the package:
-- **The credits are for MiniMax's services.** MiniMax gives them for use in
-  MiniMax Code, and its terms decide where else they may be used. This
-  package uses them from other agents. MiniMax hasn't approved that.
-- **The risk to the account is yours.** MiniMax may limit, suspend or close
-  an account that uses them this way.
-- **This is a community package.** It has nothing to do with MiniMax.
+- **The credits are for MiniMax's services.** MiniMax gives them for use in MiniMax Code, and its terms decide where else
+  they may be used. This plugin uses them from other agents; MiniMax has not approved that.
+- **The risk to the account is yours.** MiniMax may limit, suspend or close an account used this way.
+- **This is a community plugin.** It has nothing to do with MiniMax.
 
 ## Signing in
 
-You sign in with MiniMax Code's own device sign-in: the same OAuth device
-flow, PKCE S256 and client `mcode-public` that `mcode /login` uses.
-- magpie opens MiniMax's page and shows the code to confirm there.
-- The plugin then waits for the sign-in and finishes by itself.
+Open the provider's page and press "Add account". The flow is MiniMax Code's own device sign-in (OAuth device flow, PKCE
+S256, client `mcode-public`, the same as `mcode /login`): it opens MiniMax's page and shows a code to confirm there. The
+plugin polls in slices of about 40 seconds (a view action has a wall-clock limit); if the slice ends before you confirm,
+the code stays on screen and "I confirmed it, keep waiting" polls again. MiniMax Code's own sign-in (`~/.minimax`) is never
+read or changed.
 
-MiniMax Code's own sign-in is never read or changed. That is
-`~/.minimax/auth/…`, so signing in here doesn't sign `mcode` out.
+The account's credential (kept by Astra as the account's secret) holds the access and refresh tokens, their expiry and the
+MiniMax user id and email. The account row is keyed by the MiniMax user id.
 
-The sign-in is kept as an OpenCode `oauth` auth:
-- what it holds: the access and refresh tokens, their expiry, and the
-  MiniMax user id and email;
-- OpenCode keeps it in `auth.json`;
-- magpie keeps it in `plugin-auth.json`.
+## Refreshing
 
-Each account signs in on its own, so magpie can hold several and switch
-between them.
-
-Refreshing:
-- MiniMax spends a refresh token once. Sent a second time it is
-  `invalid_grant`, which signs the account out, so the plugin never sends
-  one twice.
-- magpie renews the token ten minutes before it ends, through the plugin's
-  `auth.refresh`, once for the account and before its requests, models and
-  usage need it. OpenCode doesn't call that hook: there the access token is
-  refreshed two minutes before it ends, before a request. Either way the
-  new token is saved.
-- When MiniMax turns the token away (HTTP 401), the request goes again with
-  a newer token if one was saved meanwhile, else after a refresh.
-- Only one refresh runs at a time for an account. Requests that arrive
-  meanwhile wait for it and use its token. When saving the new token
-  fails, the plugin keeps it in memory and goes on with it, rather than
-  with the spent one on disk.
-- A refresh token someone else spent first (another magpie process) isn't a
-  sign-out when the new one they saved is there: that one is used.
-- The account counts as signed out only when MiniMax answers the refresh
-  with `invalid_grant` (HTTP 400). Any other failure keeps the sign-in, and
-  the current token is used while it lasts.
+- MiniMax spends a refresh token once; sent a second time it is `invalid_grant`, which signs the account out, so the plugin
+  never sends one twice. Only one refresh runs at a time per account; requests that arrive meanwhile wait for it.
+- `prepare` refreshes the access token two minutes before it ends and saves the new credential on the account. When MiniMax
+  turns a token away (401/403), Astra calls the plugin's `refresh`, which returns `renewed` or, for a signed-out account,
+  `expired` (the account is marked and needs a new sign-in). A passing failure (a 5xx, a timeout) leaves the account alone.
 
 ## Requests
 
-Chats are Anthropic messages (`@ai-sdk/anthropic`) sent to
-`<API>/messages`. Each one carries MiniMax Code's headers:
-- `Authorization: Bearer <access token>`;
-- `x-api-key: sk-xxx`, the placeholder key MiniMax Code gives its SDK;
-- `User-Agent: MiniMaxAgent`;
-- `X-Mavis-Agent-Id: main`;
-- `X-Mavis-Timezone-Offset`;
-- `X-Mavis-Session-Id`. This is the conversation's id when magpie or
-  OpenCode passes one, and a fixed id for the plugin's run otherwise.
-
-A refusal that says the credits or quota ran out goes on as a 429. The 402,
-403 or 429 statuses count, when the body says so. That way magpie can move
-the conversation to another account.
+Every request is Anthropic Messages at `<agent>/mavis/api/v1/llm/v1/messages` with MiniMax Code's headers
+(`User-Agent: MiniMaxAgent`, `X-Mavis-Agent-Id`, `X-Mavis-Timezone-Offset`, `X-Mavis-Session-Id`, the account in
+`Authorization`). The session id is the client's `x-mavis-session-id` / `x-session-id` header, else one id per loaded plugin.
 
 ## Models
 
-When you are signed in, the models come from MiniMax Code's live model
-config (`GET /mavis/api/v1/models`). The list includes each model's context,
-image input and thinking options. If the live list doesn't answer, this
-built-in list is used instead:
+MiniMax Code's own list is built in (M3.1-Flash-Preview, M3, M2.7, M2.7-highspeed); for an account the plugin asks MiniMax
+Code's live model config and falls back to the built-in list.
 
-| Model | Context | Images | Reasoning levels (variants) |
-|---|---|---|---|
-| MiniMax-M3.1-Flash-Preview | 512K | yes | low, medium, high, xhigh, max |
-| MiniMax-M3 | 512K | yes | none, high |
-| MiniMax-M2.7 | 200K | no | — (always thinks) |
-| MiniMax-M2.7-highspeed | 200K | no | — (always thinks) |
+## Usage card
 
-Variants map to what MiniMax Code sends:
-- a level is adaptive thinking at that effort, which becomes
-  `output_config.effort`;
-- `none` turns thinking off.
+The account's plan (the M Plan's tier, else Free), its credits and the M Plan's windows (each model group's interval and week).
 
-## Usage
+## Replies
 
-The usage card shows:
-- the credits left;
-- the plan: Free, or the M Plan's tier and when it ends;
-- for an M Plan, its windows (5 hours, 7 days, and any model's own) from
-  `coding_plan/remains`.
+The manifest declares `reply: { framing: sse, output: anthropic }`; the plugin's `transformResponse`:
 
-These are read the way MiniMax Code reads them, with its signed account API.
+- turns an out-of-credits refusal (402/403 whose text is about credits, balance, quota or the plan) into a 429
+  (`usage limit reached: …`), so a pool can move on to another account (the v1 reply guard). Other refusals pass as sent;
+- passes the Anthropic events on as event pairs. MiniMax is always asked to stream, and a client that wanted one JSON
+  message gets the stream put back together (text, thinking with its signature, tool calls with parsed input); a stream
+  that ends without `message_stop` is a 502.
 
-## Not here
+Not carried over from v1:
 
-- **No check-in.** The package never claims the daily check-in's credits.
-  Check in from MiniMax Code or MiniMax's site.
-- **No sign-out.** Signing out doesn't revoke the token on MiniMax's side.
+- Model "variants" (thinking levels as provider options). v2 models have none; a client sends `thinking` / `output_config`
+  in its own Anthropic request, which passes through untouched.
+- OpenCode's `chat.headers` hook (the conversation id): see Requests.
+
+Permissions: `providers`, `ui` (the sign-in flow) and `net:` for the account, agent, platform and chat hosts of both sites.
+
+## Develop
+
+```sh
+npm install --workspaces=false --no-package-lock   # in this directory
+npm test
+npm run build && npm run validate
+npm run pack   # writes out/astragate-community.minimax-2.1.0.tgz
+```
+
+Based on an MIT-licensed community plugin (see THIRD_PARTY_NOTICES.md).

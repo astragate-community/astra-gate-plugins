@@ -1,0 +1,50 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.commandcode",
+  "version": "2.1.0",
+  "name": { "zh": "Command Code 套餐", "en": "Command Code Plan" },
+  "description": {
+    "zh": "用 Command Code API Key 使用套餐内的模型：Provider 及以上走 Provider API（Chat、Responses、Anthropic），Go 套餐走 CLI 自有端点（Chat），并显示额度。",
+    "en": "Command Code plan models with an API key: Provider and up on the Provider API (Chat, Responses, Anthropic), the Go plan on the CLI's own endpoint (Chat), with the plan's allowance."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/commandcode",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": ["providers", "storage", "ui", "net:https://api.commandcode.ai"],
+  "contributes": {
+    "providers": [
+      {
+        "id": "commandcode-plan",
+        "name": { "zh": "Command Code 套餐", "en": "Command Code Plan" },
+        "icon": "assets/icon.svg",
+        "protocols": ["chat", "responses", "anthropic"],
+        "models": [
+          { "id": "claude-sonnet-5", "name": "Claude Sonnet 5", "protocol": "anthropic", "context": 1000000, "vision": true },
+          { "id": "claude-opus-5-5", "name": "Claude Opus 5.5", "protocol": "anthropic", "context": 1000000, "vision": true },
+          { "id": "gpt-6-sol", "name": "GPT-6 Sol", "protocol": "chat", "context": 1050000, "vision": true },
+          { "id": "deepseek/deepseek-v4-pro", "name": "DeepSeek V4 Pro", "protocol": "chat", "context": 1000000 },
+          { "id": "moonshotai/Kimi-K3", "name": "Kimi K3", "protocol": "chat", "context": 1000000, "vision": true }
+        ],
+        "signIn": { "flow": "signIn" }
+      },
+      {
+        "id": "commandcode-go",
+        "name": { "zh": "Command Code Go 套餐", "en": "Command Code Go Plan" },
+        "icon": "assets/icon.svg",
+        "protocols": ["chat"],
+        "reply": { "framing": "ndjson", "output": "chat" },
+        "models": [
+          { "id": "deepseek/deepseek-v4-pro", "name": "DeepSeek V4 Pro", "protocol": "chat", "context": 1000000, "reasoning": true },
+          { "id": "moonshotai/Kimi-K3", "name": "Kimi K3", "protocol": "chat", "context": 1000000, "vision": true, "reasoning": true },
+          { "id": "zai-org/GLM-5.3", "name": "GLM-5.3", "protocol": "chat", "context": 1000000, "reasoning": true }
+        ],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [{ "id": "signIn", "view": "signIn", "title": { "zh": "添加 Command Code 密钥", "en": "Add a Command Code key" } }]
+  },
+  "replaces": [{ "v1": "@astragate-community/commandcode-auth" }]
+}

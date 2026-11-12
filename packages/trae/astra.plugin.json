@@ -1,0 +1,206 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.trae",
+  "version": "2.1.0",
+  "name": {
+    "zh": "Trae",
+    "en": "Trae"
+  },
+  "description": {
+    "zh": "用 Trae CN（trae.cn）与 Trae 国际版（trae.ai）账号登录，通过 Trae IDE 的 Agent 对话，读取模型与额度、每日签到。实验性：未用真实账号验证。",
+    "en": "Sign in with Trae CN (trae.cn) and Trae international (trae.ai) accounts and chat through Trae's IDE agent; models, allowance and Trae CN's daily check-in. Experimental: not verified against a live account."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": {
+    "name": "Astra Gate Community",
+    "url": "https://github.com/astragate-community"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/trae",
+  "engines": {
+    "astra": ">=0.15.0",
+    "api": "^2.0"
+  },
+  "main": "src/main.js",
+  "permissions": [
+    "providers",
+    "storage",
+    "secrets",
+    "ui",
+    "jobs",
+    "net:https://api.trae.cn",
+    "net:https://trae-api-cn.mchost.guru",
+    "net:https://growsg-normal.trae.ai",
+    "net:https://coresg-normal.trae.ai",
+    "net:https://coreva-normal.trae.ai",
+    "net:https://api-sg-central.trae.ai",
+    "net:https://api-us-east.trae.ai"
+  ],
+  "contributes": {
+    "configuration": {
+      "properties": {
+        "checkin": {
+          "type": "boolean",
+          "default": false,
+          "title": {
+            "zh": "每日签到（Trae CN）",
+            "en": "Daily check-in (Trae CN)"
+          },
+          "description": {
+            "zh": "每天为每个已登录的 Trae CN 账号领取一次每日签到积分。未绑定登录设备的令牌，Trae CN 可能回复 9074（参与用户太多）。",
+            "en": "Claim Trae CN's daily check-in credits once a day for each signed-in account. Trae CN may answer 9074 (too many users) for a token that is not bound to the sign-in device."
+          }
+        }
+      }
+    },
+    "jobs": [
+      {
+        "id": "checkin",
+        "every": "6h"
+      }
+    ],
+    "providers": [
+      {
+        "id": "trae-cn",
+        "name": {
+          "zh": "Trae CN",
+          "en": "Trae CN"
+        },
+        "icon": "assets/icon.svg",
+        "protocols": [
+          "chat"
+        ],
+        "models": [
+          {
+            "id": "glm-5.2",
+            "name": "GLM-5.2",
+            "protocol": "chat",
+            "context": 200000,
+            "output": 32000,
+            "reasoning": true
+          },
+          {
+            "id": "glm-5",
+            "name": "GLM-5",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          },
+          {
+            "id": "kimi-k2.6",
+            "name": "Kimi K2.6",
+            "protocol": "chat",
+            "context": 256000,
+            "reasoning": true
+          },
+          {
+            "id": "qwen-3.7-plus",
+            "name": "Qwen 3.7 Plus",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          },
+          {
+            "id": "DeepSeek-V4-Pro",
+            "name": "DeepSeek V4 Pro",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          },
+          {
+            "id": "DeepSeek-V4-Flash",
+            "name": "DeepSeek V4 Flash",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          }
+        ],
+        "signIn": {
+          "flow": "signInCn"
+        },
+        "reply": {
+          "framing": "sse",
+          "output": "chat"
+        }
+      },
+      {
+        "id": "trae-global",
+        "name": {
+          "zh": "Trae 国际版",
+          "en": "Trae Global"
+        },
+        "icon": "assets/icon.svg",
+        "protocols": [
+          "chat"
+        ],
+        "models": [
+          {
+            "id": "gpt-5.4",
+            "name": "GPT-5.4",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          },
+          {
+            "id": "gemini-3-flash",
+            "name": "Gemini 3 Flash",
+            "protocol": "chat",
+            "context": 1000000,
+            "reasoning": true
+          },
+          {
+            "id": "kimi-k2.5",
+            "name": "Kimi K2.5",
+            "protocol": "chat",
+            "context": 256000,
+            "reasoning": true
+          },
+          {
+            "id": "minimax-m2",
+            "name": "MiniMax M2",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          },
+          {
+            "id": "deepseek-v3.2",
+            "name": "DeepSeek V3.2",
+            "protocol": "chat",
+            "context": 128000,
+            "reasoning": true
+          }
+        ],
+        "signIn": {
+          "flow": "signInGlobal"
+        },
+        "reply": {
+          "framing": "sse",
+          "output": "chat"
+        }
+      }
+    ],
+    "ui.flows": [
+      {
+        "id": "signInCn",
+        "view": "signInCn",
+        "title": {
+          "zh": "登录 Trae CN",
+          "en": "Sign in to Trae CN"
+        }
+      },
+      {
+        "id": "signInGlobal",
+        "view": "signInGlobal",
+        "title": {
+          "zh": "登录 Trae 国际版",
+          "en": "Sign in to Trae Global"
+        }
+      }
+    ]
+  },
+  "replaces": [
+    {
+      "v1": "@astragate-community/trae-auth"
+    }
+  ]
+}

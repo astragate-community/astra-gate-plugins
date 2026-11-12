@@ -1,0 +1,9 @@
+{
+  "signIn.title": "Sign in to {site}",
+  "signIn.body": "Sign in to {site} in your browser and authorize this device; the page you are sent to does the rest.",
+  "signIn.start": "Sign in with {site}",
+  "signIn.open": "Open the sign-in page again",
+  "signIn.continue": "I have signed in",
+  "signIn.waiting": "Waiting for the browser sign-in…",
+  "signIn.done": "Signed in to {site}"
+}

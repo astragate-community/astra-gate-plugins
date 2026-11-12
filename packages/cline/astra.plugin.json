@@ -1,0 +1,54 @@
+{
+  "manifestVersion": 2,
+  "id": "astragate-community.cline",
+  "version": "2.1.0",
+  "name": { "zh": "Cline", "en": "Cline" },
+  "description": {
+    "zh": "用 Cline 账号（浏览器登录或 API Key）使用 Cline 网关的模型，含免费模型与 ClinePass。",
+    "en": "Cline's model gateway on your Cline account (browser sign-in or API key), including free models and ClinePass."
+  },
+  "icon": "assets/icon.svg",
+  "publisher": { "name": "Astra Gate Community", "url": "https://github.com/astragate-community" },
+  "license": "MIT",
+  "homepage": "https://github.com/astragate-community/astra-gate-plugins/tree/main/packages/cline",
+  "engines": { "astra": ">=0.15.0", "api": "^2.0" },
+  "main": "src/main.js",
+  "permissions": ["providers", "storage", "ui", "net:https://api.cline.bot", "net:https://api.workos.com"],
+  "contributes": {
+    "configuration": {
+      "properties": {
+        "pinUpstream": {
+          "type": "boolean",
+          "default": false,
+          "title": { "zh": "DeepSeek 模型固定走 DeepSeek 官方上游", "en": "Pin DeepSeek models to DeepSeek's own upstream" },
+          "description": {
+            "zh": "Cline 网关默认在多个上游里挑一个，个别上游对 DeepSeek 模型表现较差；开启后给这些模型加 providerOptions.gateway.only。cline-free/ 模型不受影响。",
+            "en": "Cline's gateway otherwise picks among the providers serving a model, and some serve DeepSeek's models worse. On, those models get providerOptions.gateway.only. cline-free/ models are left to Cline."
+          }
+        }
+      }
+    },
+    "providers": [
+      {
+        "id": "cline",
+        "name": { "zh": "Cline", "en": "Cline" },
+        "icon": "assets/icon.svg",
+        "protocols": ["chat"],
+        "reply": { "framing": "sse", "output": "chat" },
+        "models": [
+          { "id": "anthropic/claude-sonnet-5.5", "name": "Claude Sonnet 5.5", "protocol": "chat" },
+          { "id": "anthropic/claude-opus-5.5", "name": "Claude Opus 5.5", "protocol": "chat" },
+          { "id": "openai/gpt-6-astra", "name": "GPT-6 Astra", "protocol": "chat" },
+          { "id": "spacexai/grok-4.7", "name": "Grok 4.7", "protocol": "chat" },
+          { "id": "moonshotai/kimi-k3", "name": "Kimi K3", "protocol": "chat" },
+          { "id": "cline-free/deepseek-v4.1-flash", "name": "Deepseek V4.1 Flash (free)", "protocol": "chat" },
+          { "id": "cline-free/mimo-v2.6-flash", "name": "MiMo V2.6 Flash (free)", "protocol": "chat" },
+          { "id": "cline-pass/glm-5.3", "name": "GLM 5.3 (ClinePass)", "protocol": "chat" }
+        ],
+        "signIn": { "flow": "signIn" }
+      }
+    ],
+    "ui.flows": [{ "id": "signIn", "view": "signIn", "title": { "zh": "登录 Cline", "en": "Sign in to Cline" } }]
+  },
+  "replaces": [{ "v1": "@astragate-community/cline-auth" }]
+}

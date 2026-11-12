@@ -1,0 +1,18 @@
+{
+  "signIn.title": "Sign in to Devin",
+  "signIn.limit": "This plugin can sign in and show the account's allowance, but it cannot send chats: Devin's chat protocol is not available to v2 plugins. Keep the v1 Devin plugin for chat.",
+  "signIn.browser.title": "Browser sign-in",
+  "signIn.browser.body": "Sign in at app.devin.ai in the browser. It ends on a 127.0.0.1 page that fails to load; copy that page's full address from the address bar and paste it below.",
+  "signIn.browser.open": "Open the sign-in page again",
+  "signIn.browser.label": "Callback address (or just its code)",
+  "signIn.browser.hint": "Starts with http://127.0.0.1:53682/callback?code=",
+  "signIn.browser.empty": "Paste the callback address",
+  "signIn.browser.state": "That address is not from this sign-in; start again",
+  "signIn.token.title": "Session token",
+  "signIn.token.body": "Paste the devin CLI's session token: windsurf_api_key in its credentials.toml (~/.local/share/devin/ on Linux and macOS, %APPDATA%\\devin\\ on Windows).",
+  "signIn.token.label": "Session token",
+  "signIn.token.empty": "Paste the token",
+  "signIn.finish": "Sign in",
+  "signIn.back": "Back",
+  "signIn.done": "Signed in as {name}"
+}
